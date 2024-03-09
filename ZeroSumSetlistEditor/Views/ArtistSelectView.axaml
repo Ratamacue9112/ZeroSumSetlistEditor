@@ -1,0 +1,17 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ZeroSumSetlistEditor.Views.ArtistSelectView">
+
+	<StackPanel>
+		<TextBlock Classes.h1="true" FontFamily="{StaticResource MontserratFont}">
+			Zero Sum Setlist Editor
+		</TextBlock>
+		<TextBlock Classes.h2="true" FontFamily="{StaticResource MontserratFont}" FontStyle="Italic" FontWeight="ExtraLight" Margin="0">
+			Pick An Artist
+		</TextBlock>
+	</StackPanel>
+	
+</UserControl>

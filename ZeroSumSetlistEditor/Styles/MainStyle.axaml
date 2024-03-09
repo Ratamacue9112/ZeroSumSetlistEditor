@@ -1,0 +1,27 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!-- Add Controls for Previewer Here -->
+        </Border>
+    </Design.PreviewWith>
+
+    <!-- Add Styles Here -->
+	<Style Selector="Window">
+		<Setter Property="Background" Value="#FF3d3d3d"></Setter>
+	</Style>
+	<Style Selector="TextBlock">
+		<!-- Can't set font family here or it will throw an error for some reason -->
+		<Setter Property="Margin" Value="10"/>
+	</Style>
+	<Style Selector="TextBlock.h1">
+		<Setter Property="FontSize" Value="36"/>
+		<Setter Property="FontWeight" Value="Bold"/>
+		<Setter Property="HorizontalAlignment" Value="Center"/>
+	</Style>
+	<Style Selector="TextBlock.h2">
+		<Setter Property="FontSize" Value="28"/>
+		<Setter Property="HorizontalAlignment" Value="Center"/>
+	</Style>
+	
+</Styles>
