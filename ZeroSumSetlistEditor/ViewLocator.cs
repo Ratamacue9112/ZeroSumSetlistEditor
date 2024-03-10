@@ -3,7 +3,7 @@ using Avalonia.Controls.Templates;
 using ZeroSumSetlistEditor.ViewModels;
 using System;
 
-namespace AvaloniaApplication1
+namespace ZeroSumSetlistEditor
 {
     public class ViewLocator : IDataTemplate
     {

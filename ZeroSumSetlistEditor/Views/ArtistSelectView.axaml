@@ -2,8 +2,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:ZeroSumSetlistEditor.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="ZeroSumSetlistEditor.Views.ArtistSelectView">
+             x:Class="ZeroSumSetlistEditor.Views.ArtistSelectView"
+			 x:DataType="vm:ArtistSelectViewModel">
 
 	<StackPanel>
 		<TextBlock Classes.h1="true" FontFamily="{StaticResource MontserratFont}">
@@ -12,6 +14,14 @@
 		<TextBlock Classes.h2="true" FontFamily="{StaticResource MontserratFont}" FontStyle="Italic" FontWeight="ExtraLight" Margin="0">
 			Pick An Artist
 		</TextBlock>
+		
+		<ItemsControl ItemsSource="{Binding Artists}">
+			<ItemsControl.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Name}"/>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
 	</StackPanel>
 	
 </UserControl>

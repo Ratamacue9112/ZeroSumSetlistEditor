@@ -2,12 +2,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:ZeroSumSetlistEditor.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 		xmlns:views="clr-namespace:ZeroSumSetlistEditor.Views"
         x:Class="ZeroSumSetlistEditor.Views.MainWindow"
+		x:DataType="vm:MainWindowViewModel"
 		Icon="avares://ZeroSumSetlistEditor/Assets/icon.ico"
         Title="Zero Sum Setlist Editor">
 
-	<views:ArtistSelectView/>
+	<views:ArtistSelectView DataContext="{Binding ArtistSelect}"/>
 
 </Window>
