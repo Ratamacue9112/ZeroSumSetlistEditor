@@ -7,21 +7,30 @@
              x:Class="ZeroSumSetlistEditor.Views.ArtistSelectView"
 			 x:DataType="vm:ArtistSelectViewModel">
 
-	<StackPanel>
-		<TextBlock Classes.h1="true" FontFamily="{StaticResource MontserratFont}">
-			Zero Sum Setlist Editor
-		</TextBlock>
-		<TextBlock Classes.h2="true" FontFamily="{StaticResource MontserratFont}" FontStyle="Italic" FontWeight="ExtraLight" Margin="0">
-			Pick An Artist
-		</TextBlock>
+	<DockPanel>
+		<Button DockPanel.Dock="Bottom"
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Center"
+			FontFamily="{StaticResource MontserratFont}"
+			Command="{Binding OpenCreateArtistDialogCommand}">
+			Add Artist
+		</Button>
 		
-		<ItemsControl ItemsSource="{Binding Artists}">
-			<ItemsControl.ItemTemplate>
-				<DataTemplate>
-					<TextBlock Text="{Binding Name}"/>
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-		</ItemsControl>
-	</StackPanel>
-	
+		<StackPanel>
+			<TextBlock Classes.h1="true" FontFamily="{StaticResource MontserratFont}">
+				Zero Sum Setlist Editor
+			</TextBlock>
+			<TextBlock Classes.h2="true" FontFamily="{StaticResource MontserratFont}" FontStyle="Italic" FontWeight="ExtraLight" Margin="0">
+				Pick An Artist
+			</TextBlock>
+		
+			<ItemsControl ItemsSource="{Binding Artists}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding Name}"/>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</StackPanel>
+	</DockPanel>
 </UserControl>

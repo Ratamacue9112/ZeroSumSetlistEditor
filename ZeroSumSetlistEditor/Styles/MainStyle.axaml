@@ -23,5 +23,4 @@
 		<Setter Property="FontSize" Value="28"/>
 		<Setter Property="HorizontalAlignment" Value="Center"/>
 	</Style>
-	
 </Styles>

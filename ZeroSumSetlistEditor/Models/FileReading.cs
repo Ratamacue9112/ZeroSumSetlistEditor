@@ -10,12 +10,7 @@ namespace ZeroSumSetlistEditor.Models
 {
     public class FileReading
     {
-        public string PersistentDataPath { get; set; }
-
-        public FileReading()
-        {
-            PersistentDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "ZeroSumSetlistEditor";
-        }
+        public readonly static string PersistentDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "ZeroSumSetlistEditor";
 
         public List<Artist> GetArtists()
         {

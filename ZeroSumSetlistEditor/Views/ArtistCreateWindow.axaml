@@ -1,0 +1,36 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:ZeroSumSetlistEditor.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="ZeroSumSetlistEditor.ArtistCreateWindow"
+		x:DataType="vm:ArtistCreateWindowViewModel"
+		Icon="avares://ZeroSumSetlistEditor/Assets/icon.ico"
+		Width="350" Height="200"
+		WindowStartupLocation="CenterOwner"
+		CanResize="false"
+        Title="Create Artist">
+	<DockPanel>
+		<Button DockPanel.Dock="Bottom"
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Center"
+			FontFamily="{StaticResource MontserratFont}"
+			Command="{Binding CreateArtist}">
+			Add
+		</Button>
+
+		<StackPanel>
+			<TextBlock Classes.h1="true" FontFamily="{StaticResource MontserratFont}">
+				Create Artist
+			</TextBlock>
+
+			<TextBox
+				FontFamily="{StaticResource MontserratFont}"
+				FontSize="18"
+				MaxHeight="30"
+				AcceptsReturn="False"
+				Text="{Binding Description}"/>
+		</StackPanel>
+	</DockPanel>
+</Window>
