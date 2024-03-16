@@ -6,9 +6,11 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ZeroSumSetlistEditor.Views.ArtistSelectView"
 			 x:DataType="vm:ArtistSelectViewModel">
-
+	
 	<DockPanel>
 		<Button DockPanel.Dock="Bottom"
+			Grid.Row="3"
+			Margin="0 20 0 0"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Center"
 			FontFamily="{StaticResource MontserratFont}"
@@ -16,21 +18,44 @@
 			Add Artist
 		</Button>
 		
-		<StackPanel>
-			<TextBlock Classes.h1="true" FontFamily="{StaticResource MontserratFont}">
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+			
+			<TextBlock Classes.h1="true" FontFamily="{StaticResource MontserratFont}" Grid.Row="0">
 				Zero Sum Setlist Editor
 			</TextBlock>
-			<TextBlock Classes.h2="true" FontFamily="{StaticResource MontserratFont}" FontStyle="Italic" FontWeight="ExtraLight" Margin="0">
+			<TextBlock Classes.h2="true" FontFamily="{StaticResource MontserratFont}" FontStyle="Italic" FontWeight="ExtraLight" Margin="0" Grid.Row="1">
 				Pick An Artist
 			</TextBlock>
-		
-			<ItemsControl ItemsSource="{Binding Artists}">
-				<ItemsControl.ItemTemplate>
-					<DataTemplate>
-						<TextBlock Text="{Binding Name}"/>
-					</DataTemplate>
-				</ItemsControl.ItemTemplate>
-			</ItemsControl>
-		</StackPanel>
+			
+			<ScrollViewer Name="ScrollViewer" Margin="0 20 0 0" Grid.Row="2">
+				<ItemsControl ItemsSource="{Binding Artists}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<Button Classes.selectButton="true" Height="50">
+								<DockPanel LastChildFill="false">
+									<TextBlock Text="{Binding Name}" DockPanel.Dock="Left"/>
+									<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+										<Button Classes.icon="true">
+											<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/edit.svg}"
+												   Width="24" Height="24"/>
+										</Button>
+									<Button Classes.icon="true">
+											<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/delete.svg}"
+												   Width="24" Height="24"/>
+										</Button>
+									</StackPanel>
+								</DockPanel>
+							</Button>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
+		</Grid>
 	</DockPanel>
 </UserControl>
