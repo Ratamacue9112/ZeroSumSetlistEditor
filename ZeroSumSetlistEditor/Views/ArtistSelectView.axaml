@@ -39,13 +39,17 @@
 						<DataTemplate>
 							<Button Classes.selectButton="true" Height="50">
 								<DockPanel LastChildFill="false">
-									<TextBlock Text="{Binding Name}" DockPanel.Dock="Left"/>
+									<TextBlock Text="{Binding}" DockPanel.Dock="Left"/>
 									<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-										<Button Classes.icon="true">
+										<Button Classes.icon="true"
+											Command="{Binding $parent[ItemsControl].((vm:ArtistSelectViewModel)DataContext).DeleteArtist}"
+											CommandParameter="{Binding}">
 											<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/edit.svg}"
 												   Width="24" Height="24"/>
 										</Button>
-									<Button Classes.icon="true">
+										<Button Classes.icon="true"
+											Command="{Binding $parent[ItemsControl].((vm:ArtistSelectViewModel)DataContext).DeleteArtist}"
+											CommandParameter="{Binding}">
 											<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/delete.svg}"
 												   Width="24" Height="24"/>
 										</Button>

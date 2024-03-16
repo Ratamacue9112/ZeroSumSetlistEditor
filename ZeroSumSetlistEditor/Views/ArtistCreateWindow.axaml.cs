@@ -7,7 +7,6 @@ using System;
 using ZeroSumSetlistEditor.ViewModels;
 using System.IO;
 using ZeroSumSetlistEditor.Models;
-using ZeroSumSetlistEditor.DataClasses;
 
 namespace ZeroSumSetlistEditor;
 
@@ -44,7 +43,8 @@ public partial class ArtistCreateWindow : Window
                 try
                 {
                     Directory.CreateDirectory(path);
-                    artistSelectVm.Artists.Add(new Artist(vm.Description));
+                    artistSelectVm.Artists.Add(vm.Description);
+                    artistSelectVm.Artists.Sort();
                     Close();
                     return;
                 }
