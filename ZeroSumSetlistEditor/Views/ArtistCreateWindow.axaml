@@ -21,14 +21,15 @@
 		</Button>
 
 		<StackPanel>
-			<TextBlock Classes.h1="true" FontFamily="{StaticResource MontserratFont}">
-				Create Artist
-			</TextBlock>
+			<TextBlock Classes.h1="true" 
+					   FontFamily="{StaticResource MontserratFont}" 
+					   Name="Title"
+					   Text="{Binding Title}"/>
 
 			<TextBox
 				FontFamily="{StaticResource MontserratFont}"
 				FontSize="18"
-				MaxHeight="30"
+				MaxHeight="35"
 				AcceptsReturn="False"
 				Text="{Binding Description}"/>
 		</StackPanel>

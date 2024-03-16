@@ -14,7 +14,8 @@
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Center"
 			FontFamily="{StaticResource MontserratFont}"
-			Command="{Binding OpenCreateArtistDialogCommand}">
+			Command="{Binding OpenCreateArtistDialog}"
+			CommandParameter="">
 			Add Artist
 		</Button>
 		
@@ -42,7 +43,7 @@
 									<TextBlock Text="{Binding}" DockPanel.Dock="Left"/>
 									<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
 										<Button Classes.icon="true"
-											Command="{Binding $parent[ItemsControl].((vm:ArtistSelectViewModel)DataContext).DeleteArtist}"
+											Command="{Binding $parent[ItemsControl].((vm:ArtistSelectViewModel)DataContext).OpenCreateArtistDialog}"
 											CommandParameter="{Binding}">
 											<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/edit.svg}"
 												   Width="24" Height="24"/>

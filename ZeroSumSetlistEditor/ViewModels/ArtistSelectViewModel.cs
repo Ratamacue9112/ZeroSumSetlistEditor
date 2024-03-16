@@ -19,8 +19,6 @@ namespace ZeroSumSetlistEditor.ViewModels
     {
         public ObservableCollection<string> Artists { get; set; }
 
-        public ICommand OpenCreateArtistDialogCommand { get; }
-
         public Interaction<ArtistCreateWindowViewModel, ArtistSelectViewModel?> ShowDialog { get; }
 
         public ArtistSelectViewModel(List<string> artists) 
@@ -28,12 +26,12 @@ namespace ZeroSumSetlistEditor.ViewModels
             Artists = new ObservableCollection<string>(artists);
 
             ShowDialog = new Interaction<ArtistCreateWindowViewModel, ArtistSelectViewModel?>();
+        }
 
-            OpenCreateArtistDialogCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                var window = new ArtistCreateWindowViewModel();
-                var result = await ShowDialog.Handle(window);
-            });
+        public async void OpenCreateArtistDialog(string artist)
+        {
+            var window = new ArtistCreateWindowViewModel(artist);
+            var result = await ShowDialog.Handle(window);
         }
     
         public async void DeleteArtist(string name)

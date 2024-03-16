@@ -42,7 +42,16 @@ public partial class ArtistCreateWindow : Window
             {
                 try
                 {
-                    Directory.CreateDirectory(path);
+                    if (vm.EditingArtist == string.Empty)
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                    else
+                    {
+                        string oldPath = FileReading.PersistentDataPath + Path.DirectorySeparatorChar + vm.EditingArtist;
+                        Directory.Move(oldPath, path);
+                        artistSelectVm.Artists.Remove(vm.EditingArtist);
+                    }
                     artistSelectVm.Artists.Add(vm.Description);
                     artistSelectVm.Artists.Sort();
                     Close();
@@ -50,7 +59,7 @@ public partial class ArtistCreateWindow : Window
                 }
                 catch
                 {
-                    error = "Artist couldn't be created.";
+                    error = "Artist couldn't be created/renamed.";
                 }
             }
             var box = MessageBoxManager.GetMessageBoxStandard("Warning", error, ButtonEnum.Ok);
