@@ -29,6 +29,9 @@
 		<Compile Update="MainWindow.axaml.cs">
 			<DependentUpon>MainWindow.axaml</DependentUpon>
 		</Compile>
+		<Compile Update="Views\CreateWindow.axaml.cs">
+		  <DependentUpon>CreateWindow.axaml</DependentUpon>
+		</Compile>
 		<Compile Update="Views\ArtistSelectView.axaml.cs">
 			<DependentUpon>Views\ArtistSelectView.axaml</DependentUpon>
 		</Compile>

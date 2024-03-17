@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace ZeroSumSetlistEditor.ViewModels
 {
-    public class ArtistCreateWindowViewModel : ViewModelBase
+    public class CreateWindowViewModel : ViewModelBase
     {
         private string _description = string.Empty;
         public string Description
@@ -24,7 +24,7 @@ namespace ZeroSumSetlistEditor.ViewModels
         public delegate void CloseDialogAction();
         public event CloseDialogAction? CloseDialog;
 
-        public ArtistCreateWindowViewModel(string artist)
+        public CreateWindowViewModel(string artist)
         {
             EditingArtist = artist;
             TitleText = artist == string.Empty ? "Create Artist" : "Edit Artist";

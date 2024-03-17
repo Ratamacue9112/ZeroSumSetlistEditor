@@ -10,11 +10,11 @@ using ZeroSumSetlistEditor.Models;
 
 namespace ZeroSumSetlistEditor;
 
-public partial class ArtistCreateWindow : Window
+public partial class CreateWindow : Window
 {
     private ArtistSelectViewModel artistSelectVm;
 
-    public ArtistCreateWindow(ArtistSelectViewModel artistSelectVm)
+    public CreateWindow(ArtistSelectViewModel artistSelectVm)
     {
         this.artistSelectVm = artistSelectVm;
 
@@ -24,7 +24,7 @@ public partial class ArtistCreateWindow : Window
 
     private void BindCloseDialog(object sender, EventArgs e)
     {
-        var vm = (ArtistCreateWindowViewModel)DataContext!;
+        var vm = (CreateWindowViewModel)DataContext!;
         vm.CloseDialog += () =>
         {
             string path = FileReading.PersistentDataPath + Path.DirectorySeparatorChar + vm.Description;

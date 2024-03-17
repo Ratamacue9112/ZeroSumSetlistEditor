@@ -16,9 +16,9 @@ namespace ZeroSumSetlistEditor.Views
                 action(ViewModel!.ArtistSelect.ShowDialog.RegisterHandler(DoShowDialogAsync)));
         }
 
-        private async Task DoShowDialogAsync(InteractionContext<ArtistCreateWindowViewModel, ArtistSelectViewModel?> interaction)
+        private async Task DoShowDialogAsync(InteractionContext<CreateWindowViewModel, ArtistSelectViewModel?> interaction)
         {
-            var dialog = new ArtistCreateWindow(((MainWindowViewModel)DataContext!).ArtistSelect);
+            var dialog = new CreateWindow(((MainWindowViewModel)DataContext!).ArtistSelect);
             dialog.DataContext = interaction.Input;
 
             var result = await dialog.ShowDialog<ArtistSelectViewModel?>(this);
