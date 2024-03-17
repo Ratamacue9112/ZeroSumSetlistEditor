@@ -5,63 +5,59 @@
 			 xmlns:vm="using:ZeroSumSetlistEditor.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ZeroSumSetlistEditor.Views.ArtistSelectView"
-			 x:DataType="vm:ArtistSelectViewModel">
-	
-	<DockPanel>
-		<Button DockPanel.Dock="Bottom"
-			Grid.Row="3"
-			Classes.regularButton="true"
-			FontFamily="{StaticResource MontserratFont}"
-			Command="{Binding OpenCreateArtistDialog}"
-			CommandParameter="">
+			 x:DataType="vm:ArtistSelectViewModel">	
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		
+		<TextBlock Classes.h1="true" FontFamily="{StaticResource MontserratFont}" Grid.Row="0">
+			Zero Sum Setlist Editor
+		</TextBlock>
+		<TextBlock Classes.h2="true" FontFamily="{StaticResource MontserratFont}" FontStyle="Italic" FontWeight="ExtraLight" Margin="0" Grid.Row="1">
+			Pick An Artist
+		</TextBlock>
+		
+		<ScrollViewer Name="ScrollViewer" Margin="0 20 0 0" Grid.Row="2">
+			<ItemsControl ItemsSource="{Binding Artists}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Button Classes.selectButton="true" 
+								Height="50"
+								Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenModeSelect}"
+								CommandParameter="{Binding}">
+							<DockPanel LastChildFill="false">
+								<TextBlock Text="{Binding}" FontFamily="{StaticResource MontserratFont}" DockPanel.Dock="Left"/>
+								<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+									<Button Classes.icon="true"
+										Command="{Binding $parent[ItemsControl].((vm:ArtistSelectViewModel)DataContext).OpenCreateArtistDialog}"
+										CommandParameter="{Binding}">
+										<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/edit.svg}"
+											   Width="24" Height="24"/>
+									</Button>
+									<Button Classes.icon="true"
+										Command="{Binding $parent[ItemsControl].((vm:ArtistSelectViewModel)DataContext).DeleteArtist}"
+										CommandParameter="{Binding}">
+										<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/delete.svg}"
+											   Width="24" Height="24"/>
+									</Button>
+								</StackPanel>
+							</DockPanel>
+						</Button>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
+
+		<Button Grid.Row="3"
+				Classes.regularButton="true"
+				FontFamily="{StaticResource MontserratFont}"
+				Command="{Binding OpenCreateArtistDialog}"
+				CommandParameter="">
 			Add Artist
 		</Button>
-		
-		<Grid>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="Auto"/>
-			</Grid.RowDefinitions>
-			
-			<TextBlock Classes.h1="true" FontFamily="{StaticResource MontserratFont}" Grid.Row="0">
-				Zero Sum Setlist Editor
-			</TextBlock>
-			<TextBlock Classes.h2="true" FontFamily="{StaticResource MontserratFont}" FontStyle="Italic" FontWeight="ExtraLight" Margin="0" Grid.Row="1">
-				Pick An Artist
-			</TextBlock>
-			
-			<ScrollViewer Name="ScrollViewer" Margin="0 20 0 0" Grid.Row="2">
-				<ItemsControl ItemsSource="{Binding Artists}">
-					<ItemsControl.ItemTemplate>
-						<DataTemplate>
-							<Button Classes.selectButton="true" 
-									Height="50"
-									Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenModeSelect}"
-									CommandParameter="{Binding}">
-								<DockPanel LastChildFill="false">
-									<TextBlock Text="{Binding}" FontFamily="{StaticResource MontserratFont}" DockPanel.Dock="Left"/>
-									<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-										<Button Classes.icon="true"
-											Command="{Binding $parent[ItemsControl].((vm:ArtistSelectViewModel)DataContext).OpenCreateArtistDialog}"
-											CommandParameter="{Binding}">
-											<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/edit.svg}"
-												   Width="24" Height="24"/>
-										</Button>
-										<Button Classes.icon="true"
-											Command="{Binding $parent[ItemsControl].((vm:ArtistSelectViewModel)DataContext).DeleteArtist}"
-											CommandParameter="{Binding}">
-											<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/delete.svg}"
-												   Width="24" Height="24"/>
-										</Button>
-									</StackPanel>
-								</DockPanel>
-							</Button>
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>
-			</ScrollViewer>
-		</Grid>
-	</DockPanel>
+	</Grid>
 </UserControl>
