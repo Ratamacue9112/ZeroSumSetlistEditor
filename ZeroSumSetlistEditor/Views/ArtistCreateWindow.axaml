@@ -24,8 +24,7 @@
 					   FontFamily="{StaticResource MontserratFont}" 
 					   Text="{Binding TitleText}"/>
 
-			<TextBox
-				FontFamily="{StaticResource MontserratFont}"
+			<TextBox FontFamily="{StaticResource MontserratFont}"
 				FontSize="18"
 				MaxHeight="35"
 				AcceptsReturn="False"

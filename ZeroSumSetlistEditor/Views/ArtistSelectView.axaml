@@ -41,7 +41,7 @@
 									Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenModeSelect}"
 									CommandParameter="{Binding}">
 								<DockPanel LastChildFill="false">
-									<TextBlock Text="{Binding}" DockPanel.Dock="Left"/>
+									<TextBlock Text="{Binding}" FontFamily="{StaticResource MontserratFont}" DockPanel.Dock="Left"/>
 									<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
 										<Button Classes.icon="true"
 											Command="{Binding $parent[ItemsControl].((vm:ArtistSelectViewModel)DataContext).OpenCreateArtistDialog}"
