@@ -10,7 +10,7 @@
 		Width="350" Height="200"
 		WindowStartupLocation="CenterOwner"
 		CanResize="false"
-        Title="Create Artist">
+        Title="{Binding TitleText}">
 	<DockPanel>
 		<Button DockPanel.Dock="Bottom"
             Classes.regularButton="true"
