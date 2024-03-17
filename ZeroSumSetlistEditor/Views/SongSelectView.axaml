@@ -1,0 +1,46 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:ZeroSumSetlistEditor.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ZeroSumSetlistEditor.Views.SongSelectView"
+			 x:DataType="vm:SongSelectViewModel">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		
+		<TextBlock Margin="20" HorizontalAlignment="Center" Grid.Row="0" Grid.ColumnSpan="2">
+			<Run Text="{Binding Artist}"
+				 FontFamily="{StaticResource MontserratFont}"
+				 Classes.h1="true"/>
+			<Run Text=" - Songs"
+				 Classes.h2="true"
+				 FontFamily="{StaticResource MontserratFont}"
+				 FontStyle="Italic"
+				 FontWeight="ExtraLight"/>
+		</TextBlock>
+
+		<Button Classes.regularButton="true" 
+				FontFamily="{StaticResource MontserratFont}"
+				Grid.Row="2" 
+				Grid.Column="0">
+			Edit Roles
+		</Button>
+		<Button Classes.regularButton="true" 
+				FontFamily="{StaticResource MontserratFont}"
+				Grid.Row="2" 
+				Grid.Column="1"
+				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenModeSelect}"
+				CommandParameter="{Binding Artist}">
+			Back
+		</Button>
+	</Grid>
+</UserControl>

@@ -19,7 +19,9 @@
 				   Classes.h1="true" 
 				   Grid.Row="0"/>
 		<Button Classes.largeButton="true"
-				Grid.Row="1">
+				Grid.Row="1"
+				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenSongSelect}"
+				CommandParameter="{Binding Artist}">
 			<TextBlock Classes.h1="true" FontFamily="{StaticResource MontserratFont}">Songs</TextBlock>
 		</Button>
 		<Button Classes.largeButton="true"
@@ -29,7 +31,7 @@
 		<Button Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"
 				Grid.Row="3"
-				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).BackToArtistSelect}">
+				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenArtistSelect}">
 			Back
 		</Button>
 	</Grid>

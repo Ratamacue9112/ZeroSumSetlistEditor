@@ -32,5 +32,8 @@
 		<Compile Update="Views\ArtistSelectView.axaml.cs">
 			<DependentUpon>Views\ArtistSelectView.axaml</DependentUpon>
 		</Compile>
+		<Compile Update="Views\SongSelectView.axaml.cs">
+		  <DependentUpon>SongSelectView.axaml</DependentUpon>
+		</Compile>
 	</ItemGroup>
 </Project>
