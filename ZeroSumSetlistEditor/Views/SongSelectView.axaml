@@ -11,13 +11,11 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*"/>
-			<ColumnDefinition Width="*"/>
-		</Grid.ColumnDefinitions>
 		
-		<TextBlock Margin="20" HorizontalAlignment="Center" Grid.Row="0" Grid.ColumnSpan="2">
+		<TextBlock Margin="20" HorizontalAlignment="Center" Grid.Row="0">
 			<Run Text="{Binding Artist}"
 				 FontFamily="{StaticResource MontserratFont}"
 				 Classes.h1="true"/>
@@ -28,16 +26,51 @@
 				 FontWeight="ExtraLight"/>
 		</TextBlock>
 
+		<ScrollViewer Name="ScrollViewer" Margin="0 20 0 0" Grid.Row="1">
+			<ItemsControl ItemsSource="{Binding Songs}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Button Classes.selectButton="true"
+								Height="50"
+								Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenModeSelect}"
+								CommandParameter="{Binding Name}">
+							<DockPanel LastChildFill="false">
+								<TextBlock Text="{Binding Name}" FontFamily="{StaticResource MontserratFont}" DockPanel.Dock="Left"/>
+								<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+									<Button Classes.icon="true"
+										CommandParameter="{Binding}">
+										<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/edit.svg}"
+											   Width="24" Height="24"/>
+									</Button>
+									<Button Classes.icon="true"
+										CommandParameter="{Binding}">
+										<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/delete.svg}"
+											   Width="24" Height="24"/>
+									</Button>
+								</StackPanel>
+							</DockPanel>
+						</Button>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
+
+		<Button Classes.regularButton="true"
+				FontFamily="{StaticResource MontserratFont}"
+				Grid.Row="2"
+				Margin="0">
+			Add Song
+		</Button>
 		<Button Classes.regularButton="true" 
 				FontFamily="{StaticResource MontserratFont}"
-				Grid.Row="2" 
-				Grid.Column="0">
+				Grid.Row="3"
+				Margin="0">
 			Edit Roles
 		</Button>
 		<Button Classes.regularButton="true" 
 				FontFamily="{StaticResource MontserratFont}"
-				Grid.Row="2" 
-				Grid.Column="1"
+				Grid.Row="4" 
+				Margin="0"
 				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenModeSelect}"
 				CommandParameter="{Binding Artist}">
 			Back

@@ -34,7 +34,7 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public void OpenSongSelect(string artist)
         {
-            Content = new SongSelectViewModel(artist);
+            Content = new SongSelectViewModel(artist, fileReading.GetSongs(artist));
         }
 
         public ViewModelBase Content
