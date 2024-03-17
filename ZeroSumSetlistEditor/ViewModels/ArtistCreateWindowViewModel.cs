@@ -18,7 +18,7 @@ namespace ZeroSumSetlistEditor.ViewModels
             set => this.RaiseAndSetIfChanged(ref _description, value);
         }
 
-        public string Title { get; }
+        public string TitleText { get; }
         public string EditingArtist { get; }
 
         public delegate void CloseDialogAction();
@@ -27,7 +27,7 @@ namespace ZeroSumSetlistEditor.ViewModels
         public ArtistCreateWindowViewModel(string artist)
         {
             EditingArtist = artist;
-            Title = artist == string.Empty ? "Create Artist" : "Edit Artist";
+            TitleText = artist == string.Empty ? "Create Artist" : "Edit Artist";
             Description = artist;
         }
 

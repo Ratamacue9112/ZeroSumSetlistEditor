@@ -10,9 +10,7 @@
 	<DockPanel>
 		<Button DockPanel.Dock="Bottom"
 			Grid.Row="3"
-			Margin="0 20 0 0"
-            HorizontalAlignment="Stretch"
-            HorizontalContentAlignment="Center"
+			Classes.regularButton="true"
 			FontFamily="{StaticResource MontserratFont}"
 			Command="{Binding OpenCreateArtistDialog}"
 			CommandParameter="">
@@ -38,7 +36,10 @@
 				<ItemsControl ItemsSource="{Binding Artists}">
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>
-							<Button Classes.selectButton="true" Height="50">
+							<Button Classes.selectButton="true" 
+									Height="50"
+									Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenModeSelect}"
+									CommandParameter="{Binding}">
 								<DockPanel LastChildFill="false">
 									<TextBlock Text="{Binding}" DockPanel.Dock="Left"/>
 									<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">

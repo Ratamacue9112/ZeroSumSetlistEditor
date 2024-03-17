@@ -8,8 +8,5 @@
         x:Class="ZeroSumSetlistEditor.Views.MainWindow"
 		x:DataType="vm:MainWindowViewModel"
 		Icon="avares://ZeroSumSetlistEditor/Assets/icon.ico"
-        Title="Zero Sum Setlist Editor">
-
-	<views:ArtistSelectView DataContext="{Binding ArtistSelect}"/>
-
-</Window>
+        Title="Zero Sum Setlist Editor"
+		Content="{Binding Content}"/>

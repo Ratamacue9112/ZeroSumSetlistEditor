@@ -13,8 +13,7 @@
         Title="Create Artist">
 	<DockPanel>
 		<Button DockPanel.Dock="Bottom"
-            HorizontalAlignment="Stretch"
-            HorizontalContentAlignment="Center"
+            Classes.regularButton="true"
 			FontFamily="{StaticResource MontserratFont}"
 			Command="{Binding CreateArtist}">
 			Add
@@ -23,8 +22,7 @@
 		<StackPanel>
 			<TextBlock Classes.h1="true" 
 					   FontFamily="{StaticResource MontserratFont}" 
-					   Name="Title"
-					   Text="{Binding Title}"/>
+					   Text="{Binding TitleText}"/>
 
 			<TextBox
 				FontFamily="{StaticResource MontserratFont}"

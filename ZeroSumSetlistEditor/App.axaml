@@ -1,9 +1,14 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:util="clr-namespace:ZeroSumSetlistEditor.Utility"
              x:Class="ZeroSumSetlistEditor.App"
              RequestedThemeVariant="Dark">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-	
+
+	<Application.DataTemplates>
+		<util:ViewLocator/>
+	</Application.DataTemplates>
+
 	<Application.Styles>
         <FluentTheme />
 		<StyleInclude Source="/Styles/MainStyle.axaml"/>
