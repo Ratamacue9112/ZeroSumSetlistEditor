@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:vm="using:ZeroSumSetlistEditor.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="ZeroSumSetlistEditor.Views.SongSelectView"
-			 x:DataType="vm:SongSelectViewModel">
+             x:Class="ZeroSumSetlistEditor.Views.RoleEditView"
+			 x:DataType="vm:RoleEditViewModel">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
@@ -19,7 +19,7 @@
 			<Run Text="{Binding Artist}"
 				 FontFamily="{StaticResource MontserratFont}"
 				 Classes.h1="true"/>
-			<Run Text=" - Songs"
+			<Run Text=" - Roles"
 				 Classes.h2="true"
 				 FontFamily="{StaticResource MontserratFont}"
 				 FontStyle="Italic"
@@ -27,25 +27,25 @@
 		</TextBlock>
 
 		<ScrollViewer Name="ScrollViewer" Margin="0 20 0 0" Grid.Row="1">
-			<ItemsControl ItemsSource="{Binding Songs}">
+			<ItemsControl ItemsSource="{Binding Roles}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
 						<Button Classes.selectButton="true"
 								Height="50"
 								Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenModeSelect}"
-								CommandParameter="{Binding Name}">
+								CommandParameter="{Binding}">
 							<DockPanel LastChildFill="false">
-								<TextBlock Text="{Binding Name}" FontFamily="{StaticResource MontserratFont}" DockPanel.Dock="Left"/>
+								<TextBlock Text="{Binding}" FontFamily="{StaticResource MontserratFont}" DockPanel.Dock="Left"/>
 								<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
 									<Button Classes.icon="true"
 											Command="{Binding $parent[ItemsControl].((vm:SongSelectViewModel)DataContext).OpenCreateSongDialog}"
-											CommandParameter="{Binding Name}">
+											CommandParameter="{Binding}">
 										<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/edit.svg}"
 											   Width="24" Height="24"/>
 									</Button>
 									<Button Classes.icon="true"
 											Command="{Binding $parent[ItemsControl].((vm:SongSelectViewModel)DataContext).RemoveSong}"
-											CommandParameter="{Binding Name}">
+											CommandParameter="{Binding}">
 										<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/delete.svg}"
 											   Width="24" Height="24"/>
 									</Button>
@@ -61,21 +61,14 @@
 				FontFamily="{StaticResource MontserratFont}"
 				Grid.Row="2"
 				Margin="0"
-				Command="{Binding OpenCreateSongDialog}"
 				CommandParameter="">
-			Add Song
-		</Button>
-		<Button Classes.regularButton="true" 
-				FontFamily="{StaticResource MontserratFont}"
-				Grid.Row="3"
-				Margin="0">
-			Edit Roles
+			Add Role
 		</Button>
 		<Button Classes.regularButton="true" 
 				FontFamily="{StaticResource MontserratFont}"
 				Grid.Row="4" 
 				Margin="0"
-				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenModeSelect}"
+				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenSongSelect}"
 				CommandParameter="{Binding Artist}">
 			Back
 		</Button>
