@@ -119,7 +119,11 @@ public partial class CreateWindow : Window
                     }
                     else if (vm.CreateWindowMode == CreateWindowMode.EditRole)
                     {
+                        vm.mainWindowVm!.fileReading.RenameRole(vm.EditingArtist, vm.EditingSongOrRole, vm.Description);
 
+                        roleEditVm!.Roles.Remove(vm.EditingSongOrRole);
+                        roleEditVm!.Roles.Add(vm.Description);
+                        roleEditVm!.Roles.Sort();
                     }
                     Close();
                     return;
