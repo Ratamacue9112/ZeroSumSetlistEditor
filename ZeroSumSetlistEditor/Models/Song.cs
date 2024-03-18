@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ZeroSumSetlistEditor.Models
 {
-    public class Song
+    public class Song : IComparable
     {
         public string Name { get; set; }
         public List<string> Notes { get; set; }
@@ -15,6 +15,14 @@ namespace ZeroSumSetlistEditor.Models
         {
             Name = name;
             Notes = notes;
+        }
+
+        public int CompareTo(object? obj)
+        {
+            if (obj == null) return 1;
+            if (obj is not Song) return 1;
+
+            return Name.CompareTo((obj as Song)!.Name);
         }
     }
 }

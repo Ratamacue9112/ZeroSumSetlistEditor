@@ -76,6 +76,7 @@ namespace ZeroSumSetlistEditor.Models
                     songs.Add(new Song(songName, notes)); 
                 }
             }
+            songs.Sort();
             return songs;
         }
     
