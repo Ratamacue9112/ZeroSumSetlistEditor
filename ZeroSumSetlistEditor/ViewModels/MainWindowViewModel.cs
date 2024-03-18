@@ -40,7 +40,8 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public void OpenRoleEdit(string artist)
         {
-            Content = new RoleEditViewModel(artist, fileReading.GetRoles(artist));
+            Content = RoleEdit = new RoleEditViewModel(artist, fileReading.GetRoles(artist), this);
+            ShowCreateRoleDialog.Invoke();
         }
 
         public ViewModelBase Content
@@ -51,8 +52,12 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public Action ShowCreateSongDialog { get; set; }
 
+        public Action ShowCreateRoleDialog { get; set; }
+
         public ArtistSelectViewModel ArtistSelect { get; }
         
         public SongSelectViewModel SongSelect { get; set; }
+
+        public RoleEditViewModel RoleEdit { get; set; }
     }
 }

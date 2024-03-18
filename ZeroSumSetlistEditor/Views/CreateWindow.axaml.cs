@@ -15,6 +15,7 @@ public partial class CreateWindow : Window
 {
     private ArtistSelectViewModel? artistSelectVm;
     private SongSelectViewModel? songSelectVm;
+    private RoleEditViewModel? roleEditVm;
 
     public CreateWindow(ArtistSelectViewModel artistSelectVm)
     {
@@ -27,6 +28,14 @@ public partial class CreateWindow : Window
     public CreateWindow(SongSelectViewModel songSelectVm)
     {
         this.songSelectVm = songSelectVm;
+
+        Opened += BindCloseDialog;
+        InitializeComponent();
+    }
+
+    public CreateWindow(RoleEditViewModel roleEditVm)
+    {
+        this.roleEditVm = roleEditVm;
 
         Opened += BindCloseDialog;
         InitializeComponent();
@@ -64,6 +73,8 @@ public partial class CreateWindow : Window
                     if (vm.CreateWindowMode == CreateWindowMode.CreateArtist)
                     {
                         Directory.CreateDirectory(path);
+                        string csvPath = path + Path.DirectorySeparatorChar + vm.Description + "_Songs.csv";
+                        File.WriteAllText(csvPath, "songs");
                         artistSelectVm!.Artists.Add(vm.Description);
                         artistSelectVm!.Artists.Sort();
                     }
@@ -88,16 +99,27 @@ public partial class CreateWindow : Window
                     }
                     else if (vm.CreateWindowMode == CreateWindowMode.EditSong)
                     {
-                        vm.mainWindowVm!.fileReading.RenameSong(vm.EditingSong, vm.Description, vm.EditingArtist);
+                        vm.mainWindowVm!.fileReading.RenameSong(vm.EditingSongOrRole, vm.Description, vm.EditingArtist);
 
                         foreach (Song song in songSelectVm!.Songs)
                         {
-                            if (song.Name == vm.EditingSong)
+                            if (song.Name == vm.EditingSongOrRole)
                             {
                                 song.Name = vm.Description;
                             }
                         }
                         songSelectVm!.Songs.Sort();
+                    }
+                    else if (vm.CreateWindowMode == CreateWindowMode.CreateRole)
+                    {
+                        vm.mainWindowVm!.fileReading.AddRole(vm.EditingArtist, vm.Description);
+
+                        roleEditVm!.Roles.Add(vm.Description);
+                        roleEditVm!.Roles.Sort();
+                    }
+                    else if (vm.CreateWindowMode == CreateWindowMode.EditRole)
+                    {
+
                     }
                     Close();
                     return;

@@ -61,6 +61,7 @@
 				FontFamily="{StaticResource MontserratFont}"
 				Grid.Row="2"
 				Margin="0"
+				Command="{Binding OpenCreateRoleDialog}"
 				CommandParameter="">
 			Add Role
 		</Button>

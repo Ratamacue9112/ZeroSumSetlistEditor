@@ -15,6 +15,8 @@ namespace ZeroSumSetlistEditor.ViewModels
         EditArtist,
         CreateSong,
         EditSong,
+        CreateRole,
+        EditRole
     }
 
     public class CreateWindowViewModel : ViewModelBase
@@ -28,7 +30,7 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public string TitleText { get; }
         public string EditingArtist { get; }
-        public string EditingSong { get; }
+        public string EditingSongOrRole { get; }
         public CreateWindowMode CreateWindowMode { get; }
         public int RoleCount { get; }
 
@@ -37,10 +39,10 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public MainWindowViewModel? mainWindowVm;
 
-        public CreateWindowViewModel(string artist, CreateWindowMode createWindowMode, string song = "", int roleCount = 0, MainWindowViewModel? mainWindowVm = null)
+        public CreateWindowViewModel(string artist, CreateWindowMode createWindowMode, string songOrRole = "", int roleCount = 0, MainWindowViewModel? mainWindowVm = null)
         {
             EditingArtist = artist;
-            EditingSong = song;
+            EditingSongOrRole = songOrRole;
             CreateWindowMode = createWindowMode;
             RoleCount = roleCount;
             this.mainWindowVm = mainWindowVm;
@@ -58,7 +60,14 @@ namespace ZeroSumSetlistEditor.ViewModels
                     break;
                 case CreateWindowMode.EditSong:
                     TitleText = "Rename Song";
-                    Description = song;
+                    Description = songOrRole;
+                    break;
+                case CreateWindowMode.CreateRole:
+                    TitleText = "Create Role";
+                    break;
+                case CreateWindowMode.EditRole:
+                    TitleText = "Edit Role";
+                    Description = songOrRole;
                     break;
             }
         }

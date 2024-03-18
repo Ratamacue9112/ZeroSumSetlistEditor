@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic.FileIO;
-using DynamicData;
 using System.Collections;
 
 namespace ZeroSumSetlistEditor.Models
@@ -139,8 +138,8 @@ namespace ZeroSumSetlistEditor.Models
             string csvPath = path + Path.DirectorySeparatorChar + artist + "_Songs.csv";
             if (!File.Exists(csvPath))
             {
-                File.Create(csvPath);
-                return new List<string>(0);
+                File.WriteAllText(csvPath, "songs");
+                return new List<string>();
             }
 
             List<string> roles = new List<string>();
@@ -164,6 +163,38 @@ namespace ZeroSumSetlistEditor.Models
             }
 
             return roles;
+        }
+    
+        public void AddRole(string artist, string role)
+        {
+            string path = PersistentDataPath + Path.DirectorySeparatorChar + artist;
+            if (!Directory.Exists(path))
+            {
+                return;
+            }
+
+            string csvPath = path + Path.DirectorySeparatorChar + artist + "_Songs.csv";
+            if (!File.Exists(csvPath))
+            {
+                File.WriteAllText(csvPath, "songs," + role);
+                return;
+            }
+
+            string[] lines = File.ReadAllLines(csvPath);
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (i == 0)
+                {
+                    lines[i] += "," + role;
+                }
+                else
+                {
+                    lines[i] += ",";
+                }
+            }
+            File.WriteAllLines(csvPath, lines);
+
+            return;
         }
     }
 }

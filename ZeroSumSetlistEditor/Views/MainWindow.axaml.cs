@@ -16,6 +16,8 @@ namespace ZeroSumSetlistEditor.Views
                 action(ViewModel!.ArtistSelect.ShowDialog.RegisterHandler(DoShowCreateArtistDialogAsync)));
             this.WhenActivated(action => 
                 ViewModel!.ShowCreateSongDialog = () => { ViewModel!.SongSelect.ShowDialog.RegisterHandler(DoShowCreateSongDialogAsync); });
+            this.WhenActivated(action =>
+                ViewModel!.ShowCreateRoleDialog = () => { ViewModel!.RoleEdit.ShowDialog.RegisterHandler(DoShowCreateRoleDialogAsync); });
         }
 
         private async Task DoShowCreateArtistDialogAsync(InteractionContext<CreateWindowViewModel, ArtistSelectViewModel?> interaction)
@@ -33,6 +35,15 @@ namespace ZeroSumSetlistEditor.Views
             dialog.DataContext = interaction.Input;
 
             var result = await dialog.ShowDialog<SongSelectViewModel?>(this);
+            interaction.SetOutput(result);
+        }
+
+        private async Task DoShowCreateRoleDialogAsync(InteractionContext<CreateWindowViewModel, RoleEditViewModel?> interaction)
+        {
+            var dialog = new CreateWindow(((MainWindowViewModel)DataContext!).RoleEdit);
+            dialog.DataContext = interaction.Input;
+
+            var result = await dialog.ShowDialog<RoleEditViewModel?>(this);
             interaction.SetOutput(result);
         }
     }
