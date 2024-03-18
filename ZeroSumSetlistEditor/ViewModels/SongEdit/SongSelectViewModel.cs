@@ -10,7 +10,6 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using ZeroSumSetlistEditor.Models;
 
 namespace ZeroSumSetlistEditor.ViewModels
@@ -19,7 +18,22 @@ namespace ZeroSumSetlistEditor.ViewModels
     {
         public string Artist { get; set; }
         public ObservableCollection<Song> Songs { get; set; }
+        public ObservableCollection<Song> FilteredSongs { get; set; }
         public ObservableCollection<string> Roles { get; set; }
+
+        private string _searchText = string.Empty;
+        public string SearchText
+        {
+            get
+            {
+                return _searchText;
+            }
+            set
+            {
+                _searchText = value;
+                FilterSongs();
+            }
+        }
 
         public Interaction<CreateWindowViewModel, SongSelectViewModel?> ShowDialog { get; }
 
@@ -29,6 +43,7 @@ namespace ZeroSumSetlistEditor.ViewModels
         {
             Artist = artist;
             Songs = new ObservableCollection<Song>(songs);
+            FilteredSongs = new ObservableCollection<Song>(songs);
             Roles = new ObservableCollection<string>(roles);
             ShowDialog = new Interaction<CreateWindowViewModel, SongSelectViewModel?>();
             this.mainWindowVm = mainWindowVm;
@@ -66,6 +81,18 @@ namespace ZeroSumSetlistEditor.ViewModels
                 Songs.Sort();
 
                 mainWindowVm.fileReading.RemoveSong(song, Artist);
+            }
+        }
+    
+        public void FilterSongs()
+        {
+            FilteredSongs.Clear();
+            foreach (Song s in Songs)
+            {
+                if (s.Name.StartsWith(SearchText))
+                {
+                    FilteredSongs.Add(s);
+                }
             }
         }
     }
