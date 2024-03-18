@@ -274,5 +274,27 @@ namespace ZeroSumSetlistEditor.Models
 
             return;
         }
+    
+        public void SaveNotes(string artist, string song, List<SongNote> notes)
+        {
+            string path = PersistentDataPath + Path.DirectorySeparatorChar + artist + Path.DirectorySeparatorChar + artist + "_Songs.csv";
+            List<string> linesList = File.ReadAllLines(path).ToList();
+            int index = 0;
+            foreach (string line in linesList)
+            {
+                if (line.StartsWith(song))
+                {
+                    break;
+                }
+                index++;
+            }
+            string newLine = song;
+            foreach (SongNote note in notes)
+            {
+                newLine += "," + note.Note;
+            }
+            linesList[index] = newLine;
+            File.WriteAllLines(path, linesList);
+        }
     }
 }

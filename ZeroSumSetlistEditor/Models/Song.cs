@@ -6,6 +6,18 @@ using System.Threading.Tasks;
 
 namespace ZeroSumSetlistEditor.Models
 {
+    public class SongNote
+    {
+        public string Role { get; set; }
+        public string Note { get; set; }
+
+        public SongNote(string role, string note)
+        {
+            Role = role;
+            Note = note;
+        }
+    }
+
     public class Song : IComparable
     {
         public string Name { get; set; }

@@ -46,7 +46,7 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public void OpenNoteEdit(Song song)
         {
-            Content = new NoteEditViewModel(song, SongSelect.Roles.ToList());
+            Content = new NoteEditViewModel(song, SongSelect.Roles.ToList(), this);
         }
 
         public ViewModelBase Content

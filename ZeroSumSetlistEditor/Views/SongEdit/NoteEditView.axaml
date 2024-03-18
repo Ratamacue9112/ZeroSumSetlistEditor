@@ -55,8 +55,7 @@
 				FontFamily="{StaticResource MontserratFont}"
 				Grid.Row="2"
 				Margin="0"
-				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenSongSelect}"
-				CommandParameter="{Binding Artist}">
+				Command="{Binding SaveNotes}">
 			Save
 		</Button>
 		<Button Classes.regularButton="true"
