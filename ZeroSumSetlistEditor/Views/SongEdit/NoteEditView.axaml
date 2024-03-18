@@ -62,8 +62,7 @@
 				FontFamily="{StaticResource MontserratFont}"
 				Grid.Row="3"
 				Margin="0"
-				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenSongSelect}"
-				CommandParameter="{Binding Artist}">
+				Command="{Binding CancelChanges}">
 			Cancel
 		</Button>
 	</Grid>

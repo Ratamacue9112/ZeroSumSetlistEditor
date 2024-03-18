@@ -45,5 +45,16 @@ namespace ZeroSumSetlistEditor.ViewModels
             mainWindowVm.fileReading.SaveNotes(Artist, SongName, Notes.ToList());
             mainWindowVm.OpenSongSelect(Artist);
         }
+
+        public async void CancelChanges()
+        {
+            var box = MessageBoxManager.GetMessageBoxStandard("Warning", "Do you want to leave without saving? Changes will be lost.", ButtonEnum.YesNo);
+
+            var result = await box.ShowAsync();
+            if (result.ToString() == "Yes")
+            {
+                mainWindowVm.OpenSongSelect(Artist);
+            }
+        }
     }
 }
