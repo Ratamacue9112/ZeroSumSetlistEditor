@@ -25,7 +25,9 @@
 			<TextBlock Classes.h1="true" FontFamily="{StaticResource MontserratFont}">Songs</TextBlock>
 		</Button>
 		<Button Classes.largeButton="true"
-				Grid.Row="2">
+				Grid.Row="2"
+				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenSetlistSelect}"
+				CommandParameter="{Binding Artist}">
 			<TextBlock Classes.h1="true" FontFamily="{StaticResource MontserratFont}">Setlists</TextBlock>
 		</Button>
 		<Button Classes.regularButton="true"

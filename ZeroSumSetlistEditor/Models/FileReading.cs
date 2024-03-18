@@ -11,7 +11,7 @@ namespace ZeroSumSetlistEditor.Models
 {
     public class FileReading
     {
-        public readonly static string PersistentDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "ZeroSumSetlistEditor";
+        public readonly static string PersistentDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ZeroSumSetlistEditor");
 
         public List<string> GetArtists()
         {
@@ -31,13 +31,13 @@ namespace ZeroSumSetlistEditor.Models
 
         public List<Song> GetSongs(string artist)
         {
-            string path = PersistentDataPath + Path.DirectorySeparatorChar + artist;
+            string path = Path.Combine(PersistentDataPath, artist);
             if (!Directory.Exists(path))
             {
                 return new List<Song>();
             }
 
-            string csvPath = path + Path.DirectorySeparatorChar + artist + "_Songs.csv";
+            string csvPath = Path.Combine(path, artist + "_Songs.csv");
             if (!File.Exists(csvPath))
             {
                 File.Create(csvPath);
@@ -82,7 +82,7 @@ namespace ZeroSumSetlistEditor.Models
     
         public void RemoveSong(string song, string artist)
         {
-            string path = PersistentDataPath + Path.DirectorySeparatorChar + artist + Path.DirectorySeparatorChar + artist + "_Songs.csv";
+            string path = Path.Combine(PersistentDataPath, artist, artist + "_Songs.csv");
             List<string> linesList = File.ReadAllLines(path).ToList();
             int index = 0;
             foreach (string line in linesList)
@@ -99,7 +99,7 @@ namespace ZeroSumSetlistEditor.Models
 
         public void RenameSong(string song, string newName, string artist)
         {
-            string path = PersistentDataPath + Path.DirectorySeparatorChar + artist + Path.DirectorySeparatorChar + artist + "_Songs.csv";
+            string path = Path.Combine(PersistentDataPath, artist, artist + "_Songs.csv");
             List<string> linesList = File.ReadAllLines(path).ToList();
             int index = 0;
             foreach (string line in linesList)
@@ -129,13 +129,13 @@ namespace ZeroSumSetlistEditor.Models
 
         public List<string> GetRoles(string artist)
         {
-            string path = PersistentDataPath + Path.DirectorySeparatorChar + artist;
+            string path = Path.Combine(PersistentDataPath, artist);
             if (!Directory.Exists(path))
             {
                 return new List<string>();
             }
 
-            string csvPath = path + Path.DirectorySeparatorChar + artist + "_Songs.csv";
+            string csvPath = Path.Combine(path, artist + "_Songs.csv");
             if (!File.Exists(csvPath))
             {
                 File.WriteAllText(csvPath, "songs");
@@ -167,13 +167,13 @@ namespace ZeroSumSetlistEditor.Models
     
         public void AddRole(string artist, string role)
         {
-            string path = PersistentDataPath + Path.DirectorySeparatorChar + artist;
+            string path = Path.Combine(PersistentDataPath, artist);
             if (!Directory.Exists(path))
             {
                 return;
             }
 
-            string csvPath = path + Path.DirectorySeparatorChar + artist + "_Songs.csv";
+            string csvPath = Path.Combine(path, artist + "_Songs.csv");
             if (!File.Exists(csvPath))
             {
                 File.WriteAllText(csvPath, "songs," + role);
@@ -199,13 +199,13 @@ namespace ZeroSumSetlistEditor.Models
 
         public void RemoveRole(string artist, string role)
         {
-            string path = PersistentDataPath + Path.DirectorySeparatorChar + artist;
+            string path = Path.Combine(PersistentDataPath, artist);
             if (!Directory.Exists(path))
             {
                 return;
             }
 
-            string csvPath = path + Path.DirectorySeparatorChar + artist + "_Songs.csv";
+            string csvPath = Path.Combine(path, artist + "_Songs.csv");
             if (!File.Exists(csvPath))
             {
                 File.WriteAllText(csvPath, "songs");
@@ -238,13 +238,13 @@ namespace ZeroSumSetlistEditor.Models
 
         public void RenameRole(string artist, string role, string newName)
         {
-            string path = PersistentDataPath + Path.DirectorySeparatorChar + artist;
+            string path = Path.Combine(PersistentDataPath, artist);
             if (!Directory.Exists(path))
             {
                 return;
             }
 
-            string csvPath = path + Path.DirectorySeparatorChar + artist + "_Songs.csv";
+            string csvPath = Path.Combine(path, artist + "_Songs.csv");
             if (!File.Exists(csvPath))
             {
                 File.WriteAllText(csvPath, "songs," + newName);
@@ -277,7 +277,7 @@ namespace ZeroSumSetlistEditor.Models
     
         public void SaveNotes(string artist, string song, List<SongNote> notes)
         {
-            string path = PersistentDataPath + Path.DirectorySeparatorChar + artist + Path.DirectorySeparatorChar + artist + "_Songs.csv";
+            string path = Path.Combine(PersistentDataPath, artist, artist + "_Songs.csv");
             List<string> linesList = File.ReadAllLines(path).ToList();
             int index = 0;
             foreach (string line in linesList)
@@ -295,6 +295,27 @@ namespace ZeroSumSetlistEditor.Models
             }
             linesList[index] = newLine;
             File.WriteAllLines(path, linesList);
+        }
+    
+        public List<Setlist> GetSetlists(string artist)
+        {
+            var path = Path.Combine(FileReading.PersistentDataPath, artist, "Setlists");
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            List<Setlist> list = new List<Setlist>();
+            foreach(string file in Directory.GetFiles(path))
+            {
+                if (!file.EndsWith(".txt")) continue;
+                string filename = file.Split(Path.DirectorySeparatorChar).Last();
+                filename = filename.Split(".").First();
+                string[] filenameSplit = filename.Split(" == ");
+                Setlist setlist = new Setlist(filenameSplit.Last(), filenameSplit.First());
+                list.Add(setlist);
+            }
+            list.Reverse();
+            return list;
         }
     }
 }

@@ -49,6 +49,11 @@ namespace ZeroSumSetlistEditor.ViewModels
             Content = new NoteEditViewModel(song, SongSelect.Roles.ToList(), this);
         }
 
+        public void OpenSetlistSelect(string artist)
+        {
+            Content = new SetlistSelectViewModel(artist, fileReading.GetSetlists(artist));
+        }
+
         public ViewModelBase Content
         {
             get => content;
