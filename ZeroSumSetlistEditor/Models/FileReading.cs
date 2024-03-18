@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic.FileIO;
 using System.Collections;
+using DynamicData;
 
 namespace ZeroSumSetlistEditor.Models
 {
@@ -193,6 +194,45 @@ namespace ZeroSumSetlistEditor.Models
                 }
             }
             File.WriteAllLines(csvPath, lines);
+
+            return;
+        }
+
+        public void RemoveRole(string artist, string role)
+        {
+            string path = PersistentDataPath + Path.DirectorySeparatorChar + artist;
+            if (!Directory.Exists(path))
+            {
+                return;
+            }
+
+            string csvPath = path + Path.DirectorySeparatorChar + artist + "_Songs.csv";
+            if (!File.Exists(csvPath))
+            {
+                File.WriteAllText(csvPath, "songs");
+                return;
+            }
+
+            List<string> lines = File.ReadAllLines(csvPath).ToList();
+            List<string> newLines = [];
+            foreach (string line in lines)
+            {
+                string[] notes = line.Split(",");
+                string newLine = "";
+                for (int i = 0; i < notes.Length - 1; i++)
+                {
+                    if (i == 0)
+                    {
+                        newLine += notes[i];
+                    }
+                    else
+                    {
+                        newLine += "," + notes[i];
+                    }
+                }
+                newLines.Add(newLine);
+            }
+            File.WriteAllLines(csvPath, newLines);
 
             return;
         }
