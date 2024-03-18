@@ -96,6 +96,7 @@ public partial class CreateWindow : Window
                         File.AppendAllText(path, Environment.NewLine + text);
                         songSelectVm!.Songs.Add(new Song(vm.Description, new List<string>(), vm.EditingArtist));
                         songSelectVm!.Songs.Sort();
+                        songSelectVm!.FilterSongs();
                     }
                     else if (vm.CreateWindowMode == CreateWindowMode.EditSong)
                     {
@@ -109,6 +110,7 @@ public partial class CreateWindow : Window
                             }
                         }
                         songSelectVm!.Songs.Sort();
+                        songSelectVm!.FilterSongs();
                     }
                     else if (vm.CreateWindowMode == CreateWindowMode.CreateRole)
                     {

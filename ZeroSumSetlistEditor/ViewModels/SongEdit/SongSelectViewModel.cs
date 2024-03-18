@@ -82,6 +82,7 @@ namespace ZeroSumSetlistEditor.ViewModels
 
                 mainWindowVm.fileReading.RemoveSong(song, Artist);
             }
+            FilterSongs();
         }
     
         public void FilterSongs()
