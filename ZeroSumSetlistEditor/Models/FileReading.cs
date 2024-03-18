@@ -98,6 +98,36 @@ namespace ZeroSumSetlistEditor.Models
             File.WriteAllLines(path, linesList);
         }
 
+        public void RenameSong(string song, string newName, string artist)
+        {
+            string path = PersistentDataPath + Path.DirectorySeparatorChar + artist + Path.DirectorySeparatorChar + artist + "_Songs.csv";
+            List<string> linesList = File.ReadAllLines(path).ToList();
+            int index = 0;
+            foreach (string line in linesList)
+            {
+                if (line.StartsWith(song))
+                {
+                    break;
+                }
+                index++;
+            }
+            string newLine = "";
+            string[] splitLine = linesList[index].Split(",");
+            for (int i = 0; i < splitLine.Length; i++)
+            {
+                if (i == 0)
+                {
+                    newLine += newName;
+                }
+                else
+                {
+                    newLine += "," + splitLine[i];
+                }
+            }
+            linesList[index] = newLine;
+            File.WriteAllLines(path, linesList);
+        }
+
         public List<string> GetRoles(string artist)
         {
             string path = PersistentDataPath + Path.DirectorySeparatorChar + artist;

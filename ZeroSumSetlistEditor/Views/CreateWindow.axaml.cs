@@ -88,7 +88,16 @@ public partial class CreateWindow : Window
                     }
                     else if (vm.CreateWindowMode == CreateWindowMode.EditSong)
                     {
+                        vm.mainWindowVm!.fileReading.RenameSong(vm.EditingSong, vm.Description, vm.EditingArtist);
 
+                        foreach (Song song in songSelectVm!.Songs)
+                        {
+                            if (song.Name == vm.EditingSong)
+                            {
+                                song.Name = vm.Description;
+                            }
+                        }
+                        songSelectVm!.Songs.Sort();
                     }
                     Close();
                     return;

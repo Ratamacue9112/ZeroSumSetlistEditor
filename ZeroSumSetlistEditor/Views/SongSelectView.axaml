@@ -38,7 +38,8 @@
 								<TextBlock Text="{Binding Name}" FontFamily="{StaticResource MontserratFont}" DockPanel.Dock="Left"/>
 								<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
 									<Button Classes.icon="true"
-											CommandParameter="{Binding}">
+											Command="{Binding $parent[ItemsControl].((vm:SongSelectViewModel)DataContext).OpenCreateSongDialog}"
+											CommandParameter="{Binding Name}">
 										<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/edit.svg}"
 											   Width="24" Height="24"/>
 									</Button>

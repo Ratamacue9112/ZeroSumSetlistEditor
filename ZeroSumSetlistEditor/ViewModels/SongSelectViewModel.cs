@@ -36,7 +36,7 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public async void OpenCreateSongDialog(string song)
         {
-            var window = new CreateWindowViewModel(Artist, song == "" ? CreateWindowMode.CreateSong : CreateWindowMode.EditSong, song, Roles.Count);
+            var window = new CreateWindowViewModel(Artist, song == "" ? CreateWindowMode.CreateSong : CreateWindowMode.EditSong, song, Roles.Count, mainWindowVm);
             var result = await ShowDialog.Handle(window);
         }
 

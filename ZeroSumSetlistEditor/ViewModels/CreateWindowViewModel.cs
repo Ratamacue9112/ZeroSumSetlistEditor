@@ -35,12 +35,15 @@ namespace ZeroSumSetlistEditor.ViewModels
         public delegate void CloseDialogAction();
         public event CloseDialogAction? CloseDialog;
 
-        public CreateWindowViewModel(string artist, CreateWindowMode createWindowMode, string song = "", int roleCount = 0)
+        public MainWindowViewModel? mainWindowVm;
+
+        public CreateWindowViewModel(string artist, CreateWindowMode createWindowMode, string song = "", int roleCount = 0, MainWindowViewModel? mainWindowVm = null)
         {
             EditingArtist = artist;
             EditingSong = song;
             CreateWindowMode = createWindowMode;
             RoleCount = roleCount;
+            this.mainWindowVm = mainWindowVm;
             switch (createWindowMode)
             {
                 case CreateWindowMode.CreateArtist:
@@ -54,7 +57,7 @@ namespace ZeroSumSetlistEditor.ViewModels
                     TitleText = "Create Song";
                     break;
                 case CreateWindowMode.EditSong:
-                    TitleText = "Edit Song";
+                    TitleText = "Rename Song";
                     Description = song;
                     break;
             }
