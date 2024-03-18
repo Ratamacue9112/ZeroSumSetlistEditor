@@ -30,7 +30,7 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public async void OpenCreateArtistDialog(string artist)
         {
-            var window = new CreateWindowViewModel(artist);
+            var window = new CreateWindowViewModel(artist, artist == "" ? CreateWindowMode.CreateArtist : CreateWindowMode.EditArtist);
             var result = await ShowDialog.Handle(window);
         }
     

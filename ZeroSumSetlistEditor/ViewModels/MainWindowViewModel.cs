@@ -34,7 +34,8 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public void OpenSongSelect(string artist)
         {
-            Content = new SongSelectViewModel(artist, fileReading.GetSongs(artist));
+            Content = SongSelect = new SongSelectViewModel(artist, fileReading.GetSongs(artist), fileReading.GetRoles(artist));
+            ShowCreateSongDialog.Invoke();
         }
 
         public ViewModelBase Content
@@ -43,6 +44,10 @@ namespace ZeroSumSetlistEditor.ViewModels
             private set => this.RaiseAndSetIfChanged(ref content, value);
         }
 
+        public Action ShowCreateSongDialog { get; set; }
+
         public ArtistSelectViewModel ArtistSelect { get; }
+        
+        public SongSelectViewModel SongSelect { get; set; }
     }
 }

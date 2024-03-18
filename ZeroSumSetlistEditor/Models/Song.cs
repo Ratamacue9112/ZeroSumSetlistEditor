@@ -9,9 +9,9 @@ namespace ZeroSumSetlistEditor.Models
     public class Song
     {
         public string Name { get; set; }
-        public Dictionary<string, string> Notes { get; set; }
+        public List<string> Notes { get; set; }
 
-        public Song(string name, Dictionary<string, string> notes)
+        public Song(string name, List<string> notes)
         {
             Name = name;
             Notes = notes;

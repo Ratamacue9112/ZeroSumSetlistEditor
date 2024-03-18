@@ -15,7 +15,7 @@
 		<Button DockPanel.Dock="Bottom"
             Classes.regularButton="true"
 			FontFamily="{StaticResource MontserratFont}"
-			Command="{Binding CreateArtist}">
+			Command="{Binding Create}">
 			Add
 		</Button>
 

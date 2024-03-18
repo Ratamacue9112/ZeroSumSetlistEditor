@@ -1,6 +1,9 @@
-﻿using System;
+﻿using ReactiveUI;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ZeroSumSetlistEditor.Models;
@@ -10,21 +13,23 @@ namespace ZeroSumSetlistEditor.ViewModels
     public class SongSelectViewModel : ViewModelBase
     {
         public string Artist { get; set; }
-        public List<Song> Songs { get; set; }
+        public ObservableCollection<Song> Songs { get; set; }
+        public ObservableCollection<string> Roles { get; set; }
 
-        public SongSelectViewModel(string artist, List<Song> songs)
+        public Interaction<CreateWindowViewModel, SongSelectViewModel?> ShowDialog { get; }
+
+        public SongSelectViewModel(string artist, List<Song> songs, List<string> roles)
         {
             Artist = artist;
-            Songs = songs;
+            Songs = new ObservableCollection<Song>(songs);
+            Roles = new ObservableCollection<string>(roles);
+            ShowDialog = new Interaction<CreateWindowViewModel, SongSelectViewModel?>();
+        }
 
-            foreach(Song s in Songs)
-            {
-                Console.WriteLine(s.Name + ":");
-                foreach (KeyValuePair<string, string> note in s.Notes)
-                {
-                    Console.WriteLine(note.Key + " - " + note.Value);
-                }
-            }
+        public async void OpenCreateSongDialog(string song)
+        {
+            var window = new CreateWindowViewModel(Artist, song == "" ? CreateWindowMode.CreateSong : CreateWindowMode.EditSong, song, Roles.Count);
+            var result = await ShowDialog.Handle(window);
         }
     }
 }

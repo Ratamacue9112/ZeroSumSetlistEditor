@@ -9,6 +9,14 @@ using System.Windows.Input;
 
 namespace ZeroSumSetlistEditor.ViewModels
 {
+    public enum CreateWindowMode
+    {
+        CreateArtist,
+        EditArtist,
+        CreateSong,
+        EditSong,
+    }
+
     public class CreateWindowViewModel : ViewModelBase
     {
         private string _description = string.Empty;
@@ -20,18 +28,39 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public string TitleText { get; }
         public string EditingArtist { get; }
+        public string EditingSong { get; }
+        public CreateWindowMode CreateWindowMode { get; }
+        public int RoleCount { get; }
 
         public delegate void CloseDialogAction();
         public event CloseDialogAction? CloseDialog;
 
-        public CreateWindowViewModel(string artist)
+        public CreateWindowViewModel(string artist, CreateWindowMode createWindowMode, string song = "", int roleCount = 0)
         {
             EditingArtist = artist;
-            TitleText = artist == string.Empty ? "Create Artist" : "Edit Artist";
-            Description = artist;
+            EditingSong = song;
+            CreateWindowMode = createWindowMode;
+            RoleCount = roleCount;
+            switch (createWindowMode)
+            {
+                case CreateWindowMode.CreateArtist:
+                    TitleText = "Create Artist";
+                    break;
+                case CreateWindowMode.EditArtist:
+                    TitleText = "Edit Artist";
+                    Description = artist;
+                    break;
+                case CreateWindowMode.CreateSong:
+                    TitleText = "Create Song";
+                    break;
+                case CreateWindowMode.EditSong:
+                    TitleText = "Edit Song";
+                    Description = song;
+                    break;
+            }
         }
 
-        public void CreateArtist()
+        public void Create()
         {
             CloseDialog?.Invoke();
         }
