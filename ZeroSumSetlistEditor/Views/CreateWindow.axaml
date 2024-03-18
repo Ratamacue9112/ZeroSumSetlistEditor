@@ -16,7 +16,7 @@
             Classes.regularButton="true"
 			FontFamily="{StaticResource MontserratFont}"
 			Command="{Binding Create}">
-			Add
+			Confirm
 		</Button>
 
 		<StackPanel>
