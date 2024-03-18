@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic.FileIO;
 using DynamicData;
+using System.Collections;
 
 namespace ZeroSumSetlistEditor.Models
 {
@@ -80,6 +81,23 @@ namespace ZeroSumSetlistEditor.Models
             return songs;
         }
     
+        public void RemoveSong(string song, string artist)
+        {
+            string path = PersistentDataPath + Path.DirectorySeparatorChar + artist + Path.DirectorySeparatorChar + artist + "_Songs.csv";
+            List<string> linesList = File.ReadAllLines(path).ToList();
+            int index = 0;
+            foreach (string line in linesList)
+            {
+                if (line.StartsWith(song))
+                {
+                    break;
+                }
+                index++;
+            }
+            linesList.RemoveAt(index);
+            File.WriteAllLines(path, linesList);
+        }
+
         public List<string> GetRoles(string artist)
         {
             string path = PersistentDataPath + Path.DirectorySeparatorChar + artist;

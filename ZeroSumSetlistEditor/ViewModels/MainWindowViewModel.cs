@@ -11,7 +11,7 @@ namespace ZeroSumSetlistEditor.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private FileReading fileReading;
+        public FileReading fileReading;
 
         private ViewModelBase content;
 
@@ -34,7 +34,7 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public void OpenSongSelect(string artist)
         {
-            Content = SongSelect = new SongSelectViewModel(artist, fileReading.GetSongs(artist), fileReading.GetRoles(artist));
+            Content = SongSelect = new SongSelectViewModel(artist, fileReading.GetSongs(artist), fileReading.GetRoles(artist), this);
             ShowCreateSongDialog.Invoke();
         }
 

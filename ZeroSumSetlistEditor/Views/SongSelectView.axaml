@@ -43,7 +43,8 @@
 											   Width="24" Height="24"/>
 									</Button>
 									<Button Classes.icon="true"
-											CommandParameter="{Binding}">
+											Command="{Binding $parent[ItemsControl].((vm:SongSelectViewModel)DataContext).RemoveSong}"
+											CommandParameter="{Binding Name}">
 										<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/delete.svg}"
 											   Width="24" Height="24"/>
 									</Button>
