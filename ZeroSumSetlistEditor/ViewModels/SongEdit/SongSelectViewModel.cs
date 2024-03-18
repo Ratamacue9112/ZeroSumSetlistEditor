@@ -90,7 +90,7 @@ namespace ZeroSumSetlistEditor.ViewModels
             FilteredSongs.Clear();
             foreach (Song s in Songs)
             {
-                if (s.Name.StartsWith(SearchText))
+                if (s.Name.ToLower().StartsWith(SearchText.ToLower()))
                 {
                     FilteredSongs.Add(s);
                 }
