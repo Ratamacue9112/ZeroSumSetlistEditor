@@ -38,6 +38,11 @@ namespace ZeroSumSetlistEditor.ViewModels
             ShowCreateSongDialog.Invoke();
         }
 
+        public void OpenRoleEdit(string artist)
+        {
+            Content = new RoleEditViewModel(artist, fileReading.GetRoles(artist));
+        }
+
         public ViewModelBase Content
         {
             get => content;

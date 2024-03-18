@@ -32,10 +32,13 @@
 		<Compile Update="Views\CreateWindow.axaml.cs">
 		  <DependentUpon>CreateWindow.axaml</DependentUpon>
 		</Compile>
-		<Compile Update="Views\ArtistSelectView.axaml.cs">
+		<Compile Update="Views\SongEdit\ArtistSelectView.axaml.cs">
 			<DependentUpon>Views\ArtistSelectView.axaml</DependentUpon>
 		</Compile>
-		<Compile Update="Views\SongSelectView.axaml.cs">
+		<Compile Update="Views\SongEdit\RoleEditView.axaml.cs">
+		  <DependentUpon>RoleEditView.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\SongEdit\SongSelectView.axaml.cs">
 		  <DependentUpon>SongSelectView.axaml</DependentUpon>
 		</Compile>
 	</ItemGroup>

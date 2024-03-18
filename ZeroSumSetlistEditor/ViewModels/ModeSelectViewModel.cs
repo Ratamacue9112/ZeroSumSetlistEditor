@@ -11,7 +11,7 @@ namespace ZeroSumSetlistEditor.ViewModels
     {
         public string Artist { get; set; }
 
-        public ModeSelectViewModel(string artist) 
+        public ModeSelectViewModel(string artist)
         {
             Artist = artist;
         }

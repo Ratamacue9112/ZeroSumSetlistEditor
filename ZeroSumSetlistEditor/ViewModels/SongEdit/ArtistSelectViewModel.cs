@@ -21,8 +21,8 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public Interaction<CreateWindowViewModel, ArtistSelectViewModel?> ShowDialog { get; }
 
-        public ArtistSelectViewModel(List<string> artists) 
-        { 
+        public ArtistSelectViewModel(List<string> artists)
+        {
             Artists = new ObservableCollection<string>(artists);
 
             ShowDialog = new Interaction<CreateWindowViewModel, ArtistSelectViewModel?>();
@@ -33,7 +33,7 @@ namespace ZeroSumSetlistEditor.ViewModels
             var window = new CreateWindowViewModel(artist, artist == "" ? CreateWindowMode.CreateArtist : CreateWindowMode.EditArtist);
             var result = await ShowDialog.Handle(window);
         }
-    
+
         public async void DeleteArtist(string name)
         {
             var box = MessageBoxManager.GetMessageBoxCustom(new MessageBoxCustomParams
