@@ -32,8 +32,8 @@
 					<DataTemplate>
 						<Button Classes.selectButton="true"
 								Height="50"
-								Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenModeSelect}"
-								CommandParameter="{Binding Name}">
+								Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenNoteEdit}"
+								CommandParameter="{Binding}">
 							<DockPanel LastChildFill="false">
 								<TextBlock Text="{Binding Name}" FontFamily="{StaticResource MontserratFont}" DockPanel.Dock="Left"/>
 								<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">

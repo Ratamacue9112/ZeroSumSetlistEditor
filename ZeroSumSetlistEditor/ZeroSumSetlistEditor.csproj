@@ -41,5 +41,8 @@
 		<Compile Update="Views\SongEdit\SongSelectView.axaml.cs">
 		  <DependentUpon>SongSelectView.axaml</DependentUpon>
 		</Compile>
+		<Compile Update="Views\SongEdit\NoteEditView.axaml.cs">
+		  <DependentUpon>NoteEditView.axaml</DependentUpon>
+		</Compile>
 	</ItemGroup>
 </Project>

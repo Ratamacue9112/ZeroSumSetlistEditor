@@ -10,11 +10,13 @@ namespace ZeroSumSetlistEditor.Models
     {
         public string Name { get; set; }
         public List<string> Notes { get; set; }
+        public string Artist { get; set; }
 
-        public Song(string name, List<string> notes)
+        public Song(string name, List<string> notes, string artist)
         {
             Name = name;
             Notes = notes;
+            Artist = artist;
         }
 
         public int CompareTo(object? obj)

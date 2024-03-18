@@ -44,6 +44,11 @@ namespace ZeroSumSetlistEditor.ViewModels
             ShowCreateRoleDialog.Invoke();
         }
 
+        public void OpenNoteEdit(Song song)
+        {
+            Content = new NoteEditViewModel(song, SongSelect.Roles.ToList());
+        }
+
         public ViewModelBase Content
         {
             get => content;

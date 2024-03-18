@@ -25,10 +25,10 @@
 					   Text="{Binding TitleText}"/>
 
 			<TextBox FontFamily="{StaticResource MontserratFont}"
-				FontSize="18"
-				MaxHeight="35"
-				AcceptsReturn="False"
-				Text="{Binding Description}"/>
+					 FontSize="18"
+					 MaxHeight="35"
+					 AcceptsReturn="False"
+					 Text="{Binding Description}"/>
 		</StackPanel>
 	</DockPanel>
 </Window>

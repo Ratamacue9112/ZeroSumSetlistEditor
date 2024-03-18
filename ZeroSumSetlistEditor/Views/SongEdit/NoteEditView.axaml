@@ -1,0 +1,71 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:ZeroSumSetlistEditor.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ZeroSumSetlistEditor.Views.NoteEditView"
+			 x:DataType="vm:NoteEditViewModel">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		
+		<TextBlock Margin="20" HorizontalAlignment="Center" Grid.Row="0">
+			<Run Text="{Binding SongName}"
+				 FontFamily="{StaticResource MontserratFont}"
+				 Classes.h1="true"/>
+			<Run Text=" - "
+				 Classes.h2="true"
+				 FontFamily="{StaticResource MontserratFont}"
+				 FontStyle="Italic"
+				 FontWeight="ExtraLight"/>
+			<Run Text="{Binding Artist}"
+				 Classes.h2="true"
+				 FontFamily="{StaticResource MontserratFont}"
+				 FontStyle="Italic"
+				 FontWeight="ExtraLight"/>
+		</TextBlock>
+
+		<ScrollViewer Name="ScrollViewer" Margin="0 20 0 0" Grid.Row="1">
+			<ItemsControl ItemsSource="{Binding Notes}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<StackPanel Margin="0 10 0 10">
+							<TextBlock FontFamily="{StaticResource MontserratFont}"
+									   Classes.h2="true"
+									   HorizontalAlignment="Left"
+									   Text="{Binding Role}"/>
+							<TextBox FontFamily="{StaticResource MontserratFont}"
+									 FontSize="18"
+									 MaxHeight="35"
+									 Margin="10 0 10 0"
+									 AcceptsReturn="False"
+									 Text="{Binding Note}"/>
+						</StackPanel>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
+
+		<Button Classes.regularButton="true"
+				FontFamily="{StaticResource MontserratFont}"
+				Grid.Row="2"
+				Margin="0"
+				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenSongSelect}"
+				CommandParameter="{Binding Artist}">
+			Save
+		</Button>
+		<Button Classes.regularButton="true"
+				FontFamily="{StaticResource MontserratFont}"
+				Grid.Row="3"
+				Margin="0"
+				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenSongSelect}"
+				CommandParameter="{Binding Artist}">
+			Cancel
+		</Button>
+	</Grid>
+</UserControl>

@@ -73,7 +73,7 @@ namespace ZeroSumSetlistEditor.Models
 
                 if (songName != string.Empty) 
                 { 
-                    songs.Add(new Song(songName, notes)); 
+                    songs.Add(new Song(songName, notes, artist)); 
                 }
             }
             songs.Sort();

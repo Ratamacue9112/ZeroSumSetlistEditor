@@ -94,7 +94,7 @@ public partial class CreateWindow : Window
                             text += ",";
                         }
                         File.AppendAllText(path, Environment.NewLine + text);
-                        songSelectVm!.Songs.Add(new Song(vm.Description, new List<string>()));
+                        songSelectVm!.Songs.Add(new Song(vm.Description, new List<string>(), vm.EditingArtist));
                         songSelectVm!.Songs.Sort();
                     }
                     else if (vm.CreateWindowMode == CreateWindowMode.EditSong)
