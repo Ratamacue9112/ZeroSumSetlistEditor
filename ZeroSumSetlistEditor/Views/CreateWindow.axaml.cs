@@ -84,6 +84,7 @@ public partial class CreateWindow : Window
                         }
                         File.AppendAllText(path, Environment.NewLine + text);
                         songSelectVm!.Songs.Add(new Song(vm.Description, new List<string>()));
+                        songSelectVm!.Songs.Sort<Song>();
                     }
                     else if (vm.CreateWindowMode == CreateWindowMode.EditSong)
                     {
@@ -94,7 +95,7 @@ public partial class CreateWindow : Window
                 }
                 catch
                 {
-                    error = "Artist couldn't be created/renamed.";
+                    error = "An error occured.";
                 }
             }
             var box = MessageBoxManager.GetMessageBoxStandard("Warning", error, ButtonEnum.Ok);
