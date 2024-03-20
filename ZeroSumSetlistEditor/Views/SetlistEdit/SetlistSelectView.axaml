@@ -36,7 +36,7 @@
 								<TextBlock FontFamily="{StaticResource MontserratFont}" DockPanel.Dock="Left">
 									<Run Text="{Binding Venue}"/>
 									<Run Text=" - "/>
-									<Run Text="{Binding Date}" FontStyle="Italic"/>
+									<Run Text="{Binding DateText}" FontStyle="Italic"/>
 								</TextBlock>
 								<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
 									<Button Classes.icon="true"

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic.FileIO;
 using System.Collections;
+using System.Globalization;
 
 namespace ZeroSumSetlistEditor.Models
 {
@@ -311,10 +312,10 @@ namespace ZeroSumSetlistEditor.Models
                 string filename = file.Split(Path.DirectorySeparatorChar).Last();
                 filename = filename.Split(".").First();
                 string[] filenameSplit = filename.Split(" == ");
-                Setlist setlist = new Setlist(filenameSplit.Last(), filenameSplit.First());
+                Setlist setlist = new Setlist(filenameSplit.Last(), DateTime.ParseExact(filenameSplit.First(), "yyyy-MM-dd", CultureInfo.InvariantCulture));
                 list.Add(setlist);
             }
-            list.Reverse();
+            list.Sort();
             return list;
         }
     }
