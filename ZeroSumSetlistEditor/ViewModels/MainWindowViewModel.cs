@@ -51,7 +51,8 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public void OpenSetlistSelect(string artist)
         {
-            Content = new SetlistSelectViewModel(artist, fileReading.GetSetlists(artist));
+            Content = SetlistSelect = new SetlistSelectViewModel(artist, fileReading.GetSetlists(artist));
+            ShowCreateSetlistDialog.Invoke();
         }
 
         public ViewModelBase Content
@@ -63,11 +64,11 @@ namespace ZeroSumSetlistEditor.ViewModels
         public Action ShowCreateSongDialog { get; set; }
 
         public Action ShowCreateRoleDialog { get; set; }
+        public Action ShowCreateSetlistDialog { get; set; }
 
         public ArtistSelectViewModel ArtistSelect { get; }
-        
         public SongSelectViewModel SongSelect { get; set; }
-
         public RoleEditViewModel RoleEdit { get; set; }
+        public SetlistSelectViewModel SetlistSelect { get; set; }
     }
 }

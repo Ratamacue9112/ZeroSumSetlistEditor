@@ -61,6 +61,7 @@
 				Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"
 				Margin="0"
+				Command="{Binding OpenCreateSetlistDialog}"
 				CommandParameter="">
 			Add Setlist
 		</Button>

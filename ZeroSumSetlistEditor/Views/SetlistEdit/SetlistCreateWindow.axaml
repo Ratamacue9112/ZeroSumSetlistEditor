@@ -1,0 +1,42 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:ZeroSumSetlistEditor.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="ZeroSumSetlistEditor.SetlistCreateWindow"
+		x:DataType="vm:SetlistCreateWindowViewModel"
+		Icon="avares://ZeroSumSetlistEditor/Assets/icon.ico"
+		Width="350" Height="400"
+		WindowStartupLocation="CenterOwner"
+		CanResize="false"
+        Title="{Binding TitleText}">
+	<DockPanel>
+		<Button DockPanel.Dock="Bottom"
+            Classes.regularButton="true"
+			FontFamily="{StaticResource MontserratFont}"
+			Command="{Binding Create}">
+			Confirm
+		</Button>
+
+		<StackPanel>
+			<TextBlock Classes.h1="true" 
+					   FontFamily="{StaticResource MontserratFont}" 
+					   Text="{Binding TitleText}"/>
+
+			<TextBlock FontFamily="{StaticResource MontserratFont}">Venue</TextBlock>
+			<TextBox FontFamily="{StaticResource MontserratFont}"
+					 FontSize="18"
+					 MaxHeight="35"
+					 AcceptsReturn="False"
+					 Text="{Binding Description}"/>
+			<TextBlock FontFamily="{StaticResource MontserratFont}">Date</TextBlock>
+			<CalendarDatePicker FontFamily="{StaticResource MontserratFont}" 
+								FontSize="18"
+								MinHeight="48"
+								Padding="10 0 0 0"
+								HorizontalAlignment="Stretch"
+								SelectedDate="{Binding Date}"/>
+		</StackPanel>
+	</DockPanel>
+</Window>

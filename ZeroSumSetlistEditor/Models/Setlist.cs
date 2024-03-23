@@ -16,8 +16,7 @@ namespace ZeroSumSetlistEditor.Models
         {
             Venue = venue;
             Date = date;
-            DateText = date.ToString("dddd, dd{0} MMMM yyyy");
-            DateText = string.Format(DateText, Date.Day.GetOrdinalSuffix());
+            DateText = string.Format(date.ToString("dddd, d{0} MMMM yyyy"), Date.Day.GetOrdinalSuffix());
         }
 
         public int CompareTo(object? obj)
