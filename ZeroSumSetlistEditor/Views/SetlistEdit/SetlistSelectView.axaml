@@ -40,7 +40,8 @@
 								</TextBlock>
 								<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
 									<Button Classes.icon="true"
-											CommandParameter="">
+											Command="{Binding $parent[ItemsControl].((vm:SetlistSelectViewModel)DataContext).OpenCreateSetlistDialog}"
+											CommandParameter="{Binding}">
 										<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/edit.svg}"
 											   Width="24" Height="24"/>
 									</Button>

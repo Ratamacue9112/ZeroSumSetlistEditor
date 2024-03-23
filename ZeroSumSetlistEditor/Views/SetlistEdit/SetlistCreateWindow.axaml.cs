@@ -39,16 +39,32 @@ public partial class SetlistCreateWindow : Window
                 try
                 {
                     var path = Path.Combine(FileReading.PersistentDataPath, setlistSelectVm.Artist, "Setlists", vm.Date.ToString("yyyy-MM-dd") + " == " + vm.Venue + ".txt");
-                    if (vm.IsEditing)
-                    {
-
-                    }
-                    else
+                    if (vm.Setlist == null)
                     {
                         File.Create(path);
                         setlistSelectVm.Setlists.Add(new Setlist(vm.Venue, vm.Date));
-                        setlistSelectVm.Setlists.Sort();
                     }
+                    else
+                    {
+                        var oldPath = Path.Combine(FileReading.PersistentDataPath, setlistSelectVm.Artist, "Setlists", vm.Setlist.Date.ToString("yyyy-MM-dd") + " == " + vm.Setlist.Venue + ".txt");
+
+                        for (int i = 0; i < setlistSelectVm.Setlists.Count; i++)
+                        {
+                            if (setlistSelectVm.Setlists[i].Venue == vm.Setlist.Venue && setlistSelectVm.Setlists[i].Date == vm.Setlist.Date)
+                            {
+                                setlistSelectVm.Setlists[i] = new Setlist(vm.Venue, vm.Date);
+                                break;
+                            }
+                        }
+                        setlistSelectVm.Setlists.Sort();
+
+                        if (File.Exists(oldPath))
+                        {
+                            File.Move(oldPath, path);
+                        }
+                    }
+
+                    setlistSelectVm.Setlists.Sort();
 
                     Close();
                     return;

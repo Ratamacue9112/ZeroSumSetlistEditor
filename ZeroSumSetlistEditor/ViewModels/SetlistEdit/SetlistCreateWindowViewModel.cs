@@ -25,7 +25,7 @@ namespace ZeroSumSetlistEditor.ViewModels
         }
 
         public string TitleText { get; }
-        public bool IsEditing { get; }
+        public Setlist? Setlist { get; }
 
         public delegate void CloseDialogAction();
         public event CloseDialogAction? CloseDialog;
@@ -36,14 +36,14 @@ namespace ZeroSumSetlistEditor.ViewModels
             {
                 TitleText = "Create Setlist";
                 Date = DateTime.Today;
-                IsEditing = false;
             }
             else
             {
                 TitleText = "Rename Setlist";
+                Venue = setlist.Venue;
                 Date = setlist.Date;
-                IsEditing = true;
             }
+            Setlist = setlist;
         }
 
         public void Create()
