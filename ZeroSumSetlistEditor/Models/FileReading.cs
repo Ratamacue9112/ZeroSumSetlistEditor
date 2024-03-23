@@ -300,7 +300,7 @@ namespace ZeroSumSetlistEditor.Models
     
         public List<Setlist> GetSetlists(string artist)
         {
-            var path = Path.Combine(FileReading.PersistentDataPath, artist, "Setlists");
+            var path = Path.Combine(PersistentDataPath, artist, "Setlists");
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
@@ -312,11 +312,27 @@ namespace ZeroSumSetlistEditor.Models
                 string filename = file.Split(Path.DirectorySeparatorChar).Last();
                 filename = filename.Split(".").First();
                 string[] filenameSplit = filename.Split(" == ");
-                Setlist setlist = new Setlist(filenameSplit.Last(), DateTime.ParseExact(filenameSplit.First(), "yyyy-MM-dd", CultureInfo.InvariantCulture));
+                Setlist setlist = new Setlist(filenameSplit.Last(), DateTime.ParseExact(filenameSplit.First(), "yyyy-MM-dd", CultureInfo.InvariantCulture), artist);
                 list.Add(setlist);
             }
             list.Sort();
             return list;
+        }
+
+        public List<string> GetSetlistSongs(Setlist setlist)
+        {
+            var path = Path.Combine(PersistentDataPath, setlist.Artist, "Setlists", setlist.Date.ToString("yyyy-MM-dd") + " == " + setlist.Venue + ".txt");
+            if (File.Exists(path))
+            {
+                List<string> songs = new List<string>();
+                foreach(string song in File.ReadAllLines(path))
+                {
+                    if (string.IsNullOrEmpty(song)) continue;
+                    songs.Add(song);
+                }
+                return songs;
+            }
+            return new List<string>();
         }
     }
 }

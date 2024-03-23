@@ -55,6 +55,11 @@ namespace ZeroSumSetlistEditor.ViewModels
             ShowCreateSetlistDialog.Invoke();
         }
 
+        public void OpenSetlistEdit(Setlist setlist)
+        {
+            Content = new SetlistEditViewModel(setlist, fileReading.GetSetlistSongs(setlist));
+        }
+
         public ViewModelBase Content
         {
             get => content;
@@ -62,7 +67,6 @@ namespace ZeroSumSetlistEditor.ViewModels
         }
 
         public Action ShowCreateSongDialog { get; set; }
-
         public Action ShowCreateRoleDialog { get; set; }
         public Action ShowCreateSetlistDialog { get; set; }
 

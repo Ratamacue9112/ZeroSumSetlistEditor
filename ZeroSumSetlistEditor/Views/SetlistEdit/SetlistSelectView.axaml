@@ -31,7 +31,8 @@
 					<DataTemplate>
 						<Button Classes.selectButton="true"
 								Height="50"
-								CommandParameter="">
+								Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenSetlistEdit}"
+								CommandParameter="{Binding}">
 							<DockPanel LastChildFill="false">
 								<TextBlock FontFamily="{StaticResource MontserratFont}" DockPanel.Dock="Left">
 									<Run Text="{Binding Venue}"/>
