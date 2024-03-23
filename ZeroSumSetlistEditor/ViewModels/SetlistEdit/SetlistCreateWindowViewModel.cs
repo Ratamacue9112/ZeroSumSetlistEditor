@@ -10,11 +10,11 @@ namespace ZeroSumSetlistEditor.ViewModels
 {
     public class SetlistCreateWindowViewModel : ViewModelBase
     {
-        private string _description = string.Empty;
-        public string Description
+        private string _venue = string.Empty;
+        public string Venue
         {
-            get => _description;
-            set => this.RaiseAndSetIfChanged(ref _description, value);
+            get => _venue;
+            set => this.RaiseAndSetIfChanged(ref _venue, value);
         }
 
         private DateTime _date;

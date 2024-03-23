@@ -29,7 +29,7 @@
 					 FontSize="18"
 					 MaxHeight="35"
 					 AcceptsReturn="False"
-					 Text="{Binding Description}"/>
+					 Text="{Binding Venue}"/>
 			<TextBlock FontFamily="{StaticResource MontserratFont}">Date</TextBlock>
 			<CalendarDatePicker FontFamily="{StaticResource MontserratFont}" 
 								FontSize="18"

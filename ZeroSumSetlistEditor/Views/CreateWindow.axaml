@@ -28,7 +28,7 @@
 					 FontSize="18"
 					 MaxHeight="35"
 					 AcceptsReturn="False"
-					 Text="{Binding Description}"/>
+					 Text="{Binding Text}"/>
 		</StackPanel>
 	</DockPanel>
 </Window>

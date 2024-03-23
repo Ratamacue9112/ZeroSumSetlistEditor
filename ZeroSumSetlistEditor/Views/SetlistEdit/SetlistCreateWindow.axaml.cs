@@ -29,7 +29,7 @@ public partial class SetlistCreateWindow : Window
         vm.CloseDialog += () =>
         {
             string error = "";
-            if (string.IsNullOrEmpty(vm.Description))
+            if (string.IsNullOrEmpty(vm.Venue))
             {
                 error = "No venue has been entered.";
             }
@@ -38,7 +38,7 @@ public partial class SetlistCreateWindow : Window
             {
                 try
                 {
-                    var path = Path.Combine(FileReading.PersistentDataPath, setlistSelectVm.Artist, "Setlists", vm.Date.ToString("yyyy-MM-dd") + " == " + vm.Description + ".txt");
+                    var path = Path.Combine(FileReading.PersistentDataPath, setlistSelectVm.Artist, "Setlists", vm.Date.ToString("yyyy-MM-dd") + " == " + vm.Venue + ".txt");
                     if (vm.IsEditing)
                     {
 
@@ -46,7 +46,7 @@ public partial class SetlistCreateWindow : Window
                     else
                     {
                         File.Create(path);
-                        setlistSelectVm.Setlists.Add(new Setlist(vm.Description, vm.Date));
+                        setlistSelectVm.Setlists.Add(new Setlist(vm.Venue, vm.Date));
                         setlistSelectVm.Setlists.Sort();
                     }
 

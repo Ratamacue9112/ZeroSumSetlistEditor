@@ -21,11 +21,11 @@ namespace ZeroSumSetlistEditor.ViewModels
 
     public class CreateWindowViewModel : ViewModelBase
     {
-        private string _description = string.Empty;
-        public string Description
+        private string _text = string.Empty;
+        public string Text
         {
-            get => _description;
-            set => this.RaiseAndSetIfChanged(ref _description, value);
+            get => _text;
+            set => this.RaiseAndSetIfChanged(ref _text, value);
         }
 
         public string TitleText { get; }
@@ -53,21 +53,21 @@ namespace ZeroSumSetlistEditor.ViewModels
                     break;
                 case CreateWindowMode.EditArtist:
                     TitleText = "Edit Artist";
-                    Description = artist;
+                    Text = artist;
                     break;
                 case CreateWindowMode.CreateSong:
                     TitleText = "Create Song";
                     break;
                 case CreateWindowMode.EditSong:
                     TitleText = "Rename Song";
-                    Description = songOrRole;
+                    Text = songOrRole;
                     break;
                 case CreateWindowMode.CreateRole:
                     TitleText = "Create Role";
                     break;
                 case CreateWindowMode.EditRole:
                     TitleText = "Edit Role";
-                    Description = songOrRole;
+                    Text = songOrRole;
                     break;
             }
         }

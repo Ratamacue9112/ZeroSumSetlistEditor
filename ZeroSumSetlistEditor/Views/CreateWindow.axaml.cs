@@ -47,7 +47,7 @@ public partial class CreateWindow : Window
         vm.CloseDialog += () =>
         {
             string error = "";
-            if (string.IsNullOrEmpty(vm.Description))
+            if (string.IsNullOrEmpty(vm.Text))
             {
                 error = "No name has been entered.";
             }
@@ -55,7 +55,7 @@ public partial class CreateWindow : Window
             string path;
             if (vm.CreateWindowMode == CreateWindowMode.CreateArtist || vm.CreateWindowMode == CreateWindowMode.EditArtist)
             {
-                path = FileReading.PersistentDataPath + Path.DirectorySeparatorChar + vm.Description;
+                path = FileReading.PersistentDataPath + Path.DirectorySeparatorChar + vm.Text;
                 if (Directory.Exists(path))
                 {
                     error = "Artist already exists.";
@@ -73,9 +73,9 @@ public partial class CreateWindow : Window
                     if (vm.CreateWindowMode == CreateWindowMode.CreateArtist)
                     {
                         Directory.CreateDirectory(path);
-                        string csvPath = path + Path.DirectorySeparatorChar + vm.Description + "_Songs.csv";
+                        string csvPath = path + Path.DirectorySeparatorChar + vm.Text + "_Songs.csv";
                         File.WriteAllText(csvPath, "songs");
-                        artistSelectVm!.Artists.Add(vm.Description);
+                        artistSelectVm!.Artists.Add(vm.Text);
                         artistSelectVm!.Artists.Sort();
                     }
                     else if (vm.CreateWindowMode == CreateWindowMode.EditArtist)
@@ -83,30 +83,30 @@ public partial class CreateWindow : Window
                         string oldPath = FileReading.PersistentDataPath + Path.DirectorySeparatorChar + vm.EditingArtist;
                         Directory.Move(oldPath, path);
                         artistSelectVm!.Artists.Remove(vm.EditingArtist);
-                        artistSelectVm!.Artists.Add(vm.Description);
+                        artistSelectVm!.Artists.Add(vm.Text);
                         artistSelectVm!.Artists.Sort();
                     }
                     else if (vm.CreateWindowMode == CreateWindowMode.CreateSong)
                     {
-                        string text = vm.Description;
+                        string text = vm.Text;
                         for (int i = 0; i < vm.RoleCount; i++)
                         {
                             text += ",";
                         }
                         File.AppendAllText(path, Environment.NewLine + text);
-                        songSelectVm!.Songs.Add(new Song(vm.Description, new List<string>(), vm.EditingArtist));
+                        songSelectVm!.Songs.Add(new Song(vm.Text, new List<string>(), vm.EditingArtist));
                         songSelectVm!.Songs.Sort();
                         songSelectVm!.FilterSongs();
                     }
                     else if (vm.CreateWindowMode == CreateWindowMode.EditSong)
                     {
-                        vm.mainWindowVm!.fileReading.RenameSong(vm.EditingSongOrRole, vm.Description, vm.EditingArtist);
+                        vm.mainWindowVm!.fileReading.RenameSong(vm.EditingSongOrRole, vm.Text, vm.EditingArtist);
 
                         foreach (Song song in songSelectVm!.Songs)
                         {
                             if (song.Name == vm.EditingSongOrRole)
                             {
-                                song.Name = vm.Description;
+                                song.Name = vm.Text;
                             }
                         }
                         songSelectVm!.Songs.Sort();
@@ -114,17 +114,17 @@ public partial class CreateWindow : Window
                     }
                     else if (vm.CreateWindowMode == CreateWindowMode.CreateRole)
                     {
-                        vm.mainWindowVm!.fileReading.AddRole(vm.EditingArtist, vm.Description);
+                        vm.mainWindowVm!.fileReading.AddRole(vm.EditingArtist, vm.Text);
 
-                        roleEditVm!.Roles.Add(vm.Description);
+                        roleEditVm!.Roles.Add(vm.Text);
                         roleEditVm!.Roles.Sort();
                     }
                     else if (vm.CreateWindowMode == CreateWindowMode.EditRole)
                     {
-                        vm.mainWindowVm!.fileReading.RenameRole(vm.EditingArtist, vm.EditingSongOrRole, vm.Description);
+                        vm.mainWindowVm!.fileReading.RenameRole(vm.EditingArtist, vm.EditingSongOrRole, vm.Text);
 
                         roleEditVm!.Roles.Remove(vm.EditingSongOrRole);
-                        roleEditVm!.Roles.Add(vm.Description);
+                        roleEditVm!.Roles.Add(vm.Text);
                         roleEditVm!.Roles.Sort();
                     }
                     Close();
