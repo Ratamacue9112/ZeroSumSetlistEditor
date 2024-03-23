@@ -51,7 +51,7 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public void OpenSetlistSelect(string artist)
         {
-            Content = SetlistSelect = new SetlistSelectViewModel(artist, fileReading.GetSetlists(artist));
+            Content = SetlistSelect = new SetlistSelectViewModel(artist, fileReading.GetSetlists(artist), this);
             ShowCreateSetlistDialog.Invoke();
         }
 
