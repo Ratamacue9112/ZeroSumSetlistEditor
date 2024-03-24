@@ -53,12 +53,14 @@
 						
 							<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
 								<Button Classes.icon="true"
-										CommandParameter="">
+										Command="{Binding $parent[ItemsControl].((vm:SetlistEditViewModel)DataContext).MoveSongUp}"
+										CommandParameter="{Binding}">
 									<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/arrow-up.svg}"
 									   Width="24" Height="24"/>
 								</Button>
 								<Button Classes.icon="true"
-										CommandParameter="">
+										Command="{Binding $parent[ItemsControl].((vm:SetlistEditViewModel)DataContext).MoveSongDown}"
+										CommandParameter="{Binding}">
 									<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/arrow-down.svg}"
 										   Width="24" Height="24"/>
 								</Button>

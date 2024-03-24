@@ -9,7 +9,6 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ZeroSumSetlistEditor.Models;
-using ZeroSumSetlistEditor.Views;
 
 namespace ZeroSumSetlistEditor.ViewModels
 {
@@ -50,6 +49,35 @@ namespace ZeroSumSetlistEditor.ViewModels
             Artist = setlist.Artist;
             ShowDialog = new Interaction<SetlistAddSongWindowViewModel, SetlistEditViewModel?>();
             this.mainWindowVm = mainWindowVm;
+        }
+
+        public void AdjustSongs()
+        {
+            for(int i = 0; i < Songs.Count; i++)
+            {
+                Songs[i].Number = i + 1;
+                Songs[i].DisplayColor = GetDisplayColor(i);
+            }
+        }
+
+        public void MoveSongUp(SetlistSong song)
+        {
+            var index = Songs.IndexOf(song);
+            if (index <= 0) return;
+
+            Songs[index] = Songs[index - 1];
+            Songs[index - 1] = song;
+            AdjustSongs();
+        }
+
+        public void MoveSongDown(SetlistSong song) 
+        {
+            int index = Songs.IndexOf(song);
+            if (index >= Songs.Count - 1) return;
+
+            Songs[index] = Songs[index + 1];
+            Songs[index + 1] = song;
+            AdjustSongs();
         }
 
         public void RemoveSong(SetlistSong song)
