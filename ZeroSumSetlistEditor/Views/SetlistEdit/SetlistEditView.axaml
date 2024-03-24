@@ -16,6 +16,7 @@
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
 		<TextBlock Margin="20" HorizontalAlignment="Center" Grid.Row="0" Grid.ColumnSpan="2">
@@ -46,8 +47,7 @@
 									   VerticalAlignment="Center"
 									   Margin="20 0 0 0"
 									   FontSize="18">
-								<Run FontWeight="ExtraLight" Text="{Binding Number}"/>
-								<Run FontWeight="Light" Text=". "/>
+								<Run FontWeight="ExtraLight" Text="{Binding NumberText}"/>
 								<Run Text="{Binding Name}"/>
 							</TextBlock>
 						
@@ -85,7 +85,25 @@
 				Command="{Binding OpenAddSongDialog}">
 			Add Song
 		</Button>
+
 		<Button Grid.Row="3"
+				Grid.Column="0"
+				Classes.regularButton="true"
+				FontFamily="{StaticResource MontserratFont}"
+				Margin="0"
+				Command="{Binding AddIntermission}">
+			Add Intermission
+		</Button>
+		<Button Grid.Row="3"
+				Grid.Column="1"
+				Classes.regularButton="true"
+				FontFamily="{StaticResource MontserratFont}"
+				Margin="0"
+				Command="{Binding AddEncore}">
+			Add Encore
+		</Button>
+		
+		<Button Grid.Row="4"
 				Grid.Column="0"
 				Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"
@@ -94,7 +112,7 @@
 				CommandParameter="{Binding Artist}">
 			Save
 		</Button>
-		<Button Grid.Row="3"
+		<Button Grid.Row="4"
 				Grid.Column="1"
 				Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"

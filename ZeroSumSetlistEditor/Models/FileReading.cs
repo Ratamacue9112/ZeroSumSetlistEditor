@@ -342,7 +342,18 @@ namespace ZeroSumSetlistEditor.Models
             List<string> songNames = new List<string>();
             foreach (var song in songs)
             {
-                songNames.Add(song.Name);
+                switch (song.Type) 
+                { 
+                    case SetlistItemType.Song:
+                        songNames.Add(song.Name);
+                        break;
+                    case SetlistItemType.Intermission:
+                        songNames.Add("--" + song.Name + "--");
+                        break;
+                    case SetlistItemType.Encore:
+                        songNames.Add("--ENCORE--");
+                        break;
+                }
             }
             File.WriteAllLines(path, songNames);
         }
