@@ -47,6 +47,12 @@
 											   Width="24" Height="24"/>
 									</Button>
 									<Button Classes.icon="true"
+											Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenSetlistDocumentGenerate}"
+											CommandParameter="{Binding}">
+										<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/document.svg}"
+											   Width="24" Height="24"/>
+									</Button>
+									<Button Classes.icon="true"
 											Command="{Binding $parent[ItemsControl].((vm:SetlistSelectViewModel)DataContext).DeleteSetlist}"
 											CommandParameter="{Binding}">
 										<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/delete.svg}"

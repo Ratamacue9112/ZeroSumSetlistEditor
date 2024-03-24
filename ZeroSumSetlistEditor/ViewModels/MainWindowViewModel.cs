@@ -61,6 +61,11 @@ namespace ZeroSumSetlistEditor.ViewModels
             ShowSetlistAddSongDialog.Invoke();
         }
 
+        public void OpenSetlistDocumentGenerate(Setlist setlist)
+        {
+            Content = new SetlistDocumentGenerateViewModel(setlist, fileReading.GetRoles(setlist.Artist));
+        }
+
         public ViewModelBase Content
         {
             get => content;

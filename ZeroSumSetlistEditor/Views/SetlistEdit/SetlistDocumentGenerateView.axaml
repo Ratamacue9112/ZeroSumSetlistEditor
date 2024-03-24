@@ -1,0 +1,64 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:ZeroSumSetlistEditor.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ZeroSumSetlistEditor.Views.SetlistDocumentGenerateView"
+			 x:DataType="vm:SetlistDocumentGenerateViewModel">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		
+		<TextBlock Margin="20" HorizontalAlignment="Center" Grid.Row="0">
+			<Run Text="{Binding Setlist.Venue}"
+				 FontFamily="{StaticResource MontserratFont}"
+				 Classes.h1="true"/>
+			<Run Text=" - "
+				 Classes.h2="true"
+				 FontFamily="{StaticResource MontserratFont}"
+				 FontStyle="Italic"
+				 FontWeight="ExtraLight"/>
+			<Run Text="{Binding Setlist.DateText}"
+				 Classes.h2="true"
+				 FontFamily="{StaticResource MontserratFont}"
+				 FontStyle="Italic"
+				 FontWeight="ExtraLight"/>
+		</TextBlock>
+
+		<ScrollViewer Name="ScrollViewer" 
+					  Margin="0 20 0 0" 
+					  Grid.Row="2"
+					  HorizontalAlignment="Center">
+			<StackPanel>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Text="General"/>
+					<CheckBox IsChecked="{Binding PrintGeneral}"/>
+				</StackPanel>
+				<ItemsControl ItemsSource="{Binding Roles}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Horizontal">
+								<TextBlock Text="{Binding Name}"/>
+								<CheckBox IsChecked="{Binding ToPrint}"/>
+							</StackPanel>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</StackPanel>
+		</ScrollViewer>
+
+		<Button Grid.Row="4"
+				Classes.regularButton="true"
+				FontFamily="{StaticResource MontserratFont}"
+				Margin="0"
+				Command="{Binding GenerateDocument}">
+			Generate Document
+		</Button>
+	</Grid>
+</UserControl>
