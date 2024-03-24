@@ -1,0 +1,50 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:ZeroSumSetlistEditor.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="ZeroSumSetlistEditor.SetlistAddSongWindow"
+		x:DataType="vm:SetlistAddSongWindowViewModel"
+		Icon="avares://ZeroSumSetlistEditor/Assets/icon.ico"
+		Width="800" Height="450"
+		WindowStartupLocation="CenterOwner"
+		CanResize="false"
+        Title="Add Song">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		
+		<TextBlock Classes.h1="true"
+				   FontFamily="{StaticResource MontserratFont}"
+				   Margin="20"
+				   Grid.Row="0"
+				   HorizontalAlignment="Center">Add Song</TextBlock>
+
+		<TextBox FontFamily="{StaticResource MontserratFont}"
+				 FontSize="18"
+				 MaxHeight="35"
+				 Margin="10 0 10 0"
+				 Grid.Row="1"
+				 AcceptsReturn="False"
+				 Text="{Binding SearchText}"/>
+
+		<ScrollViewer Name="ScrollViewer" Margin="0 20 0 20" Grid.Row="2">
+			<ItemsControl ItemsSource="{Binding FilteredSongs}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Button Classes.selectButton="true"
+								Height="50"
+								Command="{Binding $parent[ItemsControl].((vm:SetlistAddSongWindowViewModel)DataContext).Add}"
+								CommandParameter="{Binding Name}">
+							<TextBlock Text="{Binding Name}" FontFamily="{StaticResource MontserratFont}"/>
+						</Button>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
+	</Grid>
+</Window>

@@ -7,6 +7,10 @@
              x:Class="ZeroSumSetlistEditor.Views.SetlistEditView"
 			 x:DataType="vm:SetlistEditViewModel">
 	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"/>
@@ -14,7 +18,7 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<TextBlock Margin="20" HorizontalAlignment="Center" Grid.Row="0">
+		<TextBlock Margin="20" HorizontalAlignment="Center" Grid.Row="0" Grid.ColumnSpan="2">
 			<Run Text="{Binding Setlist.Venue}"
 				 FontFamily="{StaticResource MontserratFont}"
 				 Classes.h1="true"/>
@@ -30,7 +34,7 @@
 				 FontWeight="ExtraLight"/>
 		</TextBlock>
 
-		<ScrollViewer Name="ScrollViewer" Margin="0 20 0 0" Grid.Row="1">
+		<ScrollViewer Name="ScrollViewer" Margin="0 20 0 0" Grid.Row="1" Grid.ColumnSpan="2">
 			<ItemsControl ItemsSource="{Binding Songs}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
@@ -71,19 +75,30 @@
 		</ScrollViewer>
 
 		<Button Grid.Row="2"
+				Grid.ColumnSpan="2"
 				Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"
 				Margin="0"
-				CommandParameter="">
+				Command="{Binding OpenAddSongDialog}">
 			Add Song
 		</Button>
 		<Button Grid.Row="3"
+				Grid.Column="0"
 				Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"
 				Margin="0"
-				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenSetlistSelect}"
+				Command="{Binding Save}"
 				CommandParameter="{Binding Artist}">
-			Back
+			Save
+		</Button>
+		<Button Grid.Row="3"
+				Grid.Column="1"
+				Classes.regularButton="true"
+				FontFamily="{StaticResource MontserratFont}"
+				Margin="0"
+				Command="{Binding Cancel}"
+				CommandParameter="{Binding Artist}">
+			Cancel
 		</Button>
 	</Grid>
 </UserControl>

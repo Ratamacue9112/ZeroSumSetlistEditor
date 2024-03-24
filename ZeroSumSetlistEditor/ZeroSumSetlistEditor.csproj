@@ -32,6 +32,9 @@
 		<Compile Update="Views\CreateWindow.axaml.cs">
 		  <DependentUpon>CreateWindow.axaml</DependentUpon>
 		</Compile>
+		<Compile Update="Views\SetlistEdit\SetlistAddSongWindow.axaml.cs">
+		  <DependentUpon>SetlistAddSongWindow.axaml</DependentUpon>
+		</Compile>
 		<Compile Update="Views\SetlistEdit\SetlistCreateWindow.axaml.cs">
 		  <DependentUpon>SetlistCreateWindow.axaml</DependentUpon>
 		</Compile>

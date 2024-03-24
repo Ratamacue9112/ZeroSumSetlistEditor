@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualBasic.FileIO;
 using System.Collections;
 using System.Globalization;
+using ZeroSumSetlistEditor.ViewModels;
 
 namespace ZeroSumSetlistEditor.Models
 {
@@ -333,6 +334,17 @@ namespace ZeroSumSetlistEditor.Models
                 return songs;
             }
             return new List<string>();
+        }
+
+        public void SaveSetlist(Setlist setlist, List<SetlistSong> songs)
+        {
+            var path = Path.Combine(PersistentDataPath, setlist.Artist, "Setlists", setlist.Date.ToString("yyyy-MM-dd") + " == " + setlist.Venue + ".txt");
+            List<string> songNames = new List<string>();
+            foreach (var song in songs)
+            {
+                songNames.Add(song.Name);
+            }
+            File.WriteAllLines(path, songNames);
         }
     }
 }
