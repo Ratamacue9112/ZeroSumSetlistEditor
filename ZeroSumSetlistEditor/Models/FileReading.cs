@@ -8,6 +8,8 @@ using Microsoft.VisualBasic.FileIO;
 using System.Collections;
 using System.Globalization;
 using ZeroSumSetlistEditor.ViewModels;
+using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 
 namespace ZeroSumSetlistEditor.Models
 {
@@ -334,6 +336,39 @@ namespace ZeroSumSetlistEditor.Models
                 return songs;
             }
             return new List<string>();
+        }
+
+        public int GetIndexOfSong(string song, List<Song> list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i].Name == song) return i;
+            }
+            return -1;
+        }
+
+        public List<Song> GetSetlistSongsFullDetail(Setlist setlist)
+        {
+            var path = Path.Combine(PersistentDataPath, setlist.Artist, "Setlists", setlist.Date.ToString("yyyy-MM-dd") + " == " + setlist.Venue + ".txt");
+            if (File.Exists(path))
+            {
+                var songs = new List<Song>();
+                var allSongs = GetSongs(setlist.Artist);
+                foreach (string song in File.ReadAllLines(path))
+                {
+                    if (string.IsNullOrEmpty(song)) continue;
+                    if (song.StartsWith("--") && song.EndsWith("--"))
+                    {
+                        songs.Add(new Song(song, new List<string>(), setlist.Artist));
+                    }
+                    foreach (Song s in allSongs)
+                    {
+                        if (s.Name == song) songs.Add(s);
+                    }
+                }
+                return songs;
+            }
+            return new List<Song>();
         }
 
         public void SaveSetlist(Setlist setlist, List<SetlistSong> songs)

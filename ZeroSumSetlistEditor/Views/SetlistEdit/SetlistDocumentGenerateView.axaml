@@ -13,6 +13,7 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 		
 		<TextBlock Margin="20" HorizontalAlignment="Center" Grid.Row="0">
@@ -59,6 +60,14 @@
 				Margin="0"
 				Command="{Binding GenerateDocument}">
 			Generate Document
+		</Button>
+		<Button Grid.Row="5"
+				Classes.regularButton="true"
+				FontFamily="{StaticResource MontserratFont}"
+				Margin="0"
+				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenSetlistSelect}"
+				CommandParameter="{Binding Setlist.Artist}">
+			Back
 		</Button>
 	</Grid>
 </UserControl>

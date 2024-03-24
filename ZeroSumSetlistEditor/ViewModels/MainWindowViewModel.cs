@@ -12,12 +12,14 @@ namespace ZeroSumSetlistEditor.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         public FileReading fileReading;
+        public DocumentGeneration documentGeneration;
 
         private ViewModelBase content;
 
         public MainWindowViewModel()
         {
             fileReading = new FileReading();
+            documentGeneration = new DocumentGeneration();
 
             content = ArtistSelect = new ArtistSelectViewModel(fileReading.GetArtists());
         }
@@ -63,7 +65,7 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public void OpenSetlistDocumentGenerate(Setlist setlist)
         {
-            Content = new SetlistDocumentGenerateViewModel(setlist, fileReading.GetRoles(setlist.Artist));
+            Content = new SetlistDocumentGenerateViewModel(setlist, fileReading.GetRoles(setlist.Artist), fileReading.GetSetlistSongsFullDetail(setlist), this);
         }
 
         public ViewModelBase Content

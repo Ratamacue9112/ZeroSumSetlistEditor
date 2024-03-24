@@ -24,9 +24,14 @@ namespace ZeroSumSetlistEditor.ViewModels
     {
         public Setlist Setlist { get; set; }
         public ObservableCollection<SetlistDocumentRole> Roles { get; set; }
+        public List<Song> Songs { get; set; }
         public bool PrintGeneral { get; set; }
 
-        public SetlistDocumentGenerateViewModel(Setlist setlist, List<string> roles)
+        public Action<byte[], Setlist> OpenSaveDialog { get; set; }
+
+        private MainWindowViewModel mainWindowVm;
+
+        public SetlistDocumentGenerateViewModel(Setlist setlist, List<string> roles, List<Song> songs, MainWindowViewModel mainWindowVm)
         {
             Setlist = setlist;
             var list = new List<SetlistDocumentRole>();
@@ -35,12 +40,15 @@ namespace ZeroSumSetlistEditor.ViewModels
                 list.Add(new SetlistDocumentRole(role));
             }
             Roles = new ObservableCollection<SetlistDocumentRole>(list);
+            Songs = songs;
             PrintGeneral = false;
+            this.mainWindowVm = mainWindowVm;
         }
 
         public void GenerateDocument()
         {
-
+            var document = mainWindowVm.documentGeneration.GenerateDocument(Roles.ToList(), PrintGeneral, Songs, Setlist);
+            OpenSaveDialog(document, Setlist);
         }
     }
 }
