@@ -89,12 +89,14 @@ public partial class CreateWindow : Window
                     else if (vm.CreateWindowMode == CreateWindowMode.CreateSong)
                     {
                         string text = vm.Text;
+                        List<string> notes = new List<string>();
                         for (int i = 0; i < vm.RoleCount; i++)
                         {
                             text += ",";
+                            notes.Add("");
                         }
                         File.AppendAllText(path, Environment.NewLine + text);
-                        songSelectVm!.Songs.Add(new Song(vm.Text, new List<string>(), vm.EditingArtist));
+                        songSelectVm!.Songs.Add(new Song(vm.Text, notes, vm.EditingArtist));
                         songSelectVm!.Songs.Sort();
                         songSelectVm!.FilterSongs();
                     }
