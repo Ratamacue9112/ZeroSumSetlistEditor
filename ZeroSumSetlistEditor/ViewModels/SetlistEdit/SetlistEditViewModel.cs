@@ -52,6 +52,11 @@ namespace ZeroSumSetlistEditor.ViewModels
             this.mainWindowVm = mainWindowVm;
         }
 
+        public void RemoveSong(SetlistSong song)
+        {
+            Songs.Remove(song);
+        } 
+
         public string GetDisplayColor(int number)
         {
             return number % 2 == 0 ? "#6E6E6E" : "#5E5E5E";
