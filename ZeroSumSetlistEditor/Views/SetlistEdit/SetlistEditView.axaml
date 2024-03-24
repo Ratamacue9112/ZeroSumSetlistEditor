@@ -41,7 +41,7 @@
 					<DataTemplate>
 						<DockPanel LastChildFill="false"
 								   Background="{Binding DisplayColor}"
-								   Height="50">
+								   Height="40">
 							<TextBlock FontFamily="{StaticResource MontserratFont}"
 									   DockPanel.Dock="Left"
 									   VerticalAlignment="Center"
@@ -51,20 +51,29 @@
 								<Run Text="{Binding Name}"/>
 							</TextBlock>
 						
-							<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+							<StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="0 0 20 0">
 								<Button Classes.icon="true"
+										Width="30"
+										Height="30"
+										Margin="10 0 0 0"
 										Command="{Binding $parent[ItemsControl].((vm:SetlistEditViewModel)DataContext).MoveSongUp}"
 										CommandParameter="{Binding}">
 									<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/arrow-up.svg}"
 									   Width="24" Height="24"/>
 								</Button>
 								<Button Classes.icon="true"
+										Width="30"
+										Height="30"
+										Margin="10 0 0 0"
 										Command="{Binding $parent[ItemsControl].((vm:SetlistEditViewModel)DataContext).MoveSongDown}"
 										CommandParameter="{Binding}">
 									<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/arrow-down.svg}"
 										   Width="24" Height="24"/>
 								</Button>
 								<Button Classes.icon="true"
+										Width="30"
+										Height="30"
+										Margin="10 0 0 0"
 										Command="{Binding $parent[ItemsControl].((vm:SetlistEditViewModel)DataContext).RemoveSong}"
 										CommandParameter="{Binding}">
 									<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/delete.svg}"
