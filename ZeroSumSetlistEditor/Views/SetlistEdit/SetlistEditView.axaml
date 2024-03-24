@@ -119,7 +119,7 @@
 				Margin="0"
 				Command="{Binding Cancel}"
 				CommandParameter="{Binding Artist}">
-			Cancel
+			Back
 		</Button>
 	</Grid>
 </UserControl>

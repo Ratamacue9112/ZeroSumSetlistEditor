@@ -48,13 +48,23 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public async void CancelChanges()
         {
-            var box = MessageBoxManager.GetMessageBoxStandard("Warning", "Do you want to leave without saving? Changes will be lost.", ButtonEnum.YesNo);
-
-            var result = await box.ShowAsync();
-            if (result.ToString() == "Yes")
+            bool hasChanged = false;
+            foreach (var note in Notes)
             {
-                mainWindowVm.OpenSongSelect(Artist);
+                if (note.HasChanged)
+                {
+                    hasChanged = true;
+                    break;
+                }
             }
+            if (hasChanged)
+            {
+                var box = MessageBoxManager.GetMessageBoxStandard("Warning", "Do you want to leave without saving? Changes will be lost.", ButtonEnum.YesNo);
+                var result = await box.ShowAsync();
+                if (result.ToString() == "No") return;
+            }
+
+            mainWindowVm.OpenSongSelect(Artist);
         }
     }
 }

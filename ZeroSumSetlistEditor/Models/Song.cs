@@ -8,13 +8,28 @@ namespace ZeroSumSetlistEditor.Models
 {
     public class SongNote
     {
+        public string _note = string.Empty;
+        public string Note
+        {
+            get
+            {
+                return _note;
+            }
+            set
+            {
+                _note = value;
+                HasChanged = true;
+            }
+        }
+
         public string Role { get; set; }
-        public string Note { get; set; }
+        public bool HasChanged { get; set; }
 
         public SongNote(string role, string note)
         {
-            Role = role;
             Note = note;
+            Role = role;
+            HasChanged = false;
         }
     }
 

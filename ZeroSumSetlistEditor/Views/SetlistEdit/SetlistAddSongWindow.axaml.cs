@@ -29,6 +29,7 @@ namespace ZeroSumSetlistEditor
             vm.CloseDialog += () =>
             {
                 setlistEditVm.SongCount++;
+                setlistEditVm.HasChanged = true;
                 setlistEditVm.Songs.Add(new SetlistSong(vm.SelectedSong, setlistEditVm.SongCount, setlistEditVm.GetDisplayColor(setlistEditVm.SongCount), SetlistItemType.Song));
                 Close();
             };

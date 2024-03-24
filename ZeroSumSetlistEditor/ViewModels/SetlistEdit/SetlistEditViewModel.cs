@@ -48,6 +48,8 @@ namespace ZeroSumSetlistEditor.ViewModels
         public Setlist Setlist { get; set; }
         public string Artist { get; set; }
 
+        public bool HasChanged { get; set; }
+
         public Interaction<SetlistAddSongWindowViewModel, SetlistEditViewModel?> ShowDialog { get; }
 
         private MainWindowViewModel mainWindowVm;
@@ -85,12 +87,14 @@ namespace ZeroSumSetlistEditor.ViewModels
             Songs = list;
             Setlist = setlist;
             Artist = setlist.Artist;
+            HasChanged = false;
             ShowDialog = new Interaction<SetlistAddSongWindowViewModel, SetlistEditViewModel?>();
             this.mainWindowVm = mainWindowVm;
         }
 
         public void AdjustSongs()
         {
+            HasChanged = true;
             SongCount = 0;
             EncoreCount = 0;
             for(int i = 0; i < Songs.Count; i++)
@@ -179,13 +183,15 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public async void Cancel()
         {
-            var box = MessageBoxManager.GetMessageBoxStandard("Warning", "Do you want to leave without saving? Changes will be lost.", ButtonEnum.YesNo);
-
-            var result = await box.ShowAsync();
-            if (result.ToString() == "Yes")
+            if (HasChanged)
             {
-                mainWindowVm.OpenSetlistSelect(Artist);
+                var box = MessageBoxManager.GetMessageBoxStandard("Warning", "Do you want to leave without saving? Changes will be lost.", ButtonEnum.YesNo);
+
+                var result = await box.ShowAsync();
+                if (result.ToString() == "No") return;
             }
+
+            mainWindowVm.OpenSetlistSelect(Artist);
         }
     }
 }
