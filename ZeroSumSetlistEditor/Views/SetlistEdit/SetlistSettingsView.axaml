@@ -1,0 +1,248 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:ZeroSumSetlistEditor.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ZeroSumSetlistEditor.Views.SetlistSettingsView"
+			 x:DataType="vm:SetlistSettingsViewModel">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<TextBlock Margin="20" HorizontalAlignment="Center" Grid.Row="0">
+			<Run Text="{Binding Artist}"
+				 FontFamily="{StaticResource MontserratFont}"
+				 Classes.h1="true"/>
+			<Run Text=" - Setlist Settings"
+				 Classes.h2="true"
+				 FontFamily="{StaticResource MontserratFont}"
+				 FontStyle="Italic"
+				 FontWeight="ExtraLight"/>
+		</TextBlock>
+
+		<ScrollViewer Name="ScrollViewer" Margin="20" Grid.Row="1">
+			<StackPanel>
+				<!--Background Color-->
+				<DockPanel Classes.setting="true">
+					<TextBlock FontFamily="{StaticResource MontserratFont}"
+							   DockPanel.Dock="Left">
+						Background Color
+					</TextBlock>
+					<ColorPicker HorizontalAlignment="Right" 
+								 Width="150" 
+								 DockPanel.Dock="Right"
+								 Color="{Binding Settings.BackgroundColor}"/>
+				</DockPanel>
+
+				<!--Song Color-->
+				<DockPanel Classes.setting="true">
+					<TextBlock FontFamily="{StaticResource MontserratFont}"
+							   DockPanel.Dock="Left">
+						Song Color
+					</TextBlock>
+					<ColorPicker HorizontalAlignment="Right" 
+								 Width="150" 
+								 DockPanel.Dock="Right"
+								 Color="{Binding Settings.SongColor}"/>
+				</DockPanel>
+				
+				<!--Note Color-->
+				<DockPanel Classes.setting="true">
+					<TextBlock FontFamily="{StaticResource MontserratFont}"
+							   DockPanel.Dock="Left">
+						Note Color
+					</TextBlock>
+					<ColorPicker HorizontalAlignment="Right" 
+								 Width="150" 
+								 DockPanel.Dock="Right"
+								 Color="{Binding Settings.NoteColor}"/>
+				</DockPanel>
+
+				<!--Intermission Color-->
+				<DockPanel Classes.setting="true">
+					<TextBlock FontFamily="{StaticResource MontserratFont}"
+							   DockPanel.Dock="Left">
+						Intermission Color
+					</TextBlock>
+					<ColorPicker HorizontalAlignment="Right" 
+								 Width="150" 
+								 DockPanel.Dock="Right"
+								 Color="{Binding Settings.IntermissionColor}"/>
+				</DockPanel>
+				
+				<!--Encore Color-->
+				<DockPanel Classes.setting="true">
+					<TextBlock FontFamily="{StaticResource MontserratFont}"
+							   DockPanel.Dock="Left">
+						Encore Color
+					</TextBlock>
+					<ColorPicker HorizontalAlignment="Right" 
+								 Width="150" 
+								 DockPanel.Dock="Right"
+								 Color="{Binding Settings.EncoreColor}"/>
+				</DockPanel>
+
+				<!--Font Family-->
+				<DockPanel Classes.setting="true">
+					<TextBlock FontFamily="{StaticResource MontserratFont}"
+							   DockPanel.Dock="Left">
+						Font Family
+					</TextBlock>
+					<TextBox FontFamily="{StaticResource MontserratFont}" 
+							 FontSize="20"
+							 HorizontalAlignment="Right" 
+							 Width="300"
+							 Height="40"
+							 DockPanel.Dock="Right"
+							 Text="{Binding Settings.FontFamily}"/>
+				</DockPanel>
+
+				<!--Header Size-->
+				<DockPanel Classes.setting="true">
+					<TextBlock FontFamily="{StaticResource MontserratFont}"
+							   DockPanel.Dock="Left">
+						Header Size
+					</TextBlock>
+					<NumericUpDown FontFamily="{StaticResource MontserratFont}"
+							 FontSize="20"
+							 Minimum="0"
+							 FormatString="0"
+							 HorizontalAlignment="Right"
+							 Width="200"
+							 Height="40"
+							 DockPanel.Dock="Right"
+							 Value="{Binding Settings.HeaderSize}"/>
+				</DockPanel>
+
+				<!--Song Size-->
+				<DockPanel Classes.setting="true">
+					<TextBlock FontFamily="{StaticResource MontserratFont}"
+							   DockPanel.Dock="Left">
+						Song Size
+					</TextBlock>
+					<NumericUpDown FontFamily="{StaticResource MontserratFont}"
+							 FontSize="20"
+							 Minimum="0"
+							 FormatString="0"
+							 HorizontalAlignment="Right"
+							 Width="200"
+							 Height="40"
+							 DockPanel.Dock="Right"
+							 Value="{Binding Settings.SongSize}"/>
+				</DockPanel>
+
+				<!--Note Size-->
+				<DockPanel Classes.setting="true">
+					<TextBlock FontFamily="{StaticResource MontserratFont}"
+							   DockPanel.Dock="Left">
+						Note Size
+					</TextBlock>
+					<NumericUpDown FontFamily="{StaticResource MontserratFont}"
+							 FontSize="20"
+							 Minimum="0"
+							 FormatString="0"
+							 HorizontalAlignment="Right"
+							 Width="200"
+							 Height="40"
+							 DockPanel.Dock="Right"
+							 Value="{Binding Settings.NoteSize}"/>
+				</DockPanel>
+
+				<!--Intermission Size-->
+				<DockPanel Classes.setting="true">
+					<TextBlock FontFamily="{StaticResource MontserratFont}"
+							   DockPanel.Dock="Left">
+						Intermission Size
+					</TextBlock>
+					<NumericUpDown FontFamily="{StaticResource MontserratFont}"
+							 FontSize="20"
+							 Minimum="0"
+							 FormatString="0"
+							 HorizontalAlignment="Right"
+							 Width="200"
+							 Height="40"
+							 DockPanel.Dock="Right"
+							 Value="{Binding Settings.IntermissionSize}"/>
+				</DockPanel>
+
+				<!--Encore Size-->
+				<DockPanel Classes.setting="true">
+					<TextBlock FontFamily="{StaticResource MontserratFont}"
+							   DockPanel.Dock="Left">
+						Encore Size
+					</TextBlock>
+					<NumericUpDown FontFamily="{StaticResource MontserratFont}"
+							 FontSize="20"
+							 Minimum="0"
+							 FormatString="0"
+							 HorizontalAlignment="Right"
+							 Width="200"
+							 Height="40"
+							 DockPanel.Dock="Right"
+							 Value="{Binding Settings.IntermissionSize}"/>
+				</DockPanel>
+
+				<!--Show Venue-->
+				<DockPanel Classes.setting="true">
+					<TextBlock FontFamily="{StaticResource MontserratFont}"
+							   DockPanel.Dock="Left">
+						Show Venue
+					</TextBlock>
+					<CheckBox HorizontalAlignment="Right"
+							  DockPanel.Dock="Right"
+							  IsChecked="{Binding Settings.ShowVenue}"/>
+				</DockPanel>
+
+				<!--Show Date-->
+				<DockPanel Classes.setting="true">
+					<TextBlock FontFamily="{StaticResource MontserratFont}"
+							   DockPanel.Dock="Left">
+						Show Date
+					</TextBlock>
+					<CheckBox HorizontalAlignment="Right"
+							  DockPanel.Dock="Right"
+							  IsChecked="{Binding Settings.ShowDate}"/>
+				</DockPanel>
+
+				<!--Show Artist-->
+				<DockPanel Classes.setting="true">
+					<TextBlock FontFamily="{StaticResource MontserratFont}"
+							   DockPanel.Dock="Left">
+						Show Artist
+					</TextBlock>
+					<CheckBox HorizontalAlignment="Right"
+							  DockPanel.Dock="Right"
+							  IsChecked="{Binding Settings.ShowArtist}"/>
+				</DockPanel>
+			</StackPanel>
+		</ScrollViewer>
+
+		<Button Classes.regularButton="true"
+				FontFamily="{StaticResource MontserratFont}"
+				Grid.Row="2"
+				Margin="0"
+				Command="">
+			Save
+		</Button>
+		<Button Classes.regularButton="true"
+				FontFamily="{StaticResource MontserratFont}"
+				Grid.Row="3"
+				Margin="0"
+				Command="">
+			Reset to Defaults
+		</Button>
+		<Button Classes.regularButton="true"
+				FontFamily="{StaticResource MontserratFont}"
+				Grid.Row="4"
+				Margin="0"
+				Command="">
+			Cancel
+		</Button>
+	</Grid>
+</UserControl>

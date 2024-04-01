@@ -57,6 +57,11 @@ namespace ZeroSumSetlistEditor.ViewModels
             ShowCreateSetlistDialog.Invoke();
         }
 
+        public void OpenSetlistSettings(string artist)
+        {
+            Content = new SetlistSettingsViewModel(artist);
+        }
+
         public void OpenSetlistEdit(Setlist setlist)
         {
             Content = SetlistEdit = new SetlistEditViewModel(setlist, fileReading.GetSetlistSongs(setlist), this);
