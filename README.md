@@ -6,7 +6,6 @@ Zero Sum is an app that allows you to generate setlists for all your live shows.
 
 The editor is currently quite basic, but I plan to continue to add to it. Here is a list of planned features:
 - Customization for the setlist
-- Quick lookup mode
 - Statistics
 
 Any contributions would be welcome.
