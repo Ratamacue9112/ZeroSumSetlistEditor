@@ -227,21 +227,21 @@
 				FontFamily="{StaticResource MontserratFont}"
 				Grid.Row="2"
 				Margin="0"
-				Command="">
+				Command="{Binding Save}">
 			Save
 		</Button>
 		<Button Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"
 				Grid.Row="3"
 				Margin="0"
-				Command="">
+				Command="{Binding ResetToDefaults}">
 			Reset to Defaults
 		</Button>
 		<Button Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"
 				Grid.Row="4"
 				Margin="0"
-				Command="">
+				Command="{Binding Cancel}">
 			Cancel
 		</Button>
 	</Grid>

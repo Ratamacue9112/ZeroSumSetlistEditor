@@ -9,7 +9,7 @@ using System.Collections;
 using System.Globalization;
 using ZeroSumSetlistEditor.ViewModels;
 using Avalonia.Controls;
-using Avalonia.Platform.Storage;
+using Avalonia.Media;
 
 namespace ZeroSumSetlistEditor.Models
 {
@@ -391,6 +391,197 @@ namespace ZeroSumSetlistEditor.Models
                 }
             }
             File.WriteAllLines(path, songNames);
+        }
+    
+        public void SaveSetlistSettings(SetlistSettings settings)
+        {
+            var path = Path.Combine(PersistentDataPath, "setlist_settings.txt");
+
+            List<string> text = [
+                "backgroundColor - " + settings.BackgroundColor.ToString(),
+                "songColor - " + settings.SongColor.ToString(),
+                "noteColor - " + settings.NoteColor.ToString(),
+                "intermissionColor - " + settings.IntermissionColor.ToString(),
+                "encoreColor - " + settings.EncoreColor.ToString(),
+                "fontFamily - " + settings.FontFamily,
+                "headerSize - " + settings.HeaderSize.ToString(),
+                "songSize - " + settings.SongSize.ToString(),
+                "noteSize - " + settings.NoteSize.ToString(),
+                "intermissionSize - " + settings.IntermissionSize.ToString(),
+                "encoreSize - " + settings.EncoreSize.ToString(),
+                "showVenue - " + settings.ShowVenue.ToString(),
+                "showDate - " + settings.ShowDate.ToString(),
+                "showArtist - " + settings.ShowArtist.ToString(),
+            ];
+            File.WriteAllLines(path, text);
+        }
+
+        public SetlistSettings GetSetlistSettings()
+        {
+            var path = Path.Combine(PersistentDataPath, "setlist_settings.txt");
+            SetlistSettings settings = new SetlistSettings();
+            settings.Initialized = false;
+            if (!File.Exists(path))
+            {
+                settings.ResetToDefaults();
+                return settings;
+            }
+            
+            foreach (var line in File.ReadAllLines(path))
+            {
+                var lineSplit = line.Split(" - ");
+                switch (lineSplit.First())
+                {
+                    case "backgroundColor":
+                        var isColor = Color.TryParse(lineSplit.Last(), out var color);
+                        if (isColor)
+                        {
+                            settings.BackgroundColor = color;
+                        }
+                        else
+                        {
+                            settings.BackgroundColor = Colors.White;
+                        }
+                        break;
+                    case "songColor":
+                        isColor = Color.TryParse(lineSplit.Last(), out color);
+                        if (isColor)
+                        {
+                            settings.SongColor = color;
+                        }
+                        else
+                        {
+                            settings.SongColor = Colors.Black;
+                        }
+                        break;
+                    case "noteColor":
+                        isColor = Color.TryParse(lineSplit.Last(), out color);
+                        if (isColor)
+                        {
+                            settings.NoteColor = color;
+                        }
+                        else
+                        {
+                            settings.NoteColor = Colors.Black;
+                        }
+                        break;
+                    case "intermissionColor":
+                        isColor = Color.TryParse(lineSplit.Last(), out color);
+                        if (isColor)
+                        {
+                            settings.IntermissionColor = color;
+                        }
+                        else
+                        {
+                            settings.IntermissionColor = Colors.Black;
+                        }
+                        break;
+                    case "encoreColor":
+                        isColor = Color.TryParse(lineSplit.Last(), out color);
+                        if (isColor)
+                        {
+                            settings.EncoreColor = color;
+                        }
+                        else
+                        {
+                            settings.EncoreColor = Colors.Black;
+                        }
+                        break;
+                    case "fontFamily":
+                        settings.FontFamily = lineSplit.Last();
+                        break;
+                    case "headerSize":
+                        var isInt = int.TryParse(lineSplit.Last(), out var result);
+                        if (isInt)
+                        {
+                            settings.HeaderSize = result;
+                        }
+                        else
+                        {
+                            settings.HeaderSize = 20;
+                        }
+                        break;
+                    case "songSize":
+                        isInt = int.TryParse(lineSplit.Last(), out result);
+                        if (isInt)
+                        {
+                            settings.SongSize = result;
+                        }
+                        else
+                        {
+                            settings.SongSize = 20;
+                        }
+                        break;
+                    case "noteSize":
+                        isInt = int.TryParse(lineSplit.Last(), out result);
+                        if (isInt)
+                        {
+                            settings.NoteSize = result;
+                        }
+                        else
+                        {
+                            settings.NoteSize = 20;
+                        }
+                        break;
+                    case "intermissionSize":
+                        isInt = int.TryParse(lineSplit.Last(), out result);
+                        if (isInt)
+                        {
+                            settings.IntermissionSize = result;
+                        }
+                        else
+                        {
+                            settings.IntermissionSize = 20;
+                        }
+                        break;
+                    case "encoreSize":
+                        isInt = int.TryParse(lineSplit.Last(), out result);
+                        if (isInt)
+                        {
+                            settings.EncoreSize = result;
+                        }
+                        else
+                        {
+                            settings.EncoreSize = 20;
+                        }
+                        break;
+                    case "showVenue":
+                        var isBool = bool.TryParse(lineSplit.Last(), out var value);
+                        if (isBool)
+                        {
+                            settings.ShowVenue = value;
+                        }
+                        else
+                        {
+                            settings.ShowVenue = true;
+                        }
+                        break;
+                    case "showDate":
+                        isBool = bool.TryParse(lineSplit.Last(), out value);
+                        if (isBool)
+                        {
+                            settings.ShowDate = value;
+                        }
+                        else
+                        {
+                            settings.ShowDate = true;
+                        }
+                        break;
+                    case "showArtist":
+                        isBool = bool.TryParse(lineSplit.Last(), out value);
+                        if (isBool)
+                        {
+                            settings.ShowArtist = value;
+                        }
+                        else
+                        {
+                            settings.ShowArtist = false;
+                        }
+                        break;
+                }
+            }
+            settings.Initialized = true;
+            return settings;
         }
     }
 }
