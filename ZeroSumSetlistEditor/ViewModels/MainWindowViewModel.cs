@@ -73,6 +73,11 @@ namespace ZeroSumSetlistEditor.ViewModels
             Content = new SetlistDocumentGenerateViewModel(setlist, fileReading.GetRoles(setlist.Artist), fileReading.GetSetlistSongsFullDetail(setlist), this);
         }
 
+        public void OpenStatistics(string artist)
+        {
+            Content = new StatisticsViewModel(artist);
+        }
+
         public ViewModelBase Content
         {
             get => content;
