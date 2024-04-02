@@ -12,6 +12,7 @@
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
 		<TextBlock Margin="20" HorizontalAlignment="Center" Grid.Row="0">
@@ -75,6 +76,14 @@
 			Add Setlist
 		</Button>
 		<Button Grid.Row="3"
+				Classes.regularButton="true"
+				FontFamily="{StaticResource MontserratFont}"
+				Margin="0"
+				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenSetlistSettings}"
+				CommandParameter="{Binding Artist}">
+			Settings
+		</Button>
+		<Button Grid.Row="4"
 				Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"
 				Margin="0"

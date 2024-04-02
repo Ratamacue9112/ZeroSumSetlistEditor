@@ -13,7 +13,7 @@ namespace ZeroSumSetlistEditor.Models
 {
     public class DocumentGeneration
     {
-        public byte[] GenerateDocument(List<SetlistDocumentRole> roles, bool printGeneral, List<Song> songs, Setlist setlist)
+        public byte[] GenerateDocument(List<SetlistDocumentRole> roles, bool printGeneral, List<Song> songs, Setlist setlist, SetlistSettings settings)
         {
             QuestPDF.Settings.License = LicenseType.Community;
 
@@ -23,14 +23,14 @@ namespace ZeroSumSetlistEditor.Models
                 if (printGeneral)
                 {
                     isEmpty = false;
-                    SetlistPage(container, null, -1, setlist, songs);
+                    SetlistPage(container, null, -1, setlist, songs, settings);
                 }
                 for (int i = 0; i < roles.Count; i++)
                 {
                     if (roles[i].ToPrint)
                     {
                         isEmpty = false;
-                        SetlistPage(container, roles[i], i, setlist, songs);
+                        SetlistPage(container, roles[i], i, setlist, songs, settings);
                     }
                 }
                 if (isEmpty)
@@ -40,29 +40,49 @@ namespace ZeroSumSetlistEditor.Models
             }).GeneratePdf();
         }
 
-        private void SetlistPage(IDocumentContainer container, SetlistDocumentRole? role, int roleIndex, Setlist setlist, List<Song> songs)
+        private void SetlistPage(IDocumentContainer container, SetlistDocumentRole? role, int roleIndex, Setlist setlist, List<Song> songs, SetlistSettings settings)
         {
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
                 page.Margin(1, Unit.Centimetre);
-                page.DefaultTextStyle(x => x.FontSize(14.5f));
+                if (settings.FontFamily.IsInstalledFont())
+                {
+                    page.DefaultTextStyle(x => x.FontFamily(settings.FontFamily));
+                }
+                page.PageColor(settings.BackgroundColor.ToHex());
 
                 page.Header()
-                    .Text(text => {
-                        text.Span(setlist.Venue + Environment.NewLine)
-                            .ExtraBold()
-                            .FontSize(20);
-                        text.Span(setlist.DateText)
-                            .SemiBold()
-                            .FontSize(18);
-
+                    .Text(text =>
+                    {
+                        if (settings.ShowVenue)
+                        {
+                            text.Span(setlist.Venue + Environment.NewLine)
+                                .ExtraBold()
+                                .FontColor(settings.HeaderColor.ToHex())
+                                .FontSize(settings.HeaderSize);
+                        }
+                        if (settings.ShowDate)
+                        {
+                            text.Span(setlist.DateText + Environment.NewLine)
+                                .SemiBold()
+                                .FontColor(settings.HeaderColor.ToHex())
+                                .FontSize(settings.HeaderSize / 10 * 9);
+                        }
+                        if (settings.ShowArtist)
+                        {
+                            text.Span(setlist.Artist)
+                                .SemiBold()
+                                .FontColor(settings.HeaderColor.ToHex())
+                                .FontSize(settings.HeaderSize / 10 * 7);
+                        }
                     });
 
                 if (role != null)
                 {
                     page.Footer()
-                        .Text(role.Name);
+                        .Text(role.Name)
+                        .FontColor(settings.HeaderColor.ToHex());
                 }
 
                 page.Content()
@@ -78,20 +98,26 @@ namespace ZeroSumSetlistEditor.Models
                                 if (encoreCount > 1)
                                 {
                                     x.Item()
-                                        .Text("----------------------------------- ENCORE " + encoreCount + " -----------------------------------")
+                                        .Text("---- ENCORE " + encoreCount + " ----")
+                                        .FontColor(settings.EncoreColor.ToHex())
+                                        .FontSize(settings.EncoreSize)
                                         .ExtraBold();
                                 }
                                 else
                                 {
                                     x.Item()
-                                        .Text("------------------------------------ ENCORE ------------------------------------")
+                                        .Text("---- ENCORE ----")
+                                        .FontColor(settings.EncoreColor.ToHex())
+                                        .FontSize(settings.EncoreSize)
                                         .ExtraBold();
                                 }
                             }
                             else if (song.Name == "--INTERMISSION--")
                             {
                                 x.Item()
-                                    .Text("-------------------------------- INTERMISSION --------------------------------")
+                                    .Text("---- INTERMISSION ----")
+                                    .FontColor(settings.IntermissionColor.ToHex())
+                                    .FontSize(settings.IntermissionSize)
                                     .ExtraBold();
                             }
                             else 
@@ -99,11 +125,15 @@ namespace ZeroSumSetlistEditor.Models
                                 x.Item().Row(row =>
                                 {
                                     row.RelativeItem()
-                                        .Text(song.Name.ToUpper());
+                                        .Text(song.Name.ToUpper())
+                                        .FontColor(settings.SongColor.ToHex())
+                                        .FontSize(settings.SongSize);
                                     if (role != null)
                                     {
                                         row.RelativeItem()
-                                            .Text(song.Notes[roleIndex]);
+                                            .Text(song.Notes[roleIndex])
+                                            .FontColor(settings.NoteColor.ToHex())
+                                            .FontSize(settings.NoteSize);
                                     }
                                 });
                             }

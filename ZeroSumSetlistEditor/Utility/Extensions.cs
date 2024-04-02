@@ -2,6 +2,8 @@
 using System.Collections.ObjectModel;
 using System;
 using System.Linq;
+using Avalonia.Media;
+using System.Drawing;
 
 static class Extensions
 {
@@ -22,5 +24,15 @@ static class Extensions
         if (number.EndsWith("2")) return "nd";
         if (number.EndsWith("3")) return "rd";
         return "th";
+    }
+
+    public static string ToHex(this Avalonia.Media.Color c) => $"#{c.R:X2}{c.G:X2}{c.B:X2}";
+
+    public static bool IsInstalledFont(this string name)
+    {
+        using (Font fontTester = new Font(name, 14))
+        {
+            return fontTester.Name == name;
+        }
     }
 }

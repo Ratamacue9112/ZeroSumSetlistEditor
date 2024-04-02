@@ -47,7 +47,7 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public void GenerateDocument()
         {
-            var document = mainWindowVm.documentGeneration.GenerateDocument(Roles.ToList(), PrintGeneral, Songs, Setlist);
+            var document = mainWindowVm.documentGeneration.GenerateDocument(Roles.ToList(), PrintGeneral, Songs, Setlist, mainWindowVm.fileReading.GetSetlistSettings());
             OpenSaveDialog(document, Setlist);
         }
     }
