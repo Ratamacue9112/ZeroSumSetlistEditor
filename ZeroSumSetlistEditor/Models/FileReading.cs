@@ -399,6 +399,7 @@ namespace ZeroSumSetlistEditor.Models
 
             List<string> text = [
                 "backgroundColor - " + settings.BackgroundColor.ToString(),
+                "headerColor - " + settings.HeaderColor.ToString(),
                 "songColor - " + settings.SongColor.ToString(),
                 "noteColor - " + settings.NoteColor.ToString(),
                 "intermissionColor - " + settings.IntermissionColor.ToString(),
@@ -441,6 +442,17 @@ namespace ZeroSumSetlistEditor.Models
                         else
                         {
                             settings.BackgroundColor = Colors.White;
+                        }
+                        break;
+                    case "headerColor":
+                        isColor = Color.TryParse(lineSplit.Last(), out color);
+                        if (isColor)
+                        {
+                            settings.HeaderColor = color;
+                        }
+                        else
+                        {
+                            settings.HeaderColor = Colors.Black;
                         }
                         break;
                     case "songColor":

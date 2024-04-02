@@ -45,6 +45,20 @@ namespace ZeroSumSetlistEditor.Models
             }
         }
 
+        public Color _headerColor { get; set; }
+        public Color HeaderColor
+        {
+            get
+            {
+                return _headerColor;
+            }
+            set
+            {
+                HasChanged = true;
+                _headerColor = value;
+            }
+        }
+
         public Color _songColor { get; set; }
         public Color SongColor
         {
@@ -231,16 +245,17 @@ namespace ZeroSumSetlistEditor.Models
         {
             Initialized = false;
             BackgroundColor = Colors.White;
+            HeaderColor = Colors.Black;
             SongColor = Colors.Black;
             NoteColor = Colors.Black;
             IntermissionColor = Colors.Black;
             EncoreColor = Colors.Black;
             FontFamily = "";
             HeaderSize = 20;
-            SongSize = 16;
-            NoteSize = 16;
-            IntermissionSize = 16;
-            EncoreSize = 16;
+            SongSize = 14;
+            NoteSize = 14;
+            IntermissionSize = 14;
+            EncoreSize = 14;
             ShowVenue = true;
             ShowDate = true;
             ShowArtist = false;

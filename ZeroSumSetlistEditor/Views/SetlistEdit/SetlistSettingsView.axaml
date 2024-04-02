@@ -40,6 +40,18 @@
 								 Color="{Binding Settings.BackgroundColor}"/>
 				</DockPanel>
 
+				<!--Header Color-->
+				<DockPanel Classes.setting="true">
+					<TextBlock FontFamily="{StaticResource MontserratFont}"
+							   DockPanel.Dock="Left">
+						Header Color
+					</TextBlock>
+					<ColorPicker HorizontalAlignment="Right"
+								 Width="150"
+								 DockPanel.Dock="Right"
+								 Color="{Binding Settings.HeaderColor}"/>
+				</DockPanel>
+
 				<!--Song Color-->
 				<DockPanel Classes.setting="true">
 					<TextBlock FontFamily="{StaticResource MontserratFont}"
