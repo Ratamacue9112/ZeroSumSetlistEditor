@@ -6,8 +6,9 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ZeroSumSetlistEditor.Views.StatisticsView"
 			 x:DataType="vm:StatisticsViewModel">
-	<Grid>
+	<Grid> 
 		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
@@ -25,50 +26,110 @@
 				 FontWeight="ExtraLight"/>
 		</TextBlock>
 
-		<ScrollViewer Name="ScrollViewer" Margin="0 20 0 0" Grid.Row="1">
-			<!--
-			<ItemsControl ItemsSource="">
-				<ItemsControl.ItemTemplate>
-					<DataTemplate>
-						<Button Classes.selectButton="true"
-								Height="50"
-								Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenSetlistEdit}"
-								CommandParameter="">
-							<DockPanel LastChildFill="false">
-								<TextBlock FontFamily="{StaticResource MontserratFont}" DockPanel.Dock="Left">
-									<Run Text=""/>
-									<Run Text=" - "/>
-									<Run Text="{Binding DateText}" FontStyle="Italic"/>
-								</TextBlock>
-								<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-									<Button Classes.icon="true"
-											Command="{Binding $parent[ItemsControl].((vm:SetlistSelectViewModel)DataContext).OpenCreateSetlistDialog}"
-											CommandParameter="">
-										<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/edit.svg}"
-											   Width="24" Height="24"/>
-									</Button>
-									<Button Classes.icon="true"
-											Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenSetlistDocumentGenerate}"
-											CommandParameter="">
-										<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/document.svg}"
-											   Width="24" Height="24"/>
-									</Button>
-									<Button Classes.icon="true"
-											Command="{Binding $parent[ItemsControl].((vm:SetlistSelectViewModel)DataContext).DeleteSetlist}"
-											CommandParameter="">
-										<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/delete.svg}"
-											   Width="24" Height="24"/>
-									</Button>
-								</StackPanel>
-							</DockPanel>
-						</Button>
-					</DataTemplate>
-				</ItemsControl.ItemTemplate>
-			</ItemsControl>
-			-->
+		<ComboBox ItemsSource="{Binding TimeFrames}"
+				  SelectedItem="{Binding SelectedItem}"
+				  HorizontalAlignment="Center"
+				  Width="300"
+				  MaxDropDownHeight="500" 
+				  Grid.Row="1"/>
+		
+		<ScrollViewer Name="ScrollViewer" Margin="0 20 0 0" Grid.Row="2">
+			<StackPanel>
+				<Expander HorizontalAlignment="Stretch"
+						  FontFamily="{StaticResource MontserratFont}">
+					<Expander.Header>Times Played</Expander.Header>
+					<ItemsControl ItemsSource="{Binding CurrentTimeFrame.PlayCounts}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<DockPanel Classes.statistic="true">
+									<TextBlock FontFamily="{StaticResource MontserratFont}"
+											   DockPanel.Dock="Left"
+											   Text="{Binding Name}"/>
+									<TextBlock FontFamily="{StaticResource MontserratFont}"
+											   DockPanel.Dock="Right"
+											   HorizontalAlignment="Right"
+											   VerticalAlignment="Center">
+										<Run Text="{Binding Count}"/>
+										<Run Text="plays"/>
+									</TextBlock>
+								</DockPanel>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</Expander>
+
+				<Expander HorizontalAlignment="Stretch"
+						  FontFamily="{StaticResource MontserratFont}">
+					<Expander.Header>Show Openers</Expander.Header>
+					<ItemsControl ItemsSource="{Binding CurrentTimeFrame.ShowOpeners}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<DockPanel Classes.statistic="true">
+									<TextBlock FontFamily="{StaticResource MontserratFont}"
+											   DockPanel.Dock="Left"
+											   Text="{Binding Name}"/>
+									<TextBlock FontFamily="{StaticResource MontserratFont}"
+											   DockPanel.Dock="Right"
+											   HorizontalAlignment="Right"
+											   VerticalAlignment="Center">
+										<Run Text="{Binding Count}"/>
+										<Run Text="plays"/>
+									</TextBlock>
+								</DockPanel>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</Expander>
+
+				<Expander HorizontalAlignment="Stretch"
+						  FontFamily="{StaticResource MontserratFont}">
+					<Expander.Header>Main Set Closers</Expander.Header>
+					<ItemsControl ItemsSource="{Binding CurrentTimeFrame.MainSetClosers}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<DockPanel Classes.statistic="true">
+									<TextBlock FontFamily="{StaticResource MontserratFont}"
+											   DockPanel.Dock="Left"
+											   Text="{Binding Name}"/>
+									<TextBlock FontFamily="{StaticResource MontserratFont}"
+											   DockPanel.Dock="Right"
+											   HorizontalAlignment="Right"
+											   VerticalAlignment="Center">
+										<Run Text="{Binding Count}"/>
+										<Run Text="plays"/>
+									</TextBlock>
+								</DockPanel>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</Expander>
+
+				<Expander HorizontalAlignment="Stretch"
+						  FontFamily="{StaticResource MontserratFont}">
+					<Expander.Header>Show Closers</Expander.Header>
+					<ItemsControl ItemsSource="{Binding CurrentTimeFrame.ShowClosers}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<DockPanel Classes.statistic="true">
+									<TextBlock FontFamily="{StaticResource MontserratFont}"
+											   DockPanel.Dock="Left"
+											   Text="{Binding Name}"/>
+									<TextBlock FontFamily="{StaticResource MontserratFont}"
+											   DockPanel.Dock="Right"
+											   HorizontalAlignment="Right"
+											   VerticalAlignment="Center">
+										<Run Text="{Binding Count}"/>
+										<Run Text="plays"/>
+									</TextBlock>
+								</DockPanel>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</Expander>
+			</StackPanel>
 		</ScrollViewer>
 
-		<Button Grid.Row="2"
+		<Button Grid.Row="3"
 				Grid.ColumnSpan="2"
 				Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"
@@ -76,7 +137,7 @@
 				Command="{Binding RescanStatistics}">
 			Rescan Statistics
 		</Button>
-		<Button Grid.Row="3"
+		<Button Grid.Row="4"
 				Grid.ColumnSpan="2"
 				Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"

@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using Avalonia.Media;
 using System.Drawing;
+using ZeroSumSetlistEditor.Models;
 
 static class Extensions
 {
@@ -12,6 +13,18 @@ static class Extensions
         List<T> sorted = collection.OrderBy(x => x).ToList();
         for (int i = 0; i < sorted.Count(); i++)
             collection.Move(collection.IndexOf(sorted[i]), i);
+    }
+
+    public static int FindSong(this ObservableCollection<StatisticSong> songs, string name)
+    {
+        for (int i = 0; i < songs.Count; i++)
+        {
+            if (songs[i].Name == name)
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public static string GetOrdinalSuffix(this int num)
