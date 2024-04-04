@@ -10,9 +10,17 @@ namespace ZeroSumSetlistEditor.ViewModels
     {
         public string Artist { get; set; }
 
-        public StatisticsViewModel(string artist)
+        private MainWindowViewModel mainWindowVm;
+
+        public StatisticsViewModel(string artist, MainWindowViewModel mainWindowVm)
         {
             Artist = artist;
+            this.mainWindowVm = mainWindowVm;
+        }
+
+        public void RescanStatistics()
+        {
+            mainWindowVm.fileReading.RescanStatistics(Artist);
         }
     }
 }

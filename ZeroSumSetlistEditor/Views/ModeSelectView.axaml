@@ -50,6 +50,7 @@
 		<Button Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"
 				Grid.Row="3"
+				Grid.ColumnSpan="2"
 				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenArtistSelect}">
 			Back
 		</Button>

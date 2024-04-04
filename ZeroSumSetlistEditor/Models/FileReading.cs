@@ -13,6 +13,15 @@ using Avalonia.Media;
 
 namespace ZeroSumSetlistEditor.Models
 {
+    public enum StatisticMode
+    {
+        None,
+        AllSongs,
+        ShowOpeners,
+        MainSetClosers,
+        ShowClosers
+    }
+
     public class FileReading
     {
         public readonly static string PersistentDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ZeroSumSetlistEditor");
@@ -313,9 +322,9 @@ namespace ZeroSumSetlistEditor.Models
             {
                 if (!file.EndsWith(".txt")) continue;
                 string filename = file.Split(Path.DirectorySeparatorChar).Last();
-                filename = filename.Split(".").First();
+                filename = filename.Split(".")[0];
                 string[] filenameSplit = filename.Split(" == ");
-                Setlist setlist = new Setlist(filenameSplit.Last(), DateTime.ParseExact(filenameSplit.First(), "yyyy-MM-dd", CultureInfo.InvariantCulture), artist);
+                Setlist setlist = new Setlist(filenameSplit.Last(), DateTime.ParseExact(filenameSplit[0], "yyyy-MM-dd", CultureInfo.InvariantCulture), artist);
                 list.Add(setlist);
             }
             list.Sort();
@@ -431,7 +440,7 @@ namespace ZeroSumSetlistEditor.Models
             foreach (var line in File.ReadAllLines(path))
             {
                 var lineSplit = line.Split(" - ");
-                switch (lineSplit.First())
+                switch (lineSplit[0])
                 {
                     case "backgroundColor":
                         var isColor = Color.TryParse(lineSplit.Last(), out var color);
@@ -594,6 +603,248 @@ namespace ZeroSumSetlistEditor.Models
             }
             settings.Initialized = true;
             return settings;
+        }
+    
+        public List<StatisticTimeFrame> GetStatistics(string artist)
+        {
+            var path = Path.Combine(PersistentDataPath, artist, "stats.txt");
+            if (!File.Exists(path))
+            {
+                File.Create(path);
+                return new List<StatisticTimeFrame>();
+            }
+
+            List<StatisticTimeFrame> statistics = new List<StatisticTimeFrame>();
+            StatisticTimeFrame? currentStatistic = null;
+            StatisticMode currentStatisticMode = StatisticMode.None;
+
+            foreach (var line in File.ReadAllLines(path))
+            {
+                if (string.IsNullOrWhiteSpace(line)) 
+                {
+                    continue;
+                }
+                else if (line.StartsWith("--") && line.EndsWith("--")) 
+                {
+                    if (currentStatistic != null) statistics.Add(currentStatistic);
+                    currentStatistic = new StatisticTimeFrame { TimeFrame = line.Replace("--", "") };
+                }
+                else if (line.StartsWith("**") && line.EndsWith("**"))
+                {
+                    switch(line.Replace("**", ""))
+                    {
+                        case "all-songs":
+                            currentStatisticMode = StatisticMode.AllSongs;
+                            break;
+                        case "show-openers":
+                            currentStatisticMode = StatisticMode.ShowOpeners;
+                            break;
+                        case "main-set-closers":
+                            currentStatisticMode = StatisticMode.MainSetClosers;
+                            break;
+                        case "show-closers":
+                            currentStatisticMode = StatisticMode.ShowClosers;
+                            break;
+                    }
+                }
+                else
+                {
+                    if (currentStatistic == null) continue;
+
+                    var lineSplit = line.Split(" --- ");
+                    var name = lineSplit[0];
+                    var count = 0;
+                    var countIsNumber = int.TryParse(lineSplit.Last(), out count);
+                    if (!countIsNumber) continue;
+                    switch (currentStatisticMode)
+                    {
+                        case StatisticMode.AllSongs:
+                            currentStatistic.PlayCounts.Add(lineSplit[0], count);
+                            break;
+                        case StatisticMode.ShowOpeners:
+                            currentStatistic.ShowOpeners.Add(lineSplit[0], count);
+                            break;
+                        case StatisticMode.MainSetClosers:
+                            currentStatistic.MainSetClosers.Add(lineSplit[0], count);
+                            break;
+                        case StatisticMode.ShowClosers:
+                            currentStatistic.ShowClosers.Add(lineSplit[0], count);
+                            break;
+                    }
+                }
+            }
+
+            return statistics;
+        }
+    
+        public void SaveStatistics(string artist, List<StatisticTimeFrame> statistics)
+        {
+            List<string> lines = new List<string>();
+
+            foreach (StatisticTimeFrame stat in statistics)
+            {
+                lines.Add("--" + stat.TimeFrame + "--");
+
+                lines.Add("**all-songs**");
+                foreach (KeyValuePair<string, int> song in stat.PlayCounts)
+                {
+                    lines.Add(song.Key + " --- " + song.Value);
+                }
+
+                lines.Add("**show-openers**");
+                foreach (KeyValuePair<string, int> song in stat.ShowOpeners)
+                {
+                    lines.Add(song.Key + " --- " + song.Value);
+                }
+
+                lines.Add("**main-set-closers**");
+                foreach (KeyValuePair<string, int> song in stat.MainSetClosers)
+                {
+                    lines.Add(song.Key + " --- " + song.Value);
+                }
+
+                lines.Add("**show-closers**");
+                foreach (KeyValuePair<string, int> song in stat.ShowClosers)
+                {
+                    lines.Add(song.Key + " --- " + song.Value);
+                }
+            }
+
+            var path = Path.Combine(PersistentDataPath, artist, "stats.txt");
+            File.WriteAllLines(path, lines.ToArray());
+        }
+    
+        public void RescanStatistics(string artist)
+        {
+            List<StatisticTimeFrame> statistics = [
+                new StatisticTimeFrame { TimeFrame = "All-time" }
+            ];
+
+            foreach (var setlist in GetSetlists(artist))
+            {
+                var songs = GetSetlistSongs(setlist);
+
+                if (songs.Count <= 0) continue;
+
+                // Get year
+                int yearIndex = -1;
+                for (int i = 0; i < statistics.Count; i++)
+                {
+                    if (statistics[i].TimeFrame == setlist.Date.Year.ToString())
+                    {
+                        yearIndex = i;
+                        break;
+                    }
+                }
+                if (yearIndex == -1)
+                {
+                    yearIndex = statistics.Count;
+                    statistics.Add(new StatisticTimeFrame { TimeFrame = setlist.Date.Year.ToString() });
+                }
+
+                int value;
+                int currentIndex = 0;
+                int mainSetCloserIndex = -1;
+
+                // Play counts
+                foreach (string song in songs)
+                {
+                    if (song.StartsWith("--") && song.EndsWith("--"))
+                    {
+                        if (mainSetCloserIndex == -1 && song == "--ENCORE--")
+                        {
+                            mainSetCloserIndex = yearIndex - 1;
+                        }
+                        continue;
+                    }
+
+                    // Add to year
+                    if (statistics[yearIndex].PlayCounts.TryGetValue(song, out value))
+                    {
+                        statistics[yearIndex].PlayCounts[song] = ++value;
+                    }
+                    else
+                    {
+                        statistics[yearIndex].PlayCounts[song] = 1;
+                    }
+
+                    // Add to all-time
+                    if (statistics[0].PlayCounts.TryGetValue(song, out value))
+                    {
+                        statistics[0].PlayCounts[song] = ++value;
+                    }
+                    else
+                    {
+                        statistics[0].PlayCounts[song] = 1;
+                    }
+                }
+                // Set main set closer index if no encore
+                if (mainSetCloserIndex == -1)
+                {
+                    mainSetCloserIndex = songs.Count - 1;
+                }
+
+                // Show opener
+                if (statistics[yearIndex].ShowOpeners.TryGetValue(songs[0], out value))
+                {
+                    statistics[yearIndex].ShowOpeners[songs[0]] = ++value;
+                }
+                else
+                {
+                    statistics[yearIndex].ShowOpeners[songs[0]] = 1;
+                }
+
+                if (statistics[0].ShowOpeners.TryGetValue(songs[0], out value))
+                {
+                    statistics[0].ShowOpeners[songs[0]] = ++value;
+                }
+                else
+                {
+                    statistics[0].ShowOpeners[songs[0]] = 1;
+                }
+
+                // Main set closer
+                if (statistics[yearIndex].MainSetClosers.TryGetValue(songs[mainSetCloserIndex], out value))
+                {
+                    statistics[yearIndex].MainSetClosers[songs[mainSetCloserIndex]] = ++value;
+                }
+                else
+                {
+                    statistics[yearIndex].MainSetClosers[songs[mainSetCloserIndex]] = 1;
+                }
+
+                if (statistics[0].MainSetClosers.TryGetValue(songs[mainSetCloserIndex], out value))
+                {
+                    statistics[0].MainSetClosers[songs[mainSetCloserIndex]] = ++value;
+                }
+                else
+                {
+                    statistics[0].MainSetClosers[songs[mainSetCloserIndex]] = 1;
+                }
+
+                // Show closer
+                if (statistics[yearIndex].ShowClosers.TryGetValue(songs.Last(), out value))
+                {
+                    statistics[yearIndex].ShowClosers[songs.Last()] = ++value;
+                }
+                else
+                {
+                    statistics[yearIndex].ShowClosers[songs.Last()] = 1;
+                }
+
+                if (statistics[0].ShowClosers.TryGetValue(songs.Last(), out value))
+                {
+                    statistics[0].ShowClosers[songs.Last()] = ++value;
+                }
+                else
+                {
+                    statistics[0].ShowClosers[songs.Last()] = 1;
+                }
+
+                currentIndex++;
+            }
+
+            SaveStatistics(artist, statistics);
         }
     }
 }

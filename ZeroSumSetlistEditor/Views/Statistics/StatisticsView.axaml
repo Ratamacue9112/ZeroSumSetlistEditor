@@ -11,6 +11,7 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
 		<TextBlock Margin="20" HorizontalAlignment="Center" Grid.Row="0">
@@ -68,6 +69,14 @@
 		</ScrollViewer>
 
 		<Button Grid.Row="2"
+				Grid.ColumnSpan="2"
+				Classes.regularButton="true"
+				FontFamily="{StaticResource MontserratFont}"
+				Margin="0"
+				Command="{Binding RescanStatistics}">
+			Rescan Statistics
+		</Button>
+		<Button Grid.Row="3"
 				Grid.ColumnSpan="2"
 				Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"
