@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ZeroSumSetlistEditor.Models
 {
-    public class StatisticSong
+    public class StatisticSong : IComparable
     {
         public string Name { get; set; }
         public int Count { get; set; }
@@ -16,6 +16,14 @@ namespace ZeroSumSetlistEditor.Models
         {
             Name = name;
             Count = count;
+        }
+
+        public int CompareTo(object? obj)
+        {
+            if (obj == null) return 1;
+            if (obj is not StatisticSong) return 1;
+
+            return Count.CompareTo((obj as StatisticSong)!.Count) * -1;
         }
     }
 
@@ -34,6 +42,14 @@ namespace ZeroSumSetlistEditor.Models
             ShowOpeners = new ObservableCollection<StatisticSong>();
             MainSetClosers = new ObservableCollection<StatisticSong>();
             ShowClosers = new ObservableCollection<StatisticSong>();
+        }
+
+        public void Sort()
+        {
+            PlayCounts.Sort();
+            ShowOpeners.Sort();
+            MainSetClosers.Sort();
+            ShowClosers.Sort();
         }
     }
 }

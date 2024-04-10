@@ -793,7 +793,11 @@ namespace ZeroSumSetlistEditor.Models
                 }
                 else if (line.StartsWith("--") && line.EndsWith("--")) 
                 {
-                    if (currentStatistic != null) statistics.Add(currentStatistic);
+                    if (currentStatistic != null)
+                    {
+                        currentStatistic.Sort();
+                        statistics.Add(currentStatistic);
+                    }
                     currentStatistic = new StatisticTimeFrame { TimeFrame = line.Replace("--", "") };
                 }
                 else if (line.StartsWith("**") && line.EndsWith("**"))
@@ -842,6 +846,7 @@ namespace ZeroSumSetlistEditor.Models
             }
             if (currentStatistic != null)
             {
+                currentStatistic.Sort();
                 statistics.Add(currentStatistic);
             }
             if (statistics.Count < 1)
@@ -1037,7 +1042,10 @@ namespace ZeroSumSetlistEditor.Models
 
                 currentIndex++;
             }
-
+            foreach (var stat in statistics)
+            {
+                stat.Sort();
+            }
             SaveStatistics(artist, statistics);
             return statistics;
         }
