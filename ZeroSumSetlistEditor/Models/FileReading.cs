@@ -380,8 +380,173 @@ namespace ZeroSumSetlistEditor.Models
             return new List<Song>();
         }
 
-        public void SaveSetlist(Setlist setlist, List<SetlistSong> songs)
+        public void SaveSetlist(Setlist setlist, List<SetlistSong> songs, List<SetlistChange> changes)
         {
+            // Manage statistics
+            var stats = GetStatistics(setlist.Artist);
+            // Check if statistics are empty, if so, rescan
+            if (stats.Count <= 1)
+            {
+                stats = RescanStatistics(setlist.Artist);
+            }
+
+            int yearIndex = -1;
+            for (int i = 0; i < stats.Count; i++)
+            {
+                if (stats[i].TimeFrame == setlist.Date.Year.ToString())
+                {
+                    yearIndex = i;
+                    break;
+                }
+            }
+            if (yearIndex == -1)
+            {
+                yearIndex = stats.Count;
+                stats.Add(new StatisticTimeFrame { TimeFrame = setlist.Date.Year.ToString() });
+            }
+
+            foreach (var c in changes)
+            {
+                // Process add/delete changes
+                if (c is SetlistAddDeleteChange)
+                {
+                    var change = (c as SetlistAddDeleteChange)!;
+                    if (change.SongName == "ENCORE" || change.SongName == "INTERMISSION") continue;
+                    // Console.WriteLine("Add/Delete - " + change.SongName + ", " + change.Deleted);
+
+                    var index = stats[0].PlayCounts.FindSong(change.SongName);
+                    if (index >= 0)
+                    {
+                        stats[0].PlayCounts[index].Count += change.Deleted ? -1 : 1;
+                        break;
+                    }
+                    else if (!change.Deleted) stats[0].PlayCounts.Add(new StatisticSong(change.SongName, 1));
+
+                    index = stats[yearIndex].PlayCounts.FindSong(change.SongName);
+                    if (index >= 0)
+                    {
+                        stats[yearIndex].PlayCounts[index].Count += change.Deleted ? -1 : 1;
+                        break;
+                    }
+                    else if (!change.Deleted) stats[yearIndex].PlayCounts.Add(new StatisticSong(change.SongName, 1));
+                }
+                // Process main position changes
+                else if (c is SetlistMainPositionChange)
+                {
+                    var change = (c as SetlistMainPositionChange)!;
+                    var found = 0;
+                    Console.WriteLine("Position - " + change.OldSongName + " : " + change.NewSongName + ", " + change.Position.ToString());
+                    switch (change.Position)
+                    {
+                        case SetlistMainPosition.ShowOpener:
+                            foreach (var song in stats[0].ShowOpeners)
+                            {
+                                if (song.Name == change.OldSongName)
+                                {
+                                    song.Count--;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                                if (song.Name == change.NewSongName)
+                                {
+                                    song.Count++;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                            }
+                            if (found < 2 && (change.NewSongName != "ENCORE" && change.NewSongName != "INTERMISSION")) stats[0].ShowOpeners.Add(new StatisticSong(change.NewSongName, 1));
+                            foreach (var song in stats[yearIndex].ShowOpeners)
+                            {
+                                if (song.Name == change.OldSongName)
+                                {
+                                    song.Count--;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                                if (song.Name == change.NewSongName)
+                                {
+                                    song.Count++;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                            }
+                            if (found < 2 && (change.NewSongName != "ENCORE" && change.NewSongName != "INTERMISSION")) stats[yearIndex].ShowOpeners.Add(new StatisticSong(change.NewSongName, 1));
+                            break;
+                        case SetlistMainPosition.MainSetCloser:
+                            foreach (var song in stats[0].MainSetClosers)
+                            {
+                                if (song.Name == change.OldSongName)
+                                {
+                                    song.Count--;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                                if (song.Name == change.NewSongName)
+                                {
+                                    song.Count++;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                            }
+                            if (found < 2 && (change.NewSongName != "ENCORE" && change.NewSongName != "INTERMISSION")) stats[0].MainSetClosers.Add(new StatisticSong(change.NewSongName, 1));
+                            foreach (var song in stats[yearIndex].MainSetClosers)
+                            {
+                                if (song.Name == change.OldSongName)
+                                {
+                                    song.Count--;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                                if (song.Name == change.NewSongName)
+                                {
+                                    song.Count++;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                            }
+                            if (found < 2 && (change.NewSongName != "ENCORE" && change.NewSongName != "INTERMISSION")) stats[yearIndex].MainSetClosers.Add(new StatisticSong(change.NewSongName, 1));
+                            break;
+                        case SetlistMainPosition.ShowCloser:
+                            foreach (var song in stats[0].ShowClosers)
+                            {
+                                if (song.Name == change.OldSongName)
+                                {
+                                    song.Count--;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                                if (song.Name == change.NewSongName)
+                                {
+                                    song.Count++;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                            }
+                            if (found < 2 && (change.NewSongName != "ENCORE" && change.NewSongName != "INTERMISSION")) stats[0].ShowClosers.Add(new StatisticSong(change.NewSongName, 1));
+                            foreach (var song in stats[yearIndex].ShowClosers)
+                            {
+                                if (song.Name == change.OldSongName)
+                                {
+                                    song.Count--;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                                if (song.Name == change.NewSongName)
+                                {
+                                    song.Count++;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                            }
+                            if (found < 2 && (change.NewSongName != "ENCORE" && change.NewSongName != "INTERMISSION")) stats[yearIndex].ShowClosers.Add(new StatisticSong(change.NewSongName, 1));
+                            break;
+                    }
+                }
+            }
+
+            SaveStatistics(setlist.Artist, stats);
+
+            // Save to file
             var path = Path.Combine(PersistentDataPath, setlist.Artist, "Setlists", setlist.Date.ToString("yyyy-MM-dd") + " == " + setlist.Venue + ".txt");
             List<string> songNames = new List<string>();
             foreach (var song in songs)
@@ -799,66 +964,75 @@ namespace ZeroSumSetlistEditor.Models
                 }
 
                 // Show opener
-                songIndex = statistics[yearIndex].ShowOpeners.FindSong(songs[0]);
-                if (songIndex >= 0)
+                if (!songs[0].StartsWith("--") && !songs[0].EndsWith("--"))
                 {
-                    statistics[yearIndex].ShowOpeners[songIndex].Count++;
-                }
-                else
-                {
-                    statistics[yearIndex].ShowOpeners.Add(new StatisticSong(songs[0], 1));
-                }
+                    songIndex = statistics[yearIndex].ShowOpeners.FindSong(songs[0]);
+                    if (songIndex >= 0)
+                    {
+                        statistics[yearIndex].ShowOpeners[songIndex].Count++;
+                    }
+                    else
+                    {
+                        statistics[yearIndex].ShowOpeners.Add(new StatisticSong(songs[0], 1));
+                    }
 
-                songIndex = statistics[0].ShowOpeners.FindSong(songs[0]);
-                if (songIndex >= 0)
-                {
-                    statistics[0].ShowOpeners[songIndex].Count++;
-                }
-                else
-                {
-                    statistics[0].ShowOpeners.Add(new StatisticSong(songs[0], 1));
+                    songIndex = statistics[0].ShowOpeners.FindSong(songs[0]);
+                    if (songIndex >= 0)
+                    {
+                        statistics[0].ShowOpeners[songIndex].Count++;
+                    }
+                    else
+                    {
+                        statistics[0].ShowOpeners.Add(new StatisticSong(songs[0], 1));
+                    }
                 }
 
                 // Main set closer
-                songIndex = statistics[yearIndex].MainSetClosers.FindSong(songs[mainSetCloserIndex]);
-                if (songIndex >= 0)
+                if (!songs[mainSetCloserIndex].StartsWith("--") && !songs[mainSetCloserIndex].EndsWith("--"))
                 {
-                    statistics[yearIndex].MainSetClosers[songIndex].Count++;
-                }
-                else
-                {
-                    statistics[yearIndex].MainSetClosers.Add(new StatisticSong(songs[mainSetCloserIndex], 1));
-                }
+                    songIndex = statistics[yearIndex].MainSetClosers.FindSong(songs[mainSetCloserIndex]);
+                    if (songIndex >= 0)
+                    {
+                        statistics[yearIndex].MainSetClosers[songIndex].Count++;
+                    }
+                    else
+                    {
+                        statistics[yearIndex].MainSetClosers.Add(new StatisticSong(songs[mainSetCloserIndex], 1));
+                    }
 
-                songIndex = statistics[0].MainSetClosers.FindSong(songs[mainSetCloserIndex]);
-                if (songIndex >= 0)
-                {
-                    statistics[0].MainSetClosers[songIndex].Count++;
-                }
-                else
-                {
-                    statistics[0].MainSetClosers.Add(new StatisticSong(songs[mainSetCloserIndex], 1));
+                    songIndex = statistics[0].MainSetClosers.FindSong(songs[mainSetCloserIndex]);
+                    if (songIndex >= 0)
+                    {
+                        statistics[0].MainSetClosers[songIndex].Count++;
+                    }
+                    else
+                    {
+                        statistics[0].MainSetClosers.Add(new StatisticSong(songs[mainSetCloserIndex], 1));
+                    }
                 }
 
                 // Show closer
-                songIndex = statistics[yearIndex].ShowClosers.FindSong(songs.Last());
-                if (songIndex >= 0)
+                if (!songs.Last().StartsWith("--") && !songs.Last().EndsWith("--"))
                 {
-                    statistics[yearIndex].ShowClosers[songIndex].Count++;
-                }
-                else
-                {
-                    statistics[yearIndex].ShowClosers.Add(new StatisticSong(songs.Last(), 1));
-                }
+                    songIndex = statistics[yearIndex].ShowClosers.FindSong(songs.Last());
+                    if (songIndex >= 0)
+                    {
+                        statistics[yearIndex].ShowClosers[songIndex].Count++;
+                    }
+                    else
+                    {
+                        statistics[yearIndex].ShowClosers.Add(new StatisticSong(songs.Last(), 1));
+                    }
 
-                songIndex = statistics[0].ShowClosers.FindSong(songs.Last());
-                if (songIndex >= 0)
-                {
-                    statistics[0].ShowClosers[songIndex].Count++;
-                }
-                else
-                {
-                    statistics[0].ShowClosers.Add(new StatisticSong(songs.Last(), 1));
+                    songIndex = statistics[0].ShowClosers.FindSong(songs.Last());
+                    if (songIndex >= 0)
+                    {
+                        statistics[0].ShowClosers[songIndex].Count++;
+                    }
+                    else
+                    {
+                        statistics[0].ShowClosers.Add(new StatisticSong(songs.Last(), 1));
+                    }
                 }
 
                 currentIndex++;

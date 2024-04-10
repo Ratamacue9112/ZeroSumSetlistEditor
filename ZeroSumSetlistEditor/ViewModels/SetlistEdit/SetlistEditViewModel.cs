@@ -9,7 +9,6 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ZeroSumSetlistEditor.Models;
-using System.Numerics;
 
 namespace ZeroSumSetlistEditor.ViewModels
 {
@@ -49,9 +48,11 @@ namespace ZeroSumSetlistEditor.ViewModels
         public string Artist { get; set; }
 
         public bool HasChanged { get; set; }
+        public List<SetlistChange> Changes { get; set; }
 
         public Interaction<SetlistAddSongWindowViewModel, SetlistEditViewModel?> ShowDialog { get; }
 
+        private List<SetlistSong> startingSongs;
         private MainWindowViewModel mainWindowVm;
 
         private const string breakColor = "#0D777C";
@@ -60,7 +61,7 @@ namespace ZeroSumSetlistEditor.ViewModels
         {
             SongCount = 0;
             EncoreCount = 0;
-            var list = new ObservableCollection<SetlistSong>();
+            var list = new List<SetlistSong>();
             for (int i = 0; i < songs.Count; i++)
             {
                 if (songs[i].StartsWith("--") && songs[i].EndsWith("--"))
@@ -84,16 +85,19 @@ namespace ZeroSumSetlistEditor.ViewModels
                 }
             }
 
-            Songs = list;
+            Songs = new ObservableCollection<SetlistSong>(list);
             Setlist = setlist;
             Artist = setlist.Artist;
             HasChanged = false;
+            Changes = new List<SetlistChange>();
             ShowDialog = new Interaction<SetlistAddSongWindowViewModel, SetlistEditViewModel?>();
             this.mainWindowVm = mainWindowVm;
+            startingSongs = list;
         }
 
         public void AdjustSongs()
         {
+            Console.WriteLine("Adjusted");
             HasChanged = true;
             SongCount = 0;
             EncoreCount = 0;
@@ -148,6 +152,7 @@ namespace ZeroSumSetlistEditor.ViewModels
         public void RemoveSong(SetlistSong song)
         {
             Songs.Remove(song);
+            Changes.Add(new SetlistAddDeleteChange(song.Name, true));
             AdjustSongs();
         } 
 
@@ -177,7 +182,50 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public void Save()
         {
-            mainWindowVm.fileReading.SaveSetlist(Setlist, Songs.ToList());
+            // Add main position changes
+            // Show opener
+            if (startingSongs[0].Name != Songs[0].Name)
+            {
+                Changes.Add(new SetlistMainPositionChange(startingSongs[0].Name, Songs[0].Name, SetlistMainPosition.ShowOpener));
+            }
+            // Show closer
+            if (startingSongs.Last().Name != Songs.Last().Name)
+            {
+                Changes.Add(new SetlistMainPositionChange(startingSongs.Last().Name, Songs.Last().Name, SetlistMainPosition.ShowCloser));
+            }
+
+            // Main set closer
+            // Find old index of main set closer
+            int oldMainSetCloserIndex = -1;
+            for (int i = 0; i < startingSongs.Count; i++)
+            {
+                if (startingSongs[i].Name == "ENCORE")
+                {
+                    oldMainSetCloserIndex = i - 1;
+                    break;
+                }
+            }
+            // Find new index of main set closer
+            int newMainSetCloserIndex = -1;
+            for (int i = 0; i < Songs.Count; i++)
+            {
+                if (Songs[i].Name == "ENCORE")
+                {
+                    newMainSetCloserIndex = i - 1;
+                    break;
+                }
+            }
+
+            // Get old and new main set closer names and compares them
+            // If they are the different, add a new change
+            var oldMainSetCloserName = startingSongs[oldMainSetCloserIndex == -1 ? startingSongs.Count - 1 : oldMainSetCloserIndex].Name;
+            var newMainSetCloserName = Songs[newMainSetCloserIndex == -1 ? Songs.Count - 1 : newMainSetCloserIndex].Name;
+            if (oldMainSetCloserName != newMainSetCloserName) 
+            {
+                Changes.Add(new SetlistMainPositionChange(oldMainSetCloserName, newMainSetCloserName, SetlistMainPosition.MainSetCloser));
+            }
+
+            mainWindowVm.fileReading.SaveSetlist(Setlist, Songs.ToList(), Changes);
             mainWindowVm.OpenSetlistSelect(Artist);
         }
 
