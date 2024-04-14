@@ -126,6 +126,29 @@
 						</ItemsControl.ItemTemplate>
 					</ItemsControl>
 				</Expander>
+
+				<Expander HorizontalAlignment="Stretch"
+						  FontFamily="{StaticResource MontserratFont}">
+					<Expander.Header>Other Stats</Expander.Header>
+					<ItemsControl ItemsSource="{Binding CurrentTimeFrame.OtherStats}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<DockPanel Classes.statistic="true">
+									<TextBlock FontFamily="{StaticResource MontserratFont}"
+											   DockPanel.Dock="Left"
+											   Text="{Binding Name}"/>
+									<TextBlock FontFamily="{StaticResource MontserratFont}"
+											   DockPanel.Dock="Right"
+											   HorizontalAlignment="Right"
+											   VerticalAlignment="Center">
+										<Run Text="{Binding ValueText}"/>
+										<Run Text="{Binding Unit}"/>
+									</TextBlock>
+								</DockPanel>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</Expander>
 			</StackPanel>
 		</ScrollViewer>
 

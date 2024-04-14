@@ -41,7 +41,7 @@ namespace ZeroSumSetlistEditor
                         var path = Path.Combine(FileReading.PersistentDataPath, setlistSelectVm.Artist, "Setlists", vm.Date.ToString("yyyy-MM-dd") + " == " + vm.Venue + ".txt");
                         if (vm.Setlist == null)
                         {
-                            File.Create(path);
+                            File.Create(path).Close();
                             setlistSelectVm.Setlists.Add(new Setlist(vm.Venue, vm.Date, setlistSelectVm.Artist));
                         }
                         else
@@ -56,14 +56,12 @@ namespace ZeroSumSetlistEditor
                                     break;
                                 }
                             }
-                            setlistSelectVm.Setlists.Sort();
 
                             if (File.Exists(oldPath))
                             {
                                 File.Move(oldPath, path);
                             }
                         }
-
                         setlistSelectVm.Setlists.Sort();
 
                         Close();
@@ -71,7 +69,7 @@ namespace ZeroSumSetlistEditor
                     }
                     catch
                     {
-                        error = "An error occured.";
+                        error = "An error occurred.";
                     }
                 }
                 var box = MessageBoxManager.GetMessageBoxStandard("Warning", error, ButtonEnum.Ok);

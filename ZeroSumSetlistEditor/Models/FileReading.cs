@@ -10,6 +10,7 @@ using System.Globalization;
 using ZeroSumSetlistEditor.ViewModels;
 using Avalonia.Controls;
 using Avalonia.Media;
+using System.Collections.ObjectModel;
 
 namespace ZeroSumSetlistEditor.Models
 {
@@ -402,7 +403,15 @@ namespace ZeroSumSetlistEditor.Models
             if (yearIndex == -1)
             {
                 yearIndex = stats.Count;
-                stats.Add(new StatisticTimeFrame { TimeFrame = setlist.Date.Year.ToString() });
+                stats.Add(new StatisticTimeFrame { 
+                    TimeFrame = setlist.Date.Year.ToString(),
+                    OtherStats = new ObservableCollection<OtherStat>
+                    {
+                        new OtherStat("Shows played", "shows", 0),
+                        new OtherStat("Total songs played", "songs", 0),
+                        new OtherStat("Unique songs played", "songs", 0)
+                    }
+                });
             }
 
             foreach (var c in changes)
@@ -418,24 +427,33 @@ namespace ZeroSumSetlistEditor.Models
                     if (index >= 0)
                     {
                         stats[0].PlayCounts[index].Count += change.Deleted ? -1 : 1;
-                        break;
+                        if (stats[0].PlayCounts[index].Count < 1)
+                        {
+                            stats[0].PlayCounts.RemoveAt(index);
+                        }
                     }
                     else if (!change.Deleted) stats[0].PlayCounts.Add(new StatisticSong(change.SongName, 1));
+                    stats[0].OtherStats[1].Value += change.Deleted ? -1 : 1;
 
                     index = stats[yearIndex].PlayCounts.FindSong(change.SongName);
                     if (index >= 0)
                     {
                         stats[yearIndex].PlayCounts[index].Count += change.Deleted ? -1 : 1;
-                        break;
+                        if (stats[yearIndex].PlayCounts[index].Count < 1)
+                        {
+                            stats[yearIndex].PlayCounts.RemoveAt(index);
+                        }
+                        stats[yearIndex].OtherStats[1].Value += change.Deleted ? -1 : 1;
                     }
                     else if (!change.Deleted) stats[yearIndex].PlayCounts.Add(new StatisticSong(change.SongName, 1));
+                    stats[yearIndex].OtherStats[1].Value += change.Deleted ? -1 : 1;
                 }
                 // Process main position changes
                 else if (c is SetlistMainPositionChange)
                 {
                     var change = (c as SetlistMainPositionChange)!;
                     var found = 0;
-                    Console.WriteLine("Position - " + change.OldSongName + " : " + change.NewSongName + ", " + change.Position.ToString());
+                    // Console.WriteLine("Position - " + change.OldSongName + " : " + change.NewSongName + ", " + change.Position.ToString());
                     switch (change.Position)
                     {
                         case SetlistMainPosition.ShowOpener:
@@ -542,7 +560,17 @@ namespace ZeroSumSetlistEditor.Models
                             break;
                     }
                 }
+                // Process empty state changes
+                else if (c is SetlistEmptyStateChange)
+                {
+                    var change = (c as SetlistEmptyStateChange)!;
+                    stats[0].OtherStats[0].Value += change.Empty ? -1 : 1;
+                    stats[yearIndex].OtherStats[0].Value += change.Empty ? -1 : 1;
+                }
             }
+
+            stats[0].OtherStats[2].Value = stats[0].PlayCounts.Count;
+            stats[yearIndex].OtherStats[2].Value = stats[yearIndex].PlayCounts.Count;
 
             SaveStatistics(setlist.Artist, stats);
 
@@ -777,7 +805,15 @@ namespace ZeroSumSetlistEditor.Models
             {
                 File.Create(path).Close();
                 return new List<StatisticTimeFrame> {
-                    new StatisticTimeFrame { TimeFrame = "All-time" }
+                    new StatisticTimeFrame { 
+                        TimeFrame = "All-time",
+                        OtherStats = new ObservableCollection<OtherStat>
+                        {
+                            new OtherStat("Shows played"),
+                            new OtherStat("Total songs played"),
+                            new OtherStat("Unique songs played")
+                        }
+                    }
                 };
             }
 
@@ -795,6 +831,12 @@ namespace ZeroSumSetlistEditor.Models
                 {
                     if (currentStatistic != null)
                     {
+                        if (currentStatistic.OtherStats.Count < 1)
+                        {
+                            currentStatistic.OtherStats.Add(new OtherStat("Shows played"));
+                            currentStatistic.OtherStats.Add(new OtherStat("Total songs played"));
+                            currentStatistic.OtherStats.Add(new OtherStat("Unique songs played"));
+                        }
                         currentStatistic.Sort();
                         statistics.Add(currentStatistic);
                     }
@@ -818,14 +860,48 @@ namespace ZeroSumSetlistEditor.Models
                             break;
                     }
                 }
+                else if (line.StartsWith("::") && line.EndsWith("::"))
+                {
+                    if (currentStatistic == null) continue;
+                    var lineSplit = line.Replace("::", "").Split(",");
+                    if (lineSplit.Length < 3) continue;
+
+                    var isNumber = int.TryParse(lineSplit[0], out var value);
+                    if (isNumber)
+                    {
+                        currentStatistic.OtherStats.Add(new OtherStat("Shows played", "shows", value));
+                    }
+                    else
+                    {
+                        currentStatistic.OtherStats.Add(new OtherStat("Shows played"));
+                    }
+
+                    isNumber = int.TryParse(lineSplit[1], out value);
+                    if (isNumber)
+                    {
+                        currentStatistic.OtherStats.Add(new OtherStat("Total songs played", "songs", value));
+                    }
+                    else
+                    {
+                        currentStatistic.OtherStats.Add(new OtherStat("Total songs played"));
+                    }
+
+                    isNumber = int.TryParse(lineSplit[2], out value);
+                    if (isNumber)
+                    {
+                        currentStatistic.OtherStats.Add(new OtherStat("Unique songs played", "songs", value));
+                    }
+                    else
+                    {
+                        currentStatistic.OtherStats.Add(new OtherStat("Unique songs played"));
+                    }
+                }
                 else
                 {
                     if (currentStatistic == null) continue;
 
                     var lineSplit = line.Split(" --- ");
-                    var name = lineSplit[0];
-                    var count = 0;
-                    var countIsNumber = int.TryParse(lineSplit.Last(), out count);
+                    var countIsNumber = int.TryParse(lineSplit.Last(), out int count);
                     if (!countIsNumber) continue;
                     switch (currentStatisticMode)
                     {
@@ -846,6 +922,12 @@ namespace ZeroSumSetlistEditor.Models
             }
             if (currentStatistic != null)
             {
+                if (currentStatistic.OtherStats.Count < 1)
+                {
+                    currentStatistic.OtherStats.Add(new OtherStat("Shows played"));
+                    currentStatistic.OtherStats.Add(new OtherStat("Total songs played"));
+                    currentStatistic.OtherStats.Add(new OtherStat("Unique songs played"));
+                }
                 currentStatistic.Sort();
                 statistics.Add(currentStatistic);
             }
@@ -866,6 +948,7 @@ namespace ZeroSumSetlistEditor.Models
             foreach (StatisticTimeFrame stat in statistics)
             {
                 lines.Add("--" + stat.TimeFrame + "--");
+                lines.Add("::" + stat.OtherStats[0].Value + ", " + stat.OtherStats[1].Value + ", " + stat.OtherStats[2].Value + "::");
 
                 lines.Add("**all-songs**");
                 foreach (StatisticSong song in stat.PlayCounts)
@@ -899,7 +982,14 @@ namespace ZeroSumSetlistEditor.Models
         public List<StatisticTimeFrame> RescanStatistics(string artist)
         {
             List<StatisticTimeFrame> statistics = [
-                new StatisticTimeFrame { TimeFrame = "All-time" }
+                new StatisticTimeFrame { 
+                    TimeFrame = "All-time",
+                    OtherStats = new ObservableCollection<OtherStat> {
+                        new OtherStat("Shows played", "shows", 0),
+                        new OtherStat("Total songs played", "songs", 0),
+                        new OtherStat("Unique songs played", "songs", 0)
+                    }
+                }
             ];
 
             foreach (var setlist in GetSetlists(artist))
@@ -921,8 +1011,19 @@ namespace ZeroSumSetlistEditor.Models
                 if (yearIndex == -1)
                 {
                     yearIndex = statistics.Count;
-                    statistics.Add(new StatisticTimeFrame { TimeFrame = setlist.Date.Year.ToString() });
+                    statistics.Add(new StatisticTimeFrame { 
+                        TimeFrame = setlist.Date.Year.ToString(),
+                        OtherStats = new ObservableCollection<OtherStat> {
+                            new OtherStat("Shows played", "shows", 0),
+                            new OtherStat("Total songs played", "songs", 0),
+                            new OtherStat("Unique songs played", "songs", 0)
+                        }
+                    });
                 }
+
+                // Add to show count
+                statistics[0].OtherStats[0].Value++;
+                statistics[yearIndex].OtherStats[0].Value++;
 
                 int currentIndex = 0;
                 int mainSetCloserIndex = -1;
@@ -941,6 +1042,7 @@ namespace ZeroSumSetlistEditor.Models
                     }
 
                     // Add to year
+                    statistics[yearIndex].OtherStats[1].Value++;
                     songIndex = statistics[yearIndex].PlayCounts.FindSong(song);
                     if (songIndex >= 0)
                     {
@@ -952,6 +1054,7 @@ namespace ZeroSumSetlistEditor.Models
                     }
 
                     // Add to all-time
+                    statistics[0].OtherStats[1].Value++;
                     songIndex = statistics[0].PlayCounts.FindSong(song);
                     if (songIndex >= 0)
                     {
@@ -962,6 +1065,7 @@ namespace ZeroSumSetlistEditor.Models
                         statistics[0].PlayCounts.Add(new StatisticSong(song, 1));
                     }
                 }
+
                 // Set main set closer index if no encore
                 if (mainSetCloserIndex == -1)
                 {
@@ -1044,6 +1148,7 @@ namespace ZeroSumSetlistEditor.Models
             }
             foreach (var stat in statistics)
             {
+                stat.OtherStats[2].Value = stat.PlayCounts.Count;
                 stat.Sort();
             }
             SaveStatistics(artist, statistics);

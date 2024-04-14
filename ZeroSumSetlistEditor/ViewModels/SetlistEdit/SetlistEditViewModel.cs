@@ -97,7 +97,6 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public void AdjustSongs()
         {
-            Console.WriteLine("Adjusted");
             HasChanged = true;
             SongCount = 0;
             EncoreCount = 0;
@@ -153,6 +152,10 @@ namespace ZeroSumSetlistEditor.ViewModels
         {
             Songs.Remove(song);
             Changes.Add(new SetlistAddDeleteChange(song.Name, true));
+            if (Songs.Count < 1)
+            {
+                Changes.Add(new SetlistEmptyStateChange(true));
+            }
             AdjustSongs();
         } 
 
@@ -183,46 +186,96 @@ namespace ZeroSumSetlistEditor.ViewModels
         public void Save()
         {
             // Add main position changes
-            // Show opener
-            if (startingSongs[0].Name != Songs[0].Name)
-            {
-                Changes.Add(new SetlistMainPositionChange(startingSongs[0].Name, Songs[0].Name, SetlistMainPosition.ShowOpener));
-            }
-            // Show closer
-            if (startingSongs.Last().Name != Songs.Last().Name)
-            {
-                Changes.Add(new SetlistMainPositionChange(startingSongs.Last().Name, Songs.Last().Name, SetlistMainPosition.ShowCloser));
-            }
 
-            // Main set closer
-            // Find old index of main set closer
-            int oldMainSetCloserIndex = -1;
-            for (int i = 0; i < startingSongs.Count; i++)
+            // If setlist was not empty
+            if (startingSongs.Count > 0)
             {
-                if (startingSongs[i].Name == "ENCORE")
+                // If setlist is still not empty
+                if (Songs.Count > 0)
                 {
-                    oldMainSetCloserIndex = i - 1;
-                    break;
+                    // Show opener
+                    if (startingSongs[0].Name != Songs[0].Name)
+                    {
+                        Changes.Add(new SetlistMainPositionChange(startingSongs[0].Name, Songs[0].Name, SetlistMainPosition.ShowOpener));
+                    }
+                    // Show closer
+                    if (startingSongs.Last().Name != Songs.Last().Name)
+                    {
+                        Changes.Add(new SetlistMainPositionChange(startingSongs.Last().Name, Songs.Last().Name, SetlistMainPosition.ShowCloser));
+                    }
+
+                    // Main set closer
+                    // Find old index of main set closer
+                    int oldMainSetCloserIndex = -1;
+                    for (int i = 0; i < startingSongs.Count; i++)
+                    {
+                        if (startingSongs[i].Name == "ENCORE")
+                        {
+                            oldMainSetCloserIndex = i - 1;
+                            break;
+                        }
+                    }
+                    // Find new index of main set closer
+                    int newMainSetCloserIndex = -1;
+                    for (int i = 0; i < Songs.Count; i++)
+                    {
+                        if (Songs[i].Name == "ENCORE")
+                        {
+                            newMainSetCloserIndex = i - 1;
+                            break;
+                        }
+                    }
+
+                    // Get old and new main set closer names and compares them
+                    // If they are the different, add a new change
+                    var oldMainSetCloserName = startingSongs[oldMainSetCloserIndex == -1 ? startingSongs.Count - 1 : oldMainSetCloserIndex].Name;
+                    var newMainSetCloserName = Songs[newMainSetCloserIndex == -1 ? Songs.Count - 1 : newMainSetCloserIndex].Name;
+                    if (oldMainSetCloserName != newMainSetCloserName)
+                    {
+                        Changes.Add(new SetlistMainPositionChange(oldMainSetCloserName, newMainSetCloserName, SetlistMainPosition.MainSetCloser));
+                    }
+                }
+                // If setlist is now empty
+                else
+                {
+                    Changes.Add(new SetlistMainPositionChange(startingSongs[0].Name, "", SetlistMainPosition.ShowOpener));
+                    Changes.Add(new SetlistMainPositionChange(startingSongs.Last().Name, "", SetlistMainPosition.ShowCloser));
+
+                    int mainSetCloserIndex = -1;
+                    for (int i = 0; i < startingSongs.Count; i++)
+                    {
+                        if (startingSongs[i].Name == "ENCORE")
+                        {
+                            mainSetCloserIndex = i - 1;
+                            break;
+                        }
+                    }
+
+                    var mainSetCloserName = startingSongs[mainSetCloserIndex == -1 ? startingSongs.Count - 1 : mainSetCloserIndex].Name;
+                    Changes.Add(new SetlistMainPositionChange(mainSetCloserName, "", SetlistMainPosition.MainSetCloser));
                 }
             }
-            // Find new index of main set closer
-            int newMainSetCloserIndex = -1;
-            for (int i = 0; i < Songs.Count; i++)
+            // If setlist was empty
+            else
             {
-                if (Songs[i].Name == "ENCORE")
+                if (Songs.Count > 0)
                 {
-                    newMainSetCloserIndex = i - 1;
-                    break;
-                }
-            }
+                    Changes.Add(new SetlistMainPositionChange("", Songs[0].Name, SetlistMainPosition.ShowOpener));
+                    Changes.Add(new SetlistMainPositionChange("", Songs.Last().Name, SetlistMainPosition.ShowCloser));
 
-            // Get old and new main set closer names and compares them
-            // If they are the different, add a new change
-            var oldMainSetCloserName = startingSongs[oldMainSetCloserIndex == -1 ? startingSongs.Count - 1 : oldMainSetCloserIndex].Name;
-            var newMainSetCloserName = Songs[newMainSetCloserIndex == -1 ? Songs.Count - 1 : newMainSetCloserIndex].Name;
-            if (oldMainSetCloserName != newMainSetCloserName) 
-            {
-                Changes.Add(new SetlistMainPositionChange(oldMainSetCloserName, newMainSetCloserName, SetlistMainPosition.MainSetCloser));
+                    int mainSetCloserIndex = -1;
+                    for (int i = 0; i < Songs.Count; i++)
+                    {
+                        if (Songs[i].Name == "ENCORE")
+                        {
+                            mainSetCloserIndex = i - 1;
+                            break;
+                        }
+                    }
+
+                    var mainSetCloserName = Songs[mainSetCloserIndex == -1 ? Songs.Count - 1 : mainSetCloserIndex].Name;
+                    Changes.Add(new SetlistMainPositionChange("", mainSetCloserName, SetlistMainPosition.MainSetCloser));
+                }
             }
 
             mainWindowVm.fileReading.SaveSetlist(Setlist, Songs.ToList(), Changes);

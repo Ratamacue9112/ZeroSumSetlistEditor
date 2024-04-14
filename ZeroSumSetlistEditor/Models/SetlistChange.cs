@@ -42,4 +42,14 @@ namespace ZeroSumSetlistEditor.Models
             Position = position;
         }
     }
+
+    public class SetlistEmptyStateChange : SetlistChange
+    {
+        public bool Empty { get; set; }
+
+        public SetlistEmptyStateChange(bool empty)
+        {
+            Empty = empty;
+        }
+    }
 }

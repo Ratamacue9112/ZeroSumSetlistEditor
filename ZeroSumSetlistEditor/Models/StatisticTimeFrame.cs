@@ -27,13 +27,53 @@ namespace ZeroSumSetlistEditor.Models
         }
     }
 
+    public class OtherStat
+    {
+        public string Name { get; set; }
+        public string Unit { get; set; }
+
+        public int _value = 0;
+        public int Value 
+        {
+            get 
+            {
+                return _value;
+            }
+            set
+            {
+                _value = value;
+                ValueText = value.ToString();
+            }
+        }
+        public string ValueText { get; set; }
+        public bool CanBeFound { get; set; }
+
+        public OtherStat(string name, string unit, int value)
+        {
+            Name = name;
+            Unit = unit;
+            Value = value;
+            CanBeFound = true;
+        }
+
+        public OtherStat(string name)
+        {
+            Name = name;
+            Unit = "";
+            ValueText = "RESCAN TO VIEW";
+            CanBeFound = false;
+        }
+    }
+
     public class StatisticTimeFrame
     {
         public string TimeFrame { get; set; }
+
         public ObservableCollection<StatisticSong> PlayCounts { get; set; }
         public ObservableCollection<StatisticSong> ShowOpeners { get; set; }
         public ObservableCollection<StatisticSong> MainSetClosers { get; set; }
         public ObservableCollection<StatisticSong> ShowClosers { get; set; }
+        public ObservableCollection<OtherStat> OtherStats { get; set; }
 
         public StatisticTimeFrame() 
         {
@@ -42,6 +82,7 @@ namespace ZeroSumSetlistEditor.Models
             ShowOpeners = new ObservableCollection<StatisticSong>();
             MainSetClosers = new ObservableCollection<StatisticSong>();
             ShowClosers = new ObservableCollection<StatisticSong>();
+            OtherStats = new ObservableCollection<OtherStat>();
         }
 
         public void Sort()
