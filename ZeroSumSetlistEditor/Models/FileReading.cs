@@ -10,9 +10,19 @@ using System.Globalization;
 using ZeroSumSetlistEditor.ViewModels;
 using Avalonia.Controls;
 using Avalonia.Media;
+using System.Collections.ObjectModel;
 
 namespace ZeroSumSetlistEditor.Models
 {
+    public enum StatisticMode
+    {
+        None,
+        AllSongs,
+        ShowOpeners,
+        MainSetClosers,
+        ShowClosers
+    }
+
     public class FileReading
     {
         public readonly static string PersistentDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ZeroSumSetlistEditor");
@@ -44,7 +54,7 @@ namespace ZeroSumSetlistEditor.Models
             string csvPath = Path.Combine(path, artist + "_Songs.csv");
             if (!File.Exists(csvPath))
             {
-                File.Create(csvPath);
+                File.Create(csvPath).Close();
                 return new List<Song>();
             }
 
@@ -313,9 +323,9 @@ namespace ZeroSumSetlistEditor.Models
             {
                 if (!file.EndsWith(".txt")) continue;
                 string filename = file.Split(Path.DirectorySeparatorChar).Last();
-                filename = filename.Split(".").First();
+                filename = filename.Split(".")[0];
                 string[] filenameSplit = filename.Split(" == ");
-                Setlist setlist = new Setlist(filenameSplit.Last(), DateTime.ParseExact(filenameSplit.First(), "yyyy-MM-dd", CultureInfo.InvariantCulture), artist);
+                Setlist setlist = new Setlist(filenameSplit.Last(), DateTime.ParseExact(filenameSplit[0], "yyyy-MM-dd", CultureInfo.InvariantCulture), artist);
                 list.Add(setlist);
             }
             list.Sort();
@@ -371,8 +381,200 @@ namespace ZeroSumSetlistEditor.Models
             return new List<Song>();
         }
 
-        public void SaveSetlist(Setlist setlist, List<SetlistSong> songs)
+        public void SaveSetlist(Setlist setlist, List<SetlistSong> songs, List<SetlistChange> changes)
         {
+            // Manage statistics
+            var stats = GetStatistics(setlist.Artist);
+            // Check if statistics are empty, if so, rescan
+            if (stats.Count <= 1)
+            {
+                stats = RescanStatistics(setlist.Artist);
+            }
+
+            int yearIndex = -1;
+            for (int i = 0; i < stats.Count; i++)
+            {
+                if (stats[i].TimeFrame == setlist.Date.Year.ToString())
+                {
+                    yearIndex = i;
+                    break;
+                }
+            }
+            if (yearIndex == -1)
+            {
+                yearIndex = stats.Count;
+                stats.Add(new StatisticTimeFrame { 
+                    TimeFrame = setlist.Date.Year.ToString(),
+                    OtherStats = new ObservableCollection<OtherStat>
+                    {
+                        new OtherStat("Shows played", "shows", 0),
+                        new OtherStat("Total songs played", "songs", 0),
+                        new OtherStat("Unique songs played", "songs", 0)
+                    }
+                });
+            }
+
+            foreach (var c in changes)
+            {
+                // Process add/delete changes
+                if (c is SetlistAddDeleteChange)
+                {
+                    var change = (c as SetlistAddDeleteChange)!;
+                    if (change.SongName == "ENCORE" || change.SongName == "INTERMISSION") continue;
+                    // Console.WriteLine("Add/Delete - " + change.SongName + ", " + change.Deleted);
+
+                    var index = stats[0].PlayCounts.FindSong(change.SongName);
+                    if (index >= 0)
+                    {
+                        stats[0].PlayCounts[index].Count += change.Deleted ? -1 : 1;
+                        if (stats[0].PlayCounts[index].Count < 1)
+                        {
+                            stats[0].PlayCounts.RemoveAt(index);
+                        }
+                    }
+                    else if (!change.Deleted) stats[0].PlayCounts.Add(new StatisticSong(change.SongName, 1));
+                    stats[0].OtherStats[1].Value += change.Deleted ? -1 : 1;
+
+                    index = stats[yearIndex].PlayCounts.FindSong(change.SongName);
+                    if (index >= 0)
+                    {
+                        stats[yearIndex].PlayCounts[index].Count += change.Deleted ? -1 : 1;
+                        if (stats[yearIndex].PlayCounts[index].Count < 1)
+                        {
+                            stats[yearIndex].PlayCounts.RemoveAt(index);
+                        }
+                        stats[yearIndex].OtherStats[1].Value += change.Deleted ? -1 : 1;
+                    }
+                    else if (!change.Deleted) stats[yearIndex].PlayCounts.Add(new StatisticSong(change.SongName, 1));
+                    stats[yearIndex].OtherStats[1].Value += change.Deleted ? -1 : 1;
+                }
+                // Process main position changes
+                else if (c is SetlistMainPositionChange)
+                {
+                    var change = (c as SetlistMainPositionChange)!;
+                    var found = 0;
+                    // Console.WriteLine("Position - " + change.OldSongName + " : " + change.NewSongName + ", " + change.Position.ToString());
+                    switch (change.Position)
+                    {
+                        case SetlistMainPosition.ShowOpener:
+                            foreach (var song in stats[0].ShowOpeners)
+                            {
+                                if (song.Name == change.OldSongName)
+                                {
+                                    song.Count--;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                                if (song.Name == change.NewSongName)
+                                {
+                                    song.Count++;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                            }
+                            if (found < 2 && (change.NewSongName != "ENCORE" && change.NewSongName != "INTERMISSION")) stats[0].ShowOpeners.Add(new StatisticSong(change.NewSongName, 1));
+                            foreach (var song in stats[yearIndex].ShowOpeners)
+                            {
+                                if (song.Name == change.OldSongName)
+                                {
+                                    song.Count--;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                                if (song.Name == change.NewSongName)
+                                {
+                                    song.Count++;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                            }
+                            if (found < 2 && (change.NewSongName != "ENCORE" && change.NewSongName != "INTERMISSION")) stats[yearIndex].ShowOpeners.Add(new StatisticSong(change.NewSongName, 1));
+                            break;
+                        case SetlistMainPosition.MainSetCloser:
+                            foreach (var song in stats[0].MainSetClosers)
+                            {
+                                if (song.Name == change.OldSongName)
+                                {
+                                    song.Count--;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                                if (song.Name == change.NewSongName)
+                                {
+                                    song.Count++;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                            }
+                            if (found < 2 && (change.NewSongName != "ENCORE" && change.NewSongName != "INTERMISSION")) stats[0].MainSetClosers.Add(new StatisticSong(change.NewSongName, 1));
+                            foreach (var song in stats[yearIndex].MainSetClosers)
+                            {
+                                if (song.Name == change.OldSongName)
+                                {
+                                    song.Count--;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                                if (song.Name == change.NewSongName)
+                                {
+                                    song.Count++;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                            }
+                            if (found < 2 && (change.NewSongName != "ENCORE" && change.NewSongName != "INTERMISSION")) stats[yearIndex].MainSetClosers.Add(new StatisticSong(change.NewSongName, 1));
+                            break;
+                        case SetlistMainPosition.ShowCloser:
+                            foreach (var song in stats[0].ShowClosers)
+                            {
+                                if (song.Name == change.OldSongName)
+                                {
+                                    song.Count--;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                                if (song.Name == change.NewSongName)
+                                {
+                                    song.Count++;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                            }
+                            if (found < 2 && (change.NewSongName != "ENCORE" && change.NewSongName != "INTERMISSION")) stats[0].ShowClosers.Add(new StatisticSong(change.NewSongName, 1));
+                            foreach (var song in stats[yearIndex].ShowClosers)
+                            {
+                                if (song.Name == change.OldSongName)
+                                {
+                                    song.Count--;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                                if (song.Name == change.NewSongName)
+                                {
+                                    song.Count++;
+                                    found++;
+                                    if (found >= 2) break;
+                                }
+                            }
+                            if (found < 2 && (change.NewSongName != "ENCORE" && change.NewSongName != "INTERMISSION")) stats[yearIndex].ShowClosers.Add(new StatisticSong(change.NewSongName, 1));
+                            break;
+                    }
+                }
+                // Process empty state changes
+                else if (c is SetlistEmptyStateChange)
+                {
+                    var change = (c as SetlistEmptyStateChange)!;
+                    stats[0].OtherStats[0].Value += change.Empty ? -1 : 1;
+                    stats[yearIndex].OtherStats[0].Value += change.Empty ? -1 : 1;
+                }
+            }
+
+            stats[0].OtherStats[2].Value = stats[0].PlayCounts.Count;
+            stats[yearIndex].OtherStats[2].Value = stats[yearIndex].PlayCounts.Count;
+
+            SaveStatistics(setlist.Artist, stats);
+
+            // Save to file
             var path = Path.Combine(PersistentDataPath, setlist.Artist, "Setlists", setlist.Date.ToString("yyyy-MM-dd") + " == " + setlist.Venue + ".txt");
             List<string> songNames = new List<string>();
             foreach (var song in songs)
@@ -431,7 +633,7 @@ namespace ZeroSumSetlistEditor.Models
             foreach (var line in File.ReadAllLines(path))
             {
                 var lineSplit = line.Split(" - ");
-                switch (lineSplit.First())
+                switch (lineSplit[0])
                 {
                     case "backgroundColor":
                         var isColor = Color.TryParse(lineSplit.Last(), out var color);
@@ -594,6 +796,373 @@ namespace ZeroSumSetlistEditor.Models
             }
             settings.Initialized = true;
             return settings;
+        }
+    
+        public List<StatisticTimeFrame> GetStatistics(string artist, bool deleted = false)
+        {
+            var path = Path.Combine(PersistentDataPath, artist, deleted ? "deleted_stats.txt" : "stats.txt");
+            if (!File.Exists(path))
+            {
+                File.Create(path).Close();
+                return new List<StatisticTimeFrame> {
+                    new StatisticTimeFrame { 
+                        TimeFrame = "All-time",
+                        OtherStats = new ObservableCollection<OtherStat>
+                        {
+                            new OtherStat("Shows played"),
+                            new OtherStat("Total songs played"),
+                            new OtherStat("Unique songs played")
+                        }
+                    }
+                };
+            }
+
+            List<StatisticTimeFrame> statistics = new List<StatisticTimeFrame>();
+            StatisticTimeFrame? currentStatistic = null;
+            StatisticMode currentStatisticMode = StatisticMode.None;
+
+            foreach (var line in File.ReadAllLines(path))
+            {
+                if (string.IsNullOrWhiteSpace(line)) 
+                {
+                    continue;
+                }
+                else if (line.StartsWith("--") && line.EndsWith("--")) 
+                {
+                    if (currentStatistic != null)
+                    {
+                        if (currentStatistic.OtherStats.Count < 1)
+                        {
+                            currentStatistic.OtherStats.Add(new OtherStat("Shows played"));
+                            currentStatistic.OtherStats.Add(new OtherStat("Total songs played"));
+                            currentStatistic.OtherStats.Add(new OtherStat("Unique songs played"));
+                        }
+                        currentStatistic.Sort();
+                        statistics.Add(currentStatistic);
+                    }
+                    currentStatistic = new StatisticTimeFrame { TimeFrame = line.Replace("--", "") };
+                }
+                else if (line.StartsWith("**") && line.EndsWith("**"))
+                {
+                    switch(line.Replace("**", ""))
+                    {
+                        case "all-songs":
+                            currentStatisticMode = StatisticMode.AllSongs;
+                            break;
+                        case "show-openers":
+                            currentStatisticMode = StatisticMode.ShowOpeners;
+                            break;
+                        case "main-set-closers":
+                            currentStatisticMode = StatisticMode.MainSetClosers;
+                            break;
+                        case "show-closers":
+                            currentStatisticMode = StatisticMode.ShowClosers;
+                            break;
+                    }
+                }
+                else if (line.StartsWith("::") && line.EndsWith("::"))
+                {
+                    if (currentStatistic == null) continue;
+                    var lineSplit = line.Replace("::", "").Split(",");
+                    if (lineSplit.Length < 3) continue;
+
+                    var isNumber = int.TryParse(lineSplit[0], out var value);
+                    if (isNumber)
+                    {
+                        currentStatistic.OtherStats.Add(new OtherStat("Shows played", "shows", value));
+                    }
+                    else
+                    {
+                        currentStatistic.OtherStats.Add(new OtherStat("Shows played"));
+                    }
+
+                    isNumber = int.TryParse(lineSplit[1], out value);
+                    if (isNumber)
+                    {
+                        currentStatistic.OtherStats.Add(new OtherStat("Total songs played", "songs", value));
+                    }
+                    else
+                    {
+                        currentStatistic.OtherStats.Add(new OtherStat("Total songs played"));
+                    }
+
+                    isNumber = int.TryParse(lineSplit[2], out value);
+                    if (isNumber)
+                    {
+                        currentStatistic.OtherStats.Add(new OtherStat("Unique songs played", "songs", value));
+                    }
+                    else
+                    {
+                        currentStatistic.OtherStats.Add(new OtherStat("Unique songs played"));
+                    }
+                }
+                else
+                {
+                    if (currentStatistic == null) continue;
+
+                    var lineSplit = line.Split(" --- ");
+                    var countIsNumber = int.TryParse(lineSplit.Last(), out int count);
+                    if (!countIsNumber) continue;
+                    switch (currentStatisticMode)
+                    {
+                        case StatisticMode.AllSongs:
+                            currentStatistic.PlayCounts.Add(new StatisticSong(lineSplit[0], count));
+                            break;
+                        case StatisticMode.ShowOpeners:
+                            currentStatistic.ShowOpeners.Add(new StatisticSong(lineSplit[0], count));
+                            break;
+                        case StatisticMode.MainSetClosers:
+                            currentStatistic.MainSetClosers.Add(new StatisticSong(lineSplit[0], count));
+                            break;
+                        case StatisticMode.ShowClosers:
+                            currentStatistic.ShowClosers.Add(new StatisticSong(lineSplit[0], count));
+                            break;
+                    }
+                }
+            }
+            if (currentStatistic != null)
+            {
+                if (currentStatistic.OtherStats.Count < 1)
+                {
+                    currentStatistic.OtherStats.Add(new OtherStat("Shows played"));
+                    currentStatistic.OtherStats.Add(new OtherStat("Total songs played"));
+                    currentStatistic.OtherStats.Add(new OtherStat("Unique songs played"));
+                }
+                currentStatistic.Sort();
+                statistics.Add(currentStatistic);
+            }
+            if (statistics.Count < 1)
+            {
+                statistics = new List<StatisticTimeFrame> {
+                    new StatisticTimeFrame { 
+                        TimeFrame = "All-time",
+                        OtherStats = new ObservableCollection<OtherStat>
+                        {
+                            new OtherStat("Shows played"),
+                            new OtherStat("Total songs played"),
+                            new OtherStat("Unique songs played")
+                        } 
+                    }
+                };
+            }
+
+            return statistics;
+        }
+    
+        public void SaveStatistics(string artist, List<StatisticTimeFrame> statistics, bool deleted = false)
+        {
+            List<string> lines = new List<string>();
+
+            foreach (StatisticTimeFrame stat in statistics)
+            {
+                lines.Add("--" + stat.TimeFrame + "--");
+                lines.Add("::" + stat.OtherStats[0].Value + ", " + stat.OtherStats[1].Value + ", " + stat.OtherStats[2].Value + "::");
+
+                lines.Add("**all-songs**");
+                foreach (StatisticSong song in stat.PlayCounts)
+                {
+                    lines.Add(song.Name + " --- " + song.Count);
+                }
+
+                lines.Add("**show-openers**");
+                foreach (StatisticSong song in stat.ShowOpeners)
+                {
+                    lines.Add(song.Name + " --- " + song.Count);
+                }
+
+                lines.Add("**main-set-closers**");
+                foreach (StatisticSong song in stat.MainSetClosers)
+                {
+                    lines.Add(song.Name + " --- " + song.Count);
+                }
+
+                lines.Add("**show-closers**");
+                foreach (StatisticSong song in stat.ShowClosers)
+                {
+                    lines.Add(song.Name + " --- " + song.Count);
+                }
+            }
+
+            var path = Path.Combine(PersistentDataPath, artist, deleted ? "deleted_stats.txt" : "stats.txt");
+            File.WriteAllLines(path, lines.ToArray());
+        }
+    
+        public List<StatisticTimeFrame> RescanStatistics(string artist)
+        {
+            List<StatisticTimeFrame> statistics = [
+                new StatisticTimeFrame { 
+                    TimeFrame = "All-time",
+                    OtherStats = new ObservableCollection<OtherStat> {
+                        new OtherStat("Shows played", "shows", 0),
+                        new OtherStat("Total songs played", "songs", 0),
+                        new OtherStat("Unique songs played", "songs", 0)
+                    }
+                }
+            ];
+
+            foreach (var setlist in GetSetlists(artist))
+            {
+                var songs = GetSetlistSongs(setlist);
+
+                if (songs.Count <= 0) continue;
+
+                // Get year
+                int yearIndex = -1;
+                for (int i = 0; i < statistics.Count; i++)
+                {
+                    if (statistics[i].TimeFrame == setlist.Date.Year.ToString())
+                    {
+                        yearIndex = i;
+                        break;
+                    }
+                }
+                if (yearIndex == -1)
+                {
+                    yearIndex = statistics.Count;
+                    statistics.Add(new StatisticTimeFrame { 
+                        TimeFrame = setlist.Date.Year.ToString(),
+                        OtherStats = new ObservableCollection<OtherStat> {
+                            new OtherStat("Shows played", "shows", 0),
+                            new OtherStat("Total songs played", "songs", 0),
+                            new OtherStat("Unique songs played", "songs", 0)
+                        }
+                    });
+                }
+
+                // Add to show count
+                statistics[0].OtherStats[0].Value++;
+                statistics[yearIndex].OtherStats[0].Value++;
+
+                int currentIndex = 0;
+                int mainSetCloserIndex = -1;
+                int songIndex = -1;
+
+                // Play counts
+                foreach (string song in songs)
+                {
+                    if (song.StartsWith("--") && song.EndsWith("--"))
+                    {
+                        if (mainSetCloserIndex == -1 && song == "--ENCORE--")
+                        {
+                            mainSetCloserIndex = yearIndex - 1;
+                        }
+                        continue;
+                    }
+
+                    // Add to year
+                    statistics[yearIndex].OtherStats[1].Value++;
+                    songIndex = statistics[yearIndex].PlayCounts.FindSong(song);
+                    if (songIndex >= 0)
+                    {
+                        statistics[yearIndex].PlayCounts[songIndex].Count++;
+                    }
+                    else
+                    {
+                        statistics[yearIndex].PlayCounts.Add(new StatisticSong(song, 1));  
+                    }
+
+                    // Add to all-time
+                    statistics[0].OtherStats[1].Value++;
+                    songIndex = statistics[0].PlayCounts.FindSong(song);
+                    if (songIndex >= 0)
+                    {
+                        statistics[0].PlayCounts[songIndex].Count++;
+                    }
+                    else
+                    {
+                        statistics[0].PlayCounts.Add(new StatisticSong(song, 1));
+                    }
+                }
+
+                // Set main set closer index if no encore
+                if (mainSetCloserIndex == -1)
+                {
+                    mainSetCloserIndex = songs.Count - 1;
+                }
+
+                // Show opener
+                if (!songs[0].StartsWith("--") && !songs[0].EndsWith("--"))
+                {
+                    songIndex = statistics[yearIndex].ShowOpeners.FindSong(songs[0]);
+                    if (songIndex >= 0)
+                    {
+                        statistics[yearIndex].ShowOpeners[songIndex].Count++;
+                    }
+                    else
+                    {
+                        statistics[yearIndex].ShowOpeners.Add(new StatisticSong(songs[0], 1));
+                    }
+
+                    songIndex = statistics[0].ShowOpeners.FindSong(songs[0]);
+                    if (songIndex >= 0)
+                    {
+                        statistics[0].ShowOpeners[songIndex].Count++;
+                    }
+                    else
+                    {
+                        statistics[0].ShowOpeners.Add(new StatisticSong(songs[0], 1));
+                    }
+                }
+
+                // Main set closer
+                if (!songs[mainSetCloserIndex].StartsWith("--") && !songs[mainSetCloserIndex].EndsWith("--"))
+                {
+                    songIndex = statistics[yearIndex].MainSetClosers.FindSong(songs[mainSetCloserIndex]);
+                    if (songIndex >= 0)
+                    {
+                        statistics[yearIndex].MainSetClosers[songIndex].Count++;
+                    }
+                    else
+                    {
+                        statistics[yearIndex].MainSetClosers.Add(new StatisticSong(songs[mainSetCloserIndex], 1));
+                    }
+
+                    songIndex = statistics[0].MainSetClosers.FindSong(songs[mainSetCloserIndex]);
+                    if (songIndex >= 0)
+                    {
+                        statistics[0].MainSetClosers[songIndex].Count++;
+                    }
+                    else
+                    {
+                        statistics[0].MainSetClosers.Add(new StatisticSong(songs[mainSetCloserIndex], 1));
+                    }
+                }
+
+                // Show closer
+                if (!songs.Last().StartsWith("--") && !songs.Last().EndsWith("--"))
+                {
+                    songIndex = statistics[yearIndex].ShowClosers.FindSong(songs.Last());
+                    if (songIndex >= 0)
+                    {
+                        statistics[yearIndex].ShowClosers[songIndex].Count++;
+                    }
+                    else
+                    {
+                        statistics[yearIndex].ShowClosers.Add(new StatisticSong(songs.Last(), 1));
+                    }
+
+                    songIndex = statistics[0].ShowClosers.FindSong(songs.Last());
+                    if (songIndex >= 0)
+                    {
+                        statistics[0].ShowClosers[songIndex].Count++;
+                    }
+                    else
+                    {
+                        statistics[0].ShowClosers.Add(new StatisticSong(songs.Last(), 1));
+                    }
+                }
+
+                currentIndex++;
+            }
+            foreach (var stat in statistics)
+            {
+                stat.OtherStats[2].Value = stat.PlayCounts.Count;
+                stat.Sort();
+            }
+
+            SaveStatistics(artist, statistics);
+            statistics = statistics.Combine(GetStatistics(artist, true));
+            return statistics;
         }
     }
 }

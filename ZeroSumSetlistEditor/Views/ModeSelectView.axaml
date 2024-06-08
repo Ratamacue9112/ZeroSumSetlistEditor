@@ -7,32 +7,50 @@
              x:Class="ZeroSumSetlistEditor.Views.ModeSelectView"
 			 x:DataType="vm:ModeSelectViewModel">
 	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
+		
 		<TextBlock Text="{Binding Artist}" 
 				   FontFamily="{StaticResource MontserratFont}" 
 				   Margin="20" 
 				   Classes.h1="true" 
-				   Grid.Row="0"/>
+				   Grid.Row="0"
+				   Grid.ColumnSpan="2"/>
+		
 		<Button Classes.largeButton="true"
 				Grid.Row="1"
+				Grid.Column="0"
 				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenSongSelect}"
 				CommandParameter="{Binding Artist}">
 			<TextBlock Classes.h1="true" FontFamily="{StaticResource MontserratFont}">Songs</TextBlock>
 		</Button>
 		<Button Classes.largeButton="true"
-				Grid.Row="2"
+				Grid.Row="1"
+				Grid.Column="1"
 				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenSetlistSelect}"
 				CommandParameter="{Binding Artist}">
 			<TextBlock Classes.h1="true" FontFamily="{StaticResource MontserratFont}">Setlists</TextBlock>
 		</Button>
+		<Button Classes.largeButton="true"
+				Grid.Row="2"
+				Grid.ColumnSpan="2"
+				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenStatistics}"
+				CommandParameter="{Binding Artist}">
+			<TextBlock Classes.h1="true" FontFamily="{StaticResource MontserratFont}">Statistics</TextBlock>
+		</Button>
+		
 		<Button Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"
 				Grid.Row="3"
+				Grid.ColumnSpan="2"
 				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenArtistSelect}">
 			Back
 		</Button>

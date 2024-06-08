@@ -1,0 +1,173 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:ZeroSumSetlistEditor.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ZeroSumSetlistEditor.Views.StatisticsView"
+			 x:DataType="vm:StatisticsViewModel">
+	<Grid> 
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<TextBlock Margin="20" HorizontalAlignment="Center" Grid.Row="0">
+			<Run Text="{Binding Artist}"
+				 FontFamily="{StaticResource MontserratFont}"
+				 Classes.h1="true"/>
+			<Run Text=" - Statistics"
+				 Classes.h2="true"
+				 FontFamily="{StaticResource MontserratFont}"
+				 FontStyle="Italic"
+				 FontWeight="ExtraLight"/>
+		</TextBlock>
+
+		<ComboBox ItemsSource="{Binding TimeFrames}"
+				  SelectedItem="{Binding SelectedItem}"
+				  HorizontalAlignment="Center"
+				  Width="300"
+				  MaxDropDownHeight="500" 
+				  Grid.Row="1"/>
+		
+		<ScrollViewer Name="ScrollViewer" Margin="0 20 0 0" Grid.Row="2">
+			<StackPanel>
+				<Expander HorizontalAlignment="Stretch"
+						  FontFamily="{StaticResource MontserratFont}">
+					<Expander.Header>Times Played</Expander.Header>
+					<ItemsControl ItemsSource="{Binding CurrentTimeFrame.PlayCounts}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<DockPanel Classes.statistic="true">
+									<TextBlock FontFamily="{StaticResource MontserratFont}"
+											   DockPanel.Dock="Left"
+											   Text="{Binding Name}"/>
+									<TextBlock FontFamily="{StaticResource MontserratFont}"
+											   DockPanel.Dock="Right"
+											   HorizontalAlignment="Right"
+											   VerticalAlignment="Center">
+										<Run Text="{Binding Count}"/>
+										<Run Text="plays"/>
+									</TextBlock>
+								</DockPanel>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</Expander>
+
+				<Expander HorizontalAlignment="Stretch"
+						  FontFamily="{StaticResource MontserratFont}">
+					<Expander.Header>Show Openers</Expander.Header>
+					<ItemsControl ItemsSource="{Binding CurrentTimeFrame.ShowOpeners}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<DockPanel Classes.statistic="true">
+									<TextBlock FontFamily="{StaticResource MontserratFont}"
+											   DockPanel.Dock="Left"
+											   Text="{Binding Name}"/>
+									<TextBlock FontFamily="{StaticResource MontserratFont}"
+											   DockPanel.Dock="Right"
+											   HorizontalAlignment="Right"
+											   VerticalAlignment="Center">
+										<Run Text="{Binding Count}"/>
+										<Run Text="plays"/>
+									</TextBlock>
+								</DockPanel>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</Expander>
+
+				<Expander HorizontalAlignment="Stretch"
+						  FontFamily="{StaticResource MontserratFont}">
+					<Expander.Header>Main Set Closers</Expander.Header>
+					<ItemsControl ItemsSource="{Binding CurrentTimeFrame.MainSetClosers}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<DockPanel Classes.statistic="true">
+									<TextBlock FontFamily="{StaticResource MontserratFont}"
+											   DockPanel.Dock="Left"
+											   Text="{Binding Name}"/>
+									<TextBlock FontFamily="{StaticResource MontserratFont}"
+											   DockPanel.Dock="Right"
+											   HorizontalAlignment="Right"
+											   VerticalAlignment="Center">
+										<Run Text="{Binding Count}"/>
+										<Run Text="plays"/>
+									</TextBlock>
+								</DockPanel>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</Expander>
+
+				<Expander HorizontalAlignment="Stretch"
+						  FontFamily="{StaticResource MontserratFont}">
+					<Expander.Header>Show Closers</Expander.Header>
+					<ItemsControl ItemsSource="{Binding CurrentTimeFrame.ShowClosers}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<DockPanel Classes.statistic="true">
+									<TextBlock FontFamily="{StaticResource MontserratFont}"
+											   DockPanel.Dock="Left"
+											   Text="{Binding Name}"/>
+									<TextBlock FontFamily="{StaticResource MontserratFont}"
+											   DockPanel.Dock="Right"
+											   HorizontalAlignment="Right"
+											   VerticalAlignment="Center">
+										<Run Text="{Binding Count}"/>
+										<Run Text="plays"/>
+									</TextBlock>
+								</DockPanel>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</Expander>
+
+				<Expander HorizontalAlignment="Stretch"
+						  FontFamily="{StaticResource MontserratFont}">
+					<Expander.Header>Other Stats</Expander.Header>
+					<ItemsControl ItemsSource="{Binding CurrentTimeFrame.OtherStats}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<DockPanel Classes.statistic="true">
+									<TextBlock FontFamily="{StaticResource MontserratFont}"
+											   DockPanel.Dock="Left"
+											   Text="{Binding Name}"/>
+									<TextBlock FontFamily="{StaticResource MontserratFont}"
+											   DockPanel.Dock="Right"
+											   HorizontalAlignment="Right"
+											   VerticalAlignment="Center">
+										<Run Text="{Binding ValueText}"/>
+										<Run Text="{Binding Unit}"/>
+									</TextBlock>
+								</DockPanel>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</Expander>
+			</StackPanel>
+		</ScrollViewer>
+
+		<Button Grid.Row="3"
+				Grid.ColumnSpan="2"
+				Classes.regularButton="true"
+				FontFamily="{StaticResource MontserratFont}"
+				Margin="0"
+				Command="{Binding RescanStatistics}">
+			Rescan Statistics
+		</Button>
+		<Button Grid.Row="4"
+				Grid.ColumnSpan="2"
+				Classes.regularButton="true"
+				FontFamily="{StaticResource MontserratFont}"
+				Margin="0"
+				Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenModeSelect}"
+				CommandParameter="{Binding Artist}">
+			Back
+		</Button>
+	</Grid>
+</UserControl>
