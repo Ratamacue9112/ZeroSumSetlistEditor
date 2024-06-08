@@ -75,7 +75,7 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public void OpenStatistics(string artist)
         {
-            Content = new StatisticsViewModel(artist, fileReading.GetStatistics(artist), this);
+            Content = new StatisticsViewModel(artist, fileReading.GetStatistics(artist).Combine(fileReading.GetStatistics(artist, true)), this);
         }
 
         public ViewModelBase Content

@@ -27,6 +27,18 @@ static class Extensions
         return -1;
     }
 
+    public static int FindTimeFrame(this List<StatisticTimeFrame> songs, string name)
+    {
+        for (int i = 0; i < songs.Count; i++)
+        {
+            if (songs[i].TimeFrame == name)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public static string GetOrdinalSuffix(this int num)
     {
         string number = num.ToString();
@@ -47,5 +59,31 @@ static class Extensions
         {
             return fontTester.Name == name;
         }
+    }
+
+    public static List<StatisticTimeFrame> Combine(this List<StatisticTimeFrame> a, List<StatisticTimeFrame> b)
+    {
+        var newList = new List<StatisticTimeFrame>();
+        var bTimeFrames = b;
+        foreach (StatisticTimeFrame timeFrame in a)
+        {
+            var index = bTimeFrames.FindTimeFrame(timeFrame.TimeFrame);
+            if (index < 0)
+            {
+                newList.Add(timeFrame);
+            }
+            else
+            {
+                newList.Add(timeFrame + bTimeFrames[index]);
+                bTimeFrames.RemoveAt(index);
+            }
+        }
+        foreach (StatisticTimeFrame timeFrame in bTimeFrames)
+        {
+            newList.Add(timeFrame);
+        }
+
+        newList.Sort();
+        return newList;
     }
 }

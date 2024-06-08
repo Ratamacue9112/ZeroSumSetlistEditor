@@ -798,9 +798,9 @@ namespace ZeroSumSetlistEditor.Models
             return settings;
         }
     
-        public List<StatisticTimeFrame> GetStatistics(string artist)
+        public List<StatisticTimeFrame> GetStatistics(string artist, bool deleted = false)
         {
-            var path = Path.Combine(PersistentDataPath, artist, "stats.txt");
+            var path = Path.Combine(PersistentDataPath, artist, deleted ? "deleted_stats.txt" : "stats.txt");
             if (!File.Exists(path))
             {
                 File.Create(path).Close();
@@ -934,14 +934,22 @@ namespace ZeroSumSetlistEditor.Models
             if (statistics.Count < 1)
             {
                 statistics = new List<StatisticTimeFrame> {
-                    new StatisticTimeFrame { TimeFrame = "All-time" }
+                    new StatisticTimeFrame { 
+                        TimeFrame = "All-time",
+                        OtherStats = new ObservableCollection<OtherStat>
+                        {
+                            new OtherStat("Shows played"),
+                            new OtherStat("Total songs played"),
+                            new OtherStat("Unique songs played")
+                        } 
+                    }
                 };
             }
 
             return statistics;
         }
     
-        public void SaveStatistics(string artist, List<StatisticTimeFrame> statistics)
+        public void SaveStatistics(string artist, List<StatisticTimeFrame> statistics, bool deleted = false)
         {
             List<string> lines = new List<string>();
 
@@ -975,7 +983,7 @@ namespace ZeroSumSetlistEditor.Models
                 }
             }
 
-            var path = Path.Combine(PersistentDataPath, artist, "stats.txt");
+            var path = Path.Combine(PersistentDataPath, artist, deleted ? "deleted_stats.txt" : "stats.txt");
             File.WriteAllLines(path, lines.ToArray());
         }
     
@@ -1151,7 +1159,9 @@ namespace ZeroSumSetlistEditor.Models
                 stat.OtherStats[2].Value = stat.PlayCounts.Count;
                 stat.Sort();
             }
+
             SaveStatistics(artist, statistics);
+            statistics = statistics.Combine(GetStatistics(artist, true));
             return statistics;
         }
     }
