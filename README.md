@@ -11,5 +11,7 @@ The editor is currently quite basic, but I plan to continue to add to it. Here i
   - Using "bustouts", inspired by [kglw.net](https://kglw.net)
   - Looking at previous setlist, make choices from a list
   - Taking length of show into account
+- One off song notes
+- Shortened song names
 
 ***This app works, but it is a little glitchy as I am working on this on my own. If you find a bug, please report it as an issue so I am aware. Any contributions would be welcome.***
