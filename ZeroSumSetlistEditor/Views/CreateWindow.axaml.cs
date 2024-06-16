@@ -134,7 +134,7 @@ public partial class CreateWindow : Window
                 }
                 catch
                 {
-                    error = "An error occured.";
+                    error = "An error occurred.";
                 }
             }
             var box = MessageBoxManager.GetMessageBoxStandard("Warning", error, ButtonEnum.Ok);
