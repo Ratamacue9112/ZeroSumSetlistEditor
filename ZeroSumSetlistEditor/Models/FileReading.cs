@@ -405,7 +405,7 @@ namespace ZeroSumSetlistEditor.Models
                 }
                 index++;
             }
-            string newLine = song;
+            string newLine = song + "," + GetSong(song, artist).ShortName;
             foreach (SongNote note in notes)
             {
                 newLine += "," + note.Note;
