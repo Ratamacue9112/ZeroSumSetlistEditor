@@ -67,4 +67,16 @@
 	<Style Selector="DockPanel.setting:pointerover">
 		<Setter Property="Background" Value="#6E6E6E"/>
 	</Style>
+	
+	<Style Selector="DockPanel.statistic">
+		<Setter Property="Background" Value="Transparent"/>
+	</Style>
+
+	<Style Selector="DockPanel.statistic > TextBlock">
+		<Setter Property="FontSize" Value="16"/>
+	</Style>
+
+	<Style Selector="DockPanel.statistic:pointerover">
+		<Setter Property="Background" Value="#6E6E6E"/>
+	</Style>
 </Styles>
