@@ -36,12 +36,14 @@ namespace ZeroSumSetlistEditor.Models
     public class Song : IComparable
     {
         public string Name { get; set; }
+        public string ShortName { get; set; }
         public List<string> Notes { get; set; }
         public string Artist { get; set; }
 
-        public Song(string name, List<string> notes, string artist)
+        public Song(string name, string shortName, List<string> notes, string artist)
         {
             Name = name;
+            ShortName = shortName;
             Notes = notes;
             Artist = artist;
         }

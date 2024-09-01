@@ -7,7 +7,7 @@
         x:Class="ZeroSumSetlistEditor.CreateWindow"
 		x:DataType="vm:CreateWindowViewModel"
 		Icon="avares://ZeroSumSetlistEditor/Assets/icon.ico"
-		Width="350" Height="200"
+		Width="500" Height="300"
 		WindowStartupLocation="CenterOwner"
 		CanResize="false"
         Title="{Binding TitleText}">
@@ -29,6 +29,17 @@
 					 MaxHeight="35"
 					 AcceptsReturn="False"
 					 Text="{Binding Text}"/>
+
+			<TextBlock FontFamily="{StaticResource MontserratFont}"
+				       FontSize="18"
+					   IsVisible="{Binding ShowAltText}"
+					   Text="{Binding AltTextTitle}"/>
+			<TextBox FontFamily="{StaticResource MontserratFont}"
+					 FontSize="18"
+					 MaxHeight="35"
+					 AcceptsReturn="False"
+					 IsVisible="{Binding ShowAltText}"
+					 Text="{Binding AltText}"/>
 		</StackPanel>
 	</DockPanel>
 </Window>

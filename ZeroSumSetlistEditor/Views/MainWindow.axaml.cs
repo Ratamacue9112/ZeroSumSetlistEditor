@@ -14,14 +14,16 @@ namespace ZeroSumSetlistEditor.Views
             InitializeComponent();
             this.WhenActivated(action =>
                 action(ViewModel!.ArtistSelect.ShowDialog.RegisterHandler(DoShowCreateArtistDialogAsync)));
+            this.WhenActivated(action =>
+                ViewModel!.RegisterShowCreateArtistDialog = () => { ViewModel!.ArtistSelect.ShowDialog.RegisterHandler(DoShowCreateArtistDialogAsync); });
             this.WhenActivated(action => 
-                ViewModel!.ShowCreateSongDialog = () => { ViewModel!.SongSelect.ShowDialog.RegisterHandler(DoShowCreateSongDialogAsync); });
+                ViewModel!.RegisterShowCreateSongDialog = () => { ViewModel!.SongSelect.ShowDialog.RegisterHandler(DoShowCreateSongDialogAsync); });
             this.WhenActivated(action =>
-                ViewModel!.ShowCreateRoleDialog = () => { ViewModel!.RoleEdit.ShowDialog.RegisterHandler(DoShowCreateRoleDialogAsync); });
+                ViewModel!.RegisterShowCreateRoleDialog = () => { ViewModel!.RoleEdit.ShowDialog.RegisterHandler(DoShowCreateRoleDialogAsync); });
             this.WhenActivated(action =>
-                ViewModel!.ShowCreateSetlistDialog = () => { ViewModel!.SetlistSelect.ShowDialog.RegisterHandler(DoShowCreateSetlistDialogAsync); });
+                ViewModel!.RegisterShowCreateSetlistDialog = () => { ViewModel!.SetlistSelect.ShowDialog.RegisterHandler(DoShowCreateSetlistDialogAsync); });
             this.WhenActivated(action =>
-                ViewModel!.ShowSetlistAddSongDialog = () => { ViewModel!.SetlistEdit.ShowDialog.RegisterHandler(DoShowSetlistAddSongDialogAsync); });
+                ViewModel!.RegisterShowSetlistAddSongDialog = () => { ViewModel!.SetlistEdit.ShowDialog.RegisterHandler(DoShowSetlistAddSongDialogAsync); });
         }
 
         private async Task DoShowCreateArtistDialogAsync(InteractionContext<CreateWindowViewModel, ArtistSelectViewModel?> interaction)
@@ -62,7 +64,7 @@ namespace ZeroSumSetlistEditor.Views
 
         private async Task DoShowSetlistAddSongDialogAsync(InteractionContext<SetlistAddSongWindowViewModel, SetlistEditViewModel?> interaction)
         {
-            var dialog = new SetlistAddSongWindow(((MainWindowViewModel)DataContext!).SetlistEdit);
+            var dialog = new SetlistAddSongWindow(((MainWindowViewModel)DataContext!).SetlistEdit, (MainWindowViewModel)DataContext!);
             dialog.DataContext = interaction.Input;
 
             var result = await dialog.ShowDialog<SetlistEditViewModel?>(this);

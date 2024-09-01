@@ -14,6 +14,7 @@ namespace ZeroSumSetlistEditor.ViewModels
     {
         public ObservableCollection<SongNote> Notes { get; set; }
         public string SongName { get; set; }
+        public string ShortSongName { get; set; }
         public string Artist { get; set; }
 
         private MainWindowViewModel mainWindowVm { get; }
@@ -25,7 +26,18 @@ namespace ZeroSumSetlistEditor.ViewModels
             {
                 Notes.Add(new SongNote(roles[i], song.Notes[i]));
             }
+
             SongName = song.Name;
+
+            if (song.ShortName == string.Empty)
+            {
+                ShortSongName = "";
+            }
+            else
+            {
+                ShortSongName = "(" + song.ShortName + ")";
+            }
+
             Artist = song.Artist;
             this.mainWindowVm = mainWindowVm;
         }

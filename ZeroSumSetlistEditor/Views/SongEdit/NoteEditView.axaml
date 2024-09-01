@@ -9,28 +9,33 @@
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 		
-		<TextBlock Margin="20" HorizontalAlignment="Center" Grid.Row="0">
+		<TextBlock Margin="0 10 0 0" HorizontalAlignment="Center" Grid.Row="0">
 			<Run Text="{Binding SongName}"
 				 FontFamily="{StaticResource MontserratFont}"
 				 Classes.h1="true"/>
-			<Run Text=" - "
-				 Classes.h2="true"
-				 FontFamily="{StaticResource MontserratFont}"
-				 FontStyle="Italic"
-				 FontWeight="ExtraLight"/>
-			<Run Text="{Binding Artist}"
+			<Run Text=" "/>
+			<Run Text="{Binding ShortSongName}"
 				 Classes.h2="true"
 				 FontFamily="{StaticResource MontserratFont}"
 				 FontStyle="Italic"
 				 FontWeight="ExtraLight"/>
 		</TextBlock>
+		<TextBlock Margin="0 0 0 10" 
+				   HorizontalAlignment="Center" 
+				   Grid.Row="1"
+				   Text="{Binding Artist}"
+				   Classes.h2="true"
+				   FontFamily="{StaticResource MontserratFont}"
+				   FontStyle="Italic"
+				   FontWeight="ExtraLight"/>
 
-		<ScrollViewer Name="ScrollViewer" Margin="0 20 0 0" Grid.Row="1">
+		<ScrollViewer Name="ScrollViewer" Margin="0 20 0 0" Grid.Row="2">
 			<ItemsControl ItemsSource="{Binding Notes}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
@@ -53,14 +58,14 @@
 
 		<Button Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"
-				Grid.Row="2"
+				Grid.Row="3"
 				Margin="0"
 				Command="{Binding SaveNotes}">
 			Save
 		</Button>
 		<Button Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"
-				Grid.Row="3"
+				Grid.Row="4"
 				Margin="0"
 				Command="{Binding CancelChanges}">
 			Cancel

@@ -21,6 +21,14 @@ namespace ZeroSumSetlistEditor.ViewModels
             fileReading = new FileReading();
             documentGeneration = new DocumentGeneration();
 
+            foreach (string artist in fileReading.GetArtists())
+            {
+                int version = fileReading.GetSongListVersion(artist);
+                if (version < 2)
+                {
+                    fileReading.UpdateSongList(artist);
+                }
+            }
             content = ArtistSelect = new ArtistSelectViewModel(fileReading.GetArtists());
         }
 
@@ -31,19 +39,20 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public void OpenArtistSelect()
         {
-            Content = new ArtistSelectViewModel(fileReading.GetArtists());
+            Content = ArtistSelect = new ArtistSelectViewModel(fileReading.GetArtists());
+            RegisterShowCreateArtistDialog.Invoke();
         }
 
         public void OpenSongSelect(string artist)
         {
             Content = SongSelect = new SongSelectViewModel(artist, fileReading.GetSongs(artist), fileReading.GetRoles(artist), this);
-            ShowCreateSongDialog.Invoke();
+            RegisterShowCreateSongDialog.Invoke();
         }
 
         public void OpenRoleEdit(string artist)
         {
             Content = RoleEdit = new RoleEditViewModel(artist, fileReading.GetRoles(artist), this);
-            ShowCreateRoleDialog.Invoke();
+            RegisterShowCreateRoleDialog.Invoke();
         }
 
         public void OpenNoteEdit(Song song)
@@ -54,7 +63,7 @@ namespace ZeroSumSetlistEditor.ViewModels
         public void OpenSetlistSelect(string artist)
         {
             Content = SetlistSelect = new SetlistSelectViewModel(artist, fileReading.GetSetlists(artist), this);
-            ShowCreateSetlistDialog.Invoke();
+            RegisterShowCreateSetlistDialog.Invoke();
         }
 
         public void OpenSetlistSettings(string artist)
@@ -65,7 +74,7 @@ namespace ZeroSumSetlistEditor.ViewModels
         public void OpenSetlistEdit(Setlist setlist)
         {
             Content = SetlistEdit = new SetlistEditViewModel(setlist, fileReading.GetSetlistSongs(setlist), this);
-            ShowSetlistAddSongDialog.Invoke();
+            RegisterShowSetlistAddSongDialog.Invoke();
         }
 
         public void OpenSetlistDocumentGenerate(Setlist setlist)
@@ -84,12 +93,13 @@ namespace ZeroSumSetlistEditor.ViewModels
             private set => this.RaiseAndSetIfChanged(ref content, value);
         }
 
-        public Action ShowCreateSongDialog { get; set; }
-        public Action ShowCreateRoleDialog { get; set; }
-        public Action ShowCreateSetlistDialog { get; set; }
-        public Action ShowSetlistAddSongDialog { get; set; }
+        public Action RegisterShowCreateArtistDialog { get; set; }
+        public Action RegisterShowCreateSongDialog { get; set; }
+        public Action RegisterShowCreateRoleDialog { get; set; }
+        public Action RegisterShowCreateSetlistDialog { get; set; }
+        public Action RegisterShowSetlistAddSongDialog { get; set; }
 
-        public ArtistSelectViewModel ArtistSelect { get; }
+        public ArtistSelectViewModel ArtistSelect { get; set; }
         public SongSelectViewModel SongSelect { get; set; }
         public RoleEditViewModel RoleEdit { get; set; }
         public SetlistSelectViewModel SetlistSelect { get; set; }

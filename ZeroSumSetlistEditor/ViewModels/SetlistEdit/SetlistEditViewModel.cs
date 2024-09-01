@@ -22,14 +22,18 @@ namespace ZeroSumSetlistEditor.ViewModels
     public class SetlistSong
     {
         public string Name { get; set; }
+        public string ShortName { get; set; }
+        public string ShortNameDisplay { get; set; }
         public int Number { get; set; }
         public string NumberText { get; set; }
         public string DisplayColor { get; set; }
         public SetlistItemType Type { get; set; }
 
-        public SetlistSong(string name, int number, string displayColor, SetlistItemType type)
+        public SetlistSong(string name, string shortName, int number, string displayColor, SetlistItemType type)
         {
             Name = name;
+            ShortName = shortName;
+            ShortNameDisplay = shortName != name ? "(" + shortName + ")" : "";
             Number = number;
             if (type == SetlistItemType.Song) NumberText = number.ToString() + ". ";
             else NumberText = string.Empty; 
@@ -67,7 +71,7 @@ namespace ZeroSumSetlistEditor.ViewModels
                 if (songs[i].StartsWith("--") && songs[i].EndsWith("--"))
                 {
                     var name = songs[i].Replace("--", "");
-                    SetlistSong song = new SetlistSong(name, -1, breakColor, name == "ENCORE" ? SetlistItemType.Encore : SetlistItemType.Intermission);
+                    SetlistSong song = new SetlistSong(name, name, -1, breakColor, name == "ENCORE" ? SetlistItemType.Encore : SetlistItemType.Intermission);
                     if (song.Type == SetlistItemType.Encore)
                     {
                         EncoreCount++;
@@ -81,7 +85,12 @@ namespace ZeroSumSetlistEditor.ViewModels
                 else
                 {
                     SongCount++;
-                    list.Add(new SetlistSong(songs[i], SongCount, GetDisplayColor(SongCount), SetlistItemType.Song));
+                    var shortName = mainWindowVm.fileReading.GetSong(songs[i], setlist.Artist).ShortName;
+                    if (shortName == "")
+                    {
+                        shortName = songs[i];
+                    }
+                    list.Add(new SetlistSong(songs[i], shortName, SongCount, GetDisplayColor(SongCount), SetlistItemType.Song));
                 }
             }
 
@@ -172,13 +181,13 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public void AddIntermission()
         {
-            Songs.Add(new SetlistSong("INTERMISSION", 0, breakColor, SetlistItemType.Intermission));
+            Songs.Add(new SetlistSong("INTERMISSION", "INTERMISSION", 0, breakColor, SetlistItemType.Intermission));
             AdjustSongs();
         }
 
         public void AddEncore()
         {
-            Songs.Add(new SetlistSong("ENCORE", 0, breakColor, SetlistItemType.Encore));
+            Songs.Add(new SetlistSong("ENCORE", "ENCORE", 0, breakColor, SetlistItemType.Encore));
             EncoreCount++;
             AdjustSongs();
         }

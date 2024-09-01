@@ -15,9 +15,12 @@ namespace ZeroSumSetlistEditor
     {
         public SetlistEditViewModel setlistEditVm;
 
-        public SetlistAddSongWindow(SetlistEditViewModel setlistEditVm)
+        private MainWindowViewModel mainWindowViewModel;
+
+        public SetlistAddSongWindow(SetlistEditViewModel setlistEditVm, MainWindowViewModel mainWindowViewModel)
         {
             this.setlistEditVm = setlistEditVm;
+            this.mainWindowViewModel = mainWindowViewModel;
 
             Opened += BindCloseDialog;
             InitializeComponent();
@@ -30,12 +33,20 @@ namespace ZeroSumSetlistEditor
             {
                 setlistEditVm.SongCount++;
                 setlistEditVm.HasChanged = true;
+                
                 setlistEditVm.Changes.Add(new SetlistAddDeleteChange(vm.SelectedSong, false));
                 if (setlistEditVm.Songs.Count < 1)
                 {
                     setlistEditVm.Changes.Add(new SetlistEmptyStateChange(false));
                 }
-                setlistEditVm.Songs.Add(new SetlistSong(vm.SelectedSong, setlistEditVm.SongCount, setlistEditVm.GetDisplayColor(setlistEditVm.SongCount), SetlistItemType.Song));
+                
+                var shortName = mainWindowViewModel.fileReading.GetSong(vm.SelectedSong, setlistEditVm.Artist).ShortName;
+                if (shortName == "")
+                {
+                    shortName = vm.SelectedSong;
+                }
+                setlistEditVm.Songs.Add(new SetlistSong(vm.SelectedSong, shortName, setlistEditVm.SongCount, setlistEditVm.GetDisplayColor(setlistEditVm.SongCount), SetlistItemType.Song));
+
                 Close();
             };
         }

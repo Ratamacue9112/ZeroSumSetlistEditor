@@ -7,11 +7,10 @@ Zero Sum Setlist Editor is an app that allows you to generate setlists for all y
 The editor is currently quite basic, but I plan to continue to add to it. Here is a list of planned features:
 - ~~Customization for the setlist~~
 - ~~Statistics~~
-- Automatic setlist generation from template
-  - Using "bustouts", inspired by [kglw.net](https://kglw.net)
-  - Looking at previous setlist, make choices from a list
-  - Taking length of show into account
+- ~~Shortened song names~~
 - One off song notes
-- Shortened song names
+- Setlist templates
+- Consideration for changing song names
+- Keep track of time and curfews
 
-***This app works, but it is a little glitchy as I am working on this on my own. If you find a bug, please report it as an issue so I am aware. Any contributions would be welcome.***
+***This app works for the most part, but it is a little glitchy as I am working on this on my own. If you find a bug, please report it as an issue so I am aware. Any contributions would be welcome.***

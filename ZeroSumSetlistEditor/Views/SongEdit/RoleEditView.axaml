@@ -26,14 +26,12 @@
 				 FontWeight="ExtraLight"/>
 		</TextBlock>
 
-		<ScrollViewer Name="ScrollViewer" Margin="0 20 0 0" Grid.Row="1">
+		<ScrollViewer Name="ScrollViewer" Margin="0 20 0 20" Grid.Row="1">
 			<ItemsControl ItemsSource="{Binding Roles}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
 						<Button Classes.selectButton="true"
-								Height="50"
-								Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenModeSelect}"
-								CommandParameter="{Binding}">
+								Height="50">
 							<DockPanel LastChildFill="false">
 								<TextBlock Text="{Binding}" FontFamily="{StaticResource MontserratFont}" DockPanel.Dock="Left"/>
 								<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">

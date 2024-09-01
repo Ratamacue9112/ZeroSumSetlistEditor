@@ -27,6 +27,75 @@ namespace ZeroSumSetlistEditor.Models
     {
         public readonly static string PersistentDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ZeroSumSetlistEditor");
 
+        public int GetSongListVersion(string artist)
+        {
+            string path = Path.Combine(PersistentDataPath, artist);
+            if (!Directory.Exists(path))
+            {
+                return 2;
+            }
+
+            string csvPath = Path.Combine(path, artist + "_Songs.csv");
+            if (!File.Exists(csvPath))
+            {
+                File.Create(csvPath);
+                return 2;
+            }
+
+            using TextFieldParser parser = new TextFieldParser(csvPath);
+            parser.TextFieldType = FieldType.Delimited;
+            parser.SetDelimiters(",");
+
+            string[] fields = parser.ReadFields()!;
+            
+            if (fields[0] == "version")
+            {
+                return int.Parse(fields[1]);
+            }
+            else
+            {
+                return 1;
+            }
+        }
+
+        public void UpdateSongList(string artist)
+        {
+            string path = Path.Combine(PersistentDataPath, artist);
+            if (!Directory.Exists(path))
+            {
+                return;
+            }
+
+            string csvPath = Path.Combine(path, artist + "_Songs.csv");
+            if (!File.Exists(csvPath))
+            {
+                File.Create(csvPath);
+                return;
+            }
+
+            List<Song> songs = GetSongs(artist);
+            List<string> lines = ["version,2"];
+
+            string headers = "songs,shortnames";
+            foreach (string role in GetRoles(artist))
+            {
+                headers += "," + role;
+            }
+            lines.Add(headers);
+
+            foreach (Song song in songs)
+            {
+                string line = song.Name + "," + song.ShortName;
+                foreach (string note in song.Notes)
+                {
+                    line += "," + note;
+                }
+                lines.Add(line);
+            }
+
+            File.WriteAllLines(csvPath, lines);
+        }
+
         public List<string> GetArtists()
         {
             if (!Directory.Exists(PersistentDataPath))
@@ -63,10 +132,15 @@ namespace ZeroSumSetlistEditor.Models
             using TextFieldParser parser = new TextFieldParser(csvPath);
             parser.TextFieldType = FieldType.Delimited;
             parser.SetDelimiters(",");
+            if (GetSongListVersion(artist) > 1)
+            {
+                parser.ReadFields();
+            }
             int rowCount = 0;
             while (!parser.EndOfData)
             {
                 string songName = "";
+                string shortSongName = "";
                 List<string> notes = new List<string>();
 
                 string[] fields = parser.ReadFields()!;
@@ -77,8 +151,13 @@ namespace ZeroSumSetlistEditor.Models
                     {
                         songName = field;
                     }
+                    else if (GetSongListVersion(artist) >= 2 && rowCount > 0 && fieldCount == 1)
+                    {
+                        shortSongName = field;
+                    }
                     else if (rowCount > 0 && fieldCount > 0)
                     {
+                        
                         notes.Add(field);
                     }
                     fieldCount++;
@@ -87,13 +166,27 @@ namespace ZeroSumSetlistEditor.Models
 
                 if (songName != string.Empty) 
                 { 
-                    songs.Add(new Song(songName, notes, artist)); 
+                    songs.Add(new Song(songName, shortSongName, notes, artist)); 
                 }
             }
             songs.Sort();
             return songs;
         }
     
+        public Song GetSong(string songName, string artist)
+        {
+            var songs = GetSongs(artist);
+            var index = GetIndexOfSong(songName, songs);
+            if (index >= 0)
+            {
+                return songs[index];
+            }
+            else
+            {
+                return new Song("", "", new List<string>(), "");
+            }
+        }
+
         public void RemoveSong(string song, string artist)
         {
             string path = Path.Combine(PersistentDataPath, artist, artist + "_Songs.csv");
@@ -111,7 +204,7 @@ namespace ZeroSumSetlistEditor.Models
             File.WriteAllLines(path, linesList);
         }
 
-        public void RenameSong(string song, string newName, string artist)
+        public void RenameSong(string song, string newName, string newShortName, string artist)
         {
             string path = Path.Combine(PersistentDataPath, artist, artist + "_Songs.csv");
             List<string> linesList = File.ReadAllLines(path).ToList();
@@ -131,6 +224,10 @@ namespace ZeroSumSetlistEditor.Models
                 if (i == 0)
                 {
                     newLine += newName;
+                }
+                else if (i == 1)
+                {
+                    newLine += "," + newShortName;
                 }
                 else
                 {
@@ -162,11 +259,17 @@ namespace ZeroSumSetlistEditor.Models
             parser.TextFieldType = FieldType.Delimited;
             parser.SetDelimiters(",");
 
+            int version = GetSongListVersion(artist);
+
             string[] fields = parser.ReadFields()!;
+            if (version > 1)
+            {
+                fields = parser.ReadFields()!;
+            }
             int fieldCount = 0;
             foreach (string field in fields)
             {
-                if (fieldCount > 0)
+                if (fieldCount > (version > 1 ? 1 : 0))
                 {
                     if (field != string.Empty)
                     {
@@ -190,14 +293,14 @@ namespace ZeroSumSetlistEditor.Models
             string csvPath = Path.Combine(path, artist + "_Songs.csv");
             if (!File.Exists(csvPath))
             {
-                File.WriteAllText(csvPath, "songs," + role);
+                File.WriteAllText(csvPath, "version,2\nsongs,shortnames," + role);
                 return;
             }
 
             string[] lines = File.ReadAllLines(csvPath);
-            for (int i = 0; i < lines.Length; i++)
+            for (int i = 1; i < lines.Length; i++)
             {
-                if (i == 0)
+                if (i == 1)
                 {
                     lines[i] += "," + role;
                 }
@@ -222,7 +325,7 @@ namespace ZeroSumSetlistEditor.Models
             string csvPath = Path.Combine(path, artist + "_Songs.csv");
             if (!File.Exists(csvPath))
             {
-                File.WriteAllText(csvPath, "songs");
+                File.WriteAllText(csvPath, "version,2\n,songs,shortnames");
                 return;
             }
 
@@ -232,9 +335,9 @@ namespace ZeroSumSetlistEditor.Models
             {
                 string[] notes = line.Split(",");
                 string newLine = "";
-                for (int i = 0; i < notes.Length - 1; i++)
+                for (int i = 1; i < notes.Length - 1; i++)
                 {
-                    if (i == 0)
+                    if (i == 1)
                     {
                         newLine += notes[i];
                     }
@@ -261,16 +364,16 @@ namespace ZeroSumSetlistEditor.Models
             string csvPath = Path.Combine(path, artist + "_Songs.csv");
             if (!File.Exists(csvPath))
             {
-                File.WriteAllText(csvPath, "songs," + newName);
+                File.WriteAllText(csvPath, "version,2\nsongs,shortnames," + newName);
                 return;
             }
 
             string[] lines = File.ReadAllLines(csvPath);
             string[] lineSplit = lines[0].Split(",");
             string newLine = "";
-            for (int i = 0; i < lineSplit.Length; i++)
+            for (int i = 1; i < lineSplit.Length; i++)
             {
-                if (i == 0)
+                if (i == 1)
                 {
                     newLine += lineSplit[i];
                 }
@@ -369,7 +472,7 @@ namespace ZeroSumSetlistEditor.Models
                     if (string.IsNullOrEmpty(song)) continue;
                     if (song.StartsWith("--") && song.EndsWith("--"))
                     {
-                        songs.Add(new Song(song, new List<string>(), setlist.Artist));
+                        songs.Add(new Song(song, "", new List<string>(), setlist.Artist));
                     }
                     foreach (Song s in allSongs)
                     {

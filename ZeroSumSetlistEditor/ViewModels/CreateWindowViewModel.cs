@@ -28,11 +28,26 @@ namespace ZeroSumSetlistEditor.ViewModels
             set => this.RaiseAndSetIfChanged(ref _text, value);
         }
 
+        private string _altText = string.Empty;
+        public string AltText
+        {
+            get => _altText;
+            set => this.RaiseAndSetIfChanged(ref _altText, value);
+        }
+
         public string TitleText { get; }
         public string EditingArtist { get; }
         public string EditingSongOrRole { get; }
         public CreateWindowMode CreateWindowMode { get; }
         public int RoleCount { get; }
+
+        private bool _showAltText;
+        public bool ShowAltText
+        {
+            get => _showAltText;
+            set => this.RaiseAndSetIfChanged(ref _showAltText, value);
+        }
+        public string AltTextTitle { get; set; }
 
         public delegate void CloseDialogAction();
         public event CloseDialogAction? CloseDialog;
@@ -57,10 +72,15 @@ namespace ZeroSumSetlistEditor.ViewModels
                     break;
                 case CreateWindowMode.CreateSong:
                     TitleText = "Create Song";
+                    ShowAltText = true;
+                    AltTextTitle = "Shortened title (will show up on printed setlist)\nLeave blank to be the same as the title";
                     break;
                 case CreateWindowMode.EditSong:
                     TitleText = "Rename Song";
                     Text = songOrRole;
+                    AltText = mainWindowVm!.fileReading.GetSong(songOrRole, artist).ShortName;
+                    ShowAltText = true;
+                    AltTextTitle = "Shortened title (will show up on printed setlist)\nLeave blank to be the same as the title";
                     break;
                 case CreateWindowMode.CreateRole:
                     TitleText = "Create Role";
