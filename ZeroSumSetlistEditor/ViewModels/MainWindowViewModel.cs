@@ -21,6 +21,14 @@ namespace ZeroSumSetlistEditor.ViewModels
             fileReading = new FileReading();
             documentGeneration = new DocumentGeneration();
 
+            foreach (string artist in fileReading.GetArtists())
+            {
+                int version = fileReading.GetSongListVersion(artist);
+                if (version < 2)
+                {
+                    fileReading.UpdateSongList(artist);
+                }
+            }
             content = ArtistSelect = new ArtistSelectViewModel(fileReading.GetArtists());
         }
 

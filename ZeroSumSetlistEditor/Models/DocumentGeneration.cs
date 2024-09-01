@@ -125,7 +125,7 @@ namespace ZeroSumSetlistEditor.Models
                                 x.Item().Row(row =>
                                 {
                                     row.RelativeItem()
-                                        .Text(song.Name.ToUpper())
+                                        .Text(song.ShortName == "" ? song.Name.ToUpper() : song.ShortName.ToUpper())
                                         .FontColor(settings.SongColor.ToHex())
                                         .FontSize(settings.SongSize);
                                     if (role != null)

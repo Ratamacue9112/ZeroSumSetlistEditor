@@ -1,4 +1,4 @@
-using Avalonia;
+ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using MsBox.Avalonia.Enums;
@@ -96,19 +96,20 @@ public partial class CreateWindow : Window
                             notes.Add("");
                         }
                         File.AppendAllText(path, Environment.NewLine + text);
-                        songSelectVm!.Songs.Add(new Song(vm.Text, notes, vm.EditingArtist));
+                        songSelectVm!.Songs.Add(new Song(vm.Text, vm.AltText, notes, vm.EditingArtist));
                         songSelectVm!.Songs.Sort();
                         songSelectVm!.FilterSongs();
                     }
                     else if (vm.CreateWindowMode == CreateWindowMode.EditSong)
                     {
-                        vm.mainWindowVm!.fileReading.RenameSong(vm.EditingSongOrRole, vm.Text, vm.EditingArtist);
+                        vm.mainWindowVm!.fileReading.RenameSong(vm.EditingSongOrRole, vm.Text, vm.AltText, vm.EditingArtist);
 
                         foreach (Song song in songSelectVm!.Songs)
                         {
                             if (song.Name == vm.EditingSongOrRole)
                             {
                                 song.Name = vm.Text;
+                                song.ShortName = vm.AltText;
                             }
                         }
                         songSelectVm!.Songs.Sort();
@@ -119,7 +120,6 @@ public partial class CreateWindow : Window
                         vm.mainWindowVm!.fileReading.AddRole(vm.EditingArtist, vm.Text);
 
                         roleEditVm!.Roles.Add(vm.Text);
-                        roleEditVm!.Roles.Sort();
                     }
                     else if (vm.CreateWindowMode == CreateWindowMode.EditRole)
                     {
@@ -127,13 +127,13 @@ public partial class CreateWindow : Window
 
                         roleEditVm!.Roles.Remove(vm.EditingSongOrRole);
                         roleEditVm!.Roles.Add(vm.Text);
-                        roleEditVm!.Roles.Sort();
                     }
                     Close();
                     return;
                 }
-                catch
+                catch (Exception ex) 
                 {
+                    Console.WriteLine(ex);
                     error = "An error occurred.";
                 }
             }

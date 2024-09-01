@@ -35,7 +35,7 @@
 				 Grid.Row="1"
 				 Text="{Binding SearchText}"/>
 		
-		<ScrollViewer Name="ScrollViewer" Margin="0 20 0 0" Grid.Row="2">
+		<ScrollViewer Name="ScrollViewer" Margin="0 20 0 20" Grid.Row="2">
 			<ItemsControl ItemsSource="{Binding FilteredSongs}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>

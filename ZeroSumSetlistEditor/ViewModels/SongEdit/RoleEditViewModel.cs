@@ -27,7 +27,6 @@ namespace ZeroSumSetlistEditor.ViewModels
         {
             Artist = artist;
             Roles = new ObservableCollection<string>(roles);
-            Roles.Sort();
             ShowDialog = new Interaction<CreateWindowViewModel, RoleEditViewModel?>();
             this.mainWindowVm = mainWindowVm;
         }
