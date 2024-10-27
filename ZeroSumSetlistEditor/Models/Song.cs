@@ -1,8 +1,10 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZeroSumSetlistEditor.ViewModels;
 
 namespace ZeroSumSetlistEditor.Models
 {
@@ -54,6 +56,45 @@ namespace ZeroSumSetlistEditor.Models
             if (obj is not Song) return 1;
 
             return Name.CompareTo((obj as Song)!.Name);
+        }
+    }
+
+    public partial class SetlistSong : ObservableObject
+    {
+        [ObservableProperty]
+        private string _name = "";
+        [ObservableProperty]
+        private string _shortName = "";
+        [ObservableProperty]
+        private string _shortNameDisplay = "";
+        [ObservableProperty]
+        private int _number = 0;
+        [ObservableProperty]
+        private string _numberText = "";
+        [ObservableProperty]
+        private string _displayColor = "";
+        [ObservableProperty]
+        private SetlistItemType _type = SetlistItemType.Song;
+        [ObservableProperty]
+        private string _oneOffNote = "";
+        [ObservableProperty]
+        private string _oneOffNoteDisplay = "";
+
+        public SetlistSong(string name, string shortName, int number, string displayColor, SetlistItemType type, string oneOffNote)
+        {
+            Name = name;
+            ShortName = shortName;
+            ShortNameDisplay = shortName != name ? "[" + shortName + "]" : "";
+            Number = number;
+            if (type == SetlistItemType.Song) NumberText = number.ToString() + ". ";
+            else NumberText = string.Empty;
+            DisplayColor = displayColor;
+            Type = type;
+            OneOffNote = oneOffNote;
+            if (OneOffNote != "")
+            {
+                OneOffNoteDisplay = "(" + OneOffNote + ")";
+            }
         }
     }
 }

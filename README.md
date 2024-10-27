@@ -8,7 +8,7 @@ The editor is currently quite basic, but I plan to continue to add to it. Here i
 - ~~Customization for the setlist~~
 - ~~Statistics~~
 - ~~Shortened song names~~
-- One off song notes
+- ~~One off song notes~~
 - Setlist templates
 - Consideration for changing song names
 - Keep track of time and curfews

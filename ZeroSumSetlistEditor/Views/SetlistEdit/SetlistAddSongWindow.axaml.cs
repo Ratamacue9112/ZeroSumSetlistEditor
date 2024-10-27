@@ -45,7 +45,7 @@ namespace ZeroSumSetlistEditor
                 {
                     shortName = vm.SelectedSong;
                 }
-                setlistEditVm.Songs.Add(new SetlistSong(vm.SelectedSong, shortName, setlistEditVm.SongCount, setlistEditVm.GetDisplayColor(setlistEditVm.SongCount), SetlistItemType.Song));
+                setlistEditVm.Songs.Add(new SetlistSong(vm.SelectedSong, shortName, setlistEditVm.SongCount, setlistEditVm.GetDisplayColor(setlistEditVm.SongCount), SetlistItemType.Song, ""));
 
                 Close();
             };

@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -16,24 +17,17 @@ namespace ZeroSumSetlistEditor.ViewModels
         CreateSong,
         EditSong,
         CreateRole,
-        EditRole
+        EditRole,
+        EditOneOffNote
     }
 
-    public class CreateWindowViewModel : ViewModelBase
+    public partial class CreateWindowViewModel : ViewModelBase
     {
+        [ObservableProperty]
         private string _text = string.Empty;
-        public string Text
-        {
-            get => _text;
-            set => this.RaiseAndSetIfChanged(ref _text, value);
-        }
 
+        [ObservableProperty]
         private string _altText = string.Empty;
-        public string AltText
-        {
-            get => _altText;
-            set => this.RaiseAndSetIfChanged(ref _altText, value);
-        }
 
         public string TitleText { get; }
         public string EditingArtist { get; }
@@ -41,12 +35,9 @@ namespace ZeroSumSetlistEditor.ViewModels
         public CreateWindowMode CreateWindowMode { get; }
         public int RoleCount { get; }
 
+        [ObservableProperty]
         private bool _showAltText;
-        public bool ShowAltText
-        {
-            get => _showAltText;
-            set => this.RaiseAndSetIfChanged(ref _showAltText, value);
-        }
+
         public string AltTextTitle { get; set; }
 
         public delegate void CloseDialogAction();
@@ -87,6 +78,10 @@ namespace ZeroSumSetlistEditor.ViewModels
                     break;
                 case CreateWindowMode.EditRole:
                     TitleText = "Edit Role";
+                    Text = songOrRole;
+                    break;
+                case CreateWindowMode.EditOneOffNote:
+                    TitleText = "Edit One Off Note";
                     Text = songOrRole;
                     break;
             }

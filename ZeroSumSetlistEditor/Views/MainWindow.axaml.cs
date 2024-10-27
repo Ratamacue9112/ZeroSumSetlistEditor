@@ -23,7 +23,9 @@ namespace ZeroSumSetlistEditor.Views
             this.WhenActivated(action =>
                 ViewModel!.RegisterShowCreateSetlistDialog = () => { ViewModel!.SetlistSelect.ShowDialog.RegisterHandler(DoShowCreateSetlistDialogAsync); });
             this.WhenActivated(action =>
-                ViewModel!.RegisterShowSetlistAddSongDialog = () => { ViewModel!.SetlistEdit.ShowDialog.RegisterHandler(DoShowSetlistAddSongDialogAsync); });
+                ViewModel!.RegisterShowSetlistAddSongDialog = () => { ViewModel!.SetlistEdit.ShowAddSongDialog.RegisterHandler(DoShowSetlistAddSongDialogAsync); });
+            this.WhenActivated(action =>
+                ViewModel!.RegisterShowSetlistEditOneOffNoteDialog = () => { ViewModel!.SetlistEdit.ShowEditOneOffNoteDialog.RegisterHandler(DoShowSetlistEditOneOffNoteDialogAsync); });
         }
 
         private async Task DoShowCreateArtistDialogAsync(InteractionContext<CreateWindowViewModel, ArtistSelectViewModel?> interaction)
@@ -65,6 +67,15 @@ namespace ZeroSumSetlistEditor.Views
         private async Task DoShowSetlistAddSongDialogAsync(InteractionContext<SetlistAddSongWindowViewModel, SetlistEditViewModel?> interaction)
         {
             var dialog = new SetlistAddSongWindow(((MainWindowViewModel)DataContext!).SetlistEdit, (MainWindowViewModel)DataContext!);
+            dialog.DataContext = interaction.Input;
+
+            var result = await dialog.ShowDialog<SetlistEditViewModel?>(this);
+            interaction.SetOutput(result);
+        }
+
+        private async Task DoShowSetlistEditOneOffNoteDialogAsync(InteractionContext<CreateWindowViewModel, SetlistEditViewModel?> interaction)
+        {
+            var dialog = new CreateWindow(((MainWindowViewModel)DataContext!).SetlistEdit);
             dialog.DataContext = interaction.Input;
 
             var result = await dialog.ShowDialog<SetlistEditViewModel?>(this);

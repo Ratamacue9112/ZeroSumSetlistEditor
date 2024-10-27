@@ -451,6 +451,29 @@ namespace ZeroSumSetlistEditor.Models
             return new List<string>();
         }
 
+        public Dictionary<string, string> GetSetlistSongsWithNotes(Setlist setlist)
+        {
+            var path = Path.Combine(PersistentDataPath, setlist.Artist, "Setlists", setlist.Date.ToString("yyyy-MM-dd") + " == " + setlist.Venue + ".txt");
+            if (File.Exists(path))
+            {
+                Dictionary<string, string> songs = new Dictionary<string, string>();
+                var encoreCount = 0;
+                foreach (string song in File.ReadAllLines(path))
+                {
+                    if (string.IsNullOrEmpty(song)) continue;
+                    var songSplit = song.Split("!(note)");
+                    if (songSplit[0] == "--ENCORE--")
+                    {
+                        encoreCount++;
+                        if (encoreCount >= 2) songSplit[0] = "--ENCORE " + encoreCount + "--";
+                    }
+                    songs.Add(songSplit[0], songSplit.Length > 1 ? songSplit.Last() : "");
+                }
+                return songs;
+            }
+            return new Dictionary<string, string>();
+        }
+
         public int GetIndexOfSong(string song, List<Song> list)
         {
             for (int i = 0; i < list.Count; i++)
@@ -460,28 +483,28 @@ namespace ZeroSumSetlistEditor.Models
             return -1;
         }
 
-        public List<Song> GetSetlistSongsFullDetail(Setlist setlist)
+        public Dictionary<Song, string> GetSetlistSongsFullDetail(Setlist setlist)
         {
             var path = Path.Combine(PersistentDataPath, setlist.Artist, "Setlists", setlist.Date.ToString("yyyy-MM-dd") + " == " + setlist.Venue + ".txt");
             if (File.Exists(path))
             {
-                var songs = new List<Song>();
+                var songs = new Dictionary<Song, string>();
                 var allSongs = GetSongs(setlist.Artist);
-                foreach (string song in File.ReadAllLines(path))
+                foreach (KeyValuePair<string, string> song in GetSetlistSongsWithNotes(setlist))
                 {
-                    if (string.IsNullOrEmpty(song)) continue;
-                    if (song.StartsWith("--") && song.EndsWith("--"))
+                    if (string.IsNullOrEmpty(song.Key)) continue;
+                    if (song.Key.StartsWith("--") && song.Key.EndsWith("--"))
                     {
-                        songs.Add(new Song(song, "", new List<string>(), setlist.Artist));
+                        songs.Add(new Song(song.Key, "", new List<string>(), setlist.Artist), song.Value);
                     }
                     foreach (Song s in allSongs)
                     {
-                        if (s.Name == song) songs.Add(s);
+                        if (s.Name == song.Key) songs.Add(s, song.Value);
                     }
                 }
                 return songs;
             }
-            return new List<Song>();
+            return new Dictionary<Song, string>();
         }
 
         public void SaveSetlist(Setlist setlist, List<SetlistSong> songs, List<SetlistChange> changes)
@@ -682,18 +705,24 @@ namespace ZeroSumSetlistEditor.Models
             List<string> songNames = new List<string>();
             foreach (var song in songs)
             {
+                string name = "";
                 switch (song.Type) 
-                { 
+                {
                     case SetlistItemType.Song:
-                        songNames.Add(song.Name);
+                        name = song.Name;
                         break;
                     case SetlistItemType.Intermission:
-                        songNames.Add("--" + song.Name + "--");
+                        name = "--" + song.Name + "--";
                         break;
                     case SetlistItemType.Encore:
-                        songNames.Add("--ENCORE--");
+                        name = "--ENCORE--";
                         break;
                 }
+                if (song.OneOffNote != "")
+                {
+                    name += "!(note)" + song.OneOffNote;
+                }
+                songNames.Add(name);
             }
             File.WriteAllLines(path, songNames);
         }
