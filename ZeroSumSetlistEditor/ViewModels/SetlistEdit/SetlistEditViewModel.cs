@@ -9,6 +9,8 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ZeroSumSetlistEditor.Models;
+using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ZeroSumSetlistEditor.ViewModels
 {
@@ -19,78 +21,60 @@ namespace ZeroSumSetlistEditor.ViewModels
         Encore
     }
 
-    public class SetlistSong
+    public partial class SetlistEditViewModel : ViewModelBase
     {
-        public string Name { get; set; }
-        public string ShortName { get; set; }
-        public string ShortNameDisplay { get; set; }
-        public int Number { get; set; }
-        public string NumberText { get; set; }
-        public string DisplayColor { get; set; }
-        public SetlistItemType Type { get; set; }
+        [ObservableProperty]
+        private ObservableCollection<SetlistSong> _songs = new ObservableCollection<SetlistSong>();
 
-        public SetlistSong(string name, string shortName, int number, string displayColor, SetlistItemType type)
-        {
-            Name = name;
-            ShortName = shortName;
-            ShortNameDisplay = shortName != name ? "(" + shortName + ")" : "";
-            Number = number;
-            if (type == SetlistItemType.Song) NumberText = number.ToString() + ". ";
-            else NumberText = string.Empty; 
-            DisplayColor = displayColor;
-            Type = type;
-        }
-    }
-
-    public class SetlistEditViewModel : ViewModelBase
-    {
-        public ObservableCollection<SetlistSong> Songs { get; set; }
         public int SongCount { get; set; }
         public int EncoreCount { get; set; }
 
         public Setlist Setlist { get; set; }
         public string Artist { get; set; }
 
+        public SetlistSong CurrentEditingSong { get; set; }
+
         public bool HasChanged { get; set; }
         public List<SetlistChange> Changes { get; set; }
 
-        public Interaction<SetlistAddSongWindowViewModel, SetlistEditViewModel?> ShowDialog { get; }
+        public Interaction<SetlistAddSongWindowViewModel, SetlistEditViewModel?> ShowAddSongDialog { get; }
+        public Interaction<CreateWindowViewModel, SetlistEditViewModel?> ShowEditOneOffNoteDialog { get; }
 
         private List<SetlistSong> startingSongs;
         private MainWindowViewModel mainWindowVm;
 
         private const string breakColor = "#0D777C";
 
-        public SetlistEditViewModel(Setlist setlist, List<string> songs, MainWindowViewModel mainWindowVm)
+        public SetlistEditViewModel(Setlist setlist, Dictionary<string, string> songs, MainWindowViewModel mainWindowVm)
         {
             SongCount = 0;
             EncoreCount = 0;
             var list = new List<SetlistSong>();
-            for (int i = 0; i < songs.Count; i++)
+            foreach (KeyValuePair<string, string> song in songs)
             {
-                if (songs[i].StartsWith("--") && songs[i].EndsWith("--"))
+                if (song.Key.StartsWith("--") && song.Key.EndsWith("--"))
                 {
-                    var name = songs[i].Replace("--", "");
-                    SetlistSong song = new SetlistSong(name, name, -1, breakColor, name == "ENCORE" ? SetlistItemType.Encore : SetlistItemType.Intermission);
-                    if (song.Type == SetlistItemType.Encore)
+                    var name = song.Key.Replace("--", "");
+                    SetlistSong setlistSong = new SetlistSong(name, name, -1, breakColor, name.StartsWith("ENCORE") ? SetlistItemType.Encore : SetlistItemType.Intermission, song.Value);
+                    if (setlistSong.Type == SetlistItemType.Encore)
                     {
                         EncoreCount++;
                         if (EncoreCount > 1)
                         {
-                            song.Name = EncoreCount + EncoreCount.GetOrdinalSuffix() + " ENCORE";
+                            setlistSong.Name = "ENCORE " + EncoreCount;
                         }
                     }
-                    list.Add(song);
+                    list.Add(setlistSong);
                 }
                 else
                 {
                     SongCount++;
-                    var shortName = mainWindowVm.fileReading.GetSong(songs[i], setlist.Artist).ShortName;
+                    var shortName = mainWindowVm.fileReading.GetSong(song.Key, setlist.Artist).ShortName;
                     if (shortName == "")
                     {
-                        shortName = songs[i];
+                        shortName = song.Key;
                     }
-                    list.Add(new SetlistSong(songs[i], shortName, SongCount, GetDisplayColor(SongCount), SetlistItemType.Song));
+                    list.Add(new SetlistSong(song.Key, shortName, SongCount, GetDisplayColor(SongCount), SetlistItemType.Song, song.Value));
                 }
             }
 
@@ -99,7 +83,8 @@ namespace ZeroSumSetlistEditor.ViewModels
             Artist = setlist.Artist;
             HasChanged = false;
             Changes = new List<SetlistChange>();
-            ShowDialog = new Interaction<SetlistAddSongWindowViewModel, SetlistEditViewModel?>();
+            ShowAddSongDialog = new Interaction<SetlistAddSongWindowViewModel, SetlistEditViewModel?>();
+            ShowEditOneOffNoteDialog = new Interaction<CreateWindowViewModel, SetlistEditViewModel?>();
             this.mainWindowVm = mainWindowVm;
             startingSongs = list;
         }
@@ -125,16 +110,23 @@ namespace ZeroSumSetlistEditor.ViewModels
                         EncoreCount++;
                         if (EncoreCount > 1)
                         {
-                            Songs[i].Name = EncoreCount + EncoreCount.GetOrdinalSuffix() + " ENCORE";
+                            Songs[i].Name = "ENCORE " + EncoreCount;
                         }
                         else
                         {
                             Songs[i].Name = "ENCORE";
                         }
+                        Songs[i].DisplayColor = breakColor;
                     }
-                    Songs[i].DisplayColor = breakColor;
                 }
             }
+        }
+
+        public async void OpenEditOneOffNoteDialog(SetlistSong song)
+        {
+            CurrentEditingSong = song;
+            var window = new CreateWindowViewModel(Artist, CreateWindowMode.EditOneOffNote, song.OneOffNote);
+            var result = await ShowEditOneOffNoteDialog.Handle(window);
         }
 
         public void MoveSongUp(SetlistSong song)
@@ -159,6 +151,7 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public void RemoveSong(SetlistSong song)
         {
+            var index = Songs.IndexOf(song);
             Songs.Remove(song);
             Changes.Add(new SetlistAddDeleteChange(song.Name, true));
             if (Songs.Count < 1)
@@ -176,18 +169,18 @@ namespace ZeroSumSetlistEditor.ViewModels
         public async void OpenAddSongDialog()
         {
             var window = new SetlistAddSongWindowViewModel(Artist, mainWindowVm.fileReading.GetSongs(Artist));
-            var result = await ShowDialog.Handle(window);
+            var result = await ShowAddSongDialog.Handle(window);
         }
 
         public void AddIntermission()
         {
-            Songs.Add(new SetlistSong("INTERMISSION", "INTERMISSION", 0, breakColor, SetlistItemType.Intermission));
+            Songs.Add(new SetlistSong("INTERMISSION", "INTERMISSION", 0, breakColor, SetlistItemType.Intermission, ""));
             AdjustSongs();
         }
 
         public void AddEncore()
         {
-            Songs.Add(new SetlistSong("ENCORE", "ENCORE", 0, breakColor, SetlistItemType.Encore));
+            Songs.Add(new SetlistSong("ENCORE", "ENCORE", 0, breakColor, SetlistItemType.Encore, ""));
             EncoreCount++;
             AdjustSongs();
         }

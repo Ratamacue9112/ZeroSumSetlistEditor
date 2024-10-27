@@ -49,33 +49,40 @@
 									   FontSize="18">
 								<Run FontWeight="ExtraLight" Text="{Binding NumberText}"/>
 								<Run Text="{Binding Name}"/>
-								<Run Text=""/>
 								<Run FontStyle="Italic" FontWeight="ExtraLight" Text="{Binding ShortNameDisplay}"/>
+								<Run FontWeight="Light" Text="{Binding OneOffNoteDisplay}"/>
+								<Run Text=""/>
 							</TextBlock>
 						
 							<StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="0 0 20 0">
 								<Button Classes.icon="true"
-										Width="30"
-										Height="30"
+										Width="40"
+										Height="40"
 										Margin="10 0 0 0"
+										Command="{Binding $parent[ItemsControl].((vm:SetlistEditViewModel)DataContext).OpenEditOneOffNoteDialog}"
+										CommandParameter="{Binding}">
+									<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/edit.svg}"
+									   Width="24" Height="24"/>
+								</Button>
+								<Button Classes.icon="true"
+										Width="40"
+										Height="40"
 										Command="{Binding $parent[ItemsControl].((vm:SetlistEditViewModel)DataContext).MoveSongUp}"
 										CommandParameter="{Binding}">
 									<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/arrow-up.svg}"
 									   Width="24" Height="24"/>
 								</Button>
 								<Button Classes.icon="true"
-										Width="30"
-										Height="30"
-										Margin="10 0 0 0"
+										Width="40"
+										Height="40"
 										Command="{Binding $parent[ItemsControl].((vm:SetlistEditViewModel)DataContext).MoveSongDown}"
 										CommandParameter="{Binding}">
 									<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/arrow-down.svg}"
 										   Width="24" Height="24"/>
 								</Button>
 								<Button Classes.icon="true"
-										Width="30"
-										Height="30"
-										Margin="10 0 0 0"
+										Width="40"
+										Height="40"
 										Command="{Binding $parent[ItemsControl].((vm:SetlistEditViewModel)DataContext).RemoveSong}"
 										CommandParameter="{Binding}">
 									<Image Source="{SvgImage avares://ZeroSumSetlistEditor/Assets/Icons/delete.svg}"

@@ -1,4 +1,5 @@
-﻿using ReactiveUI;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,21 +9,13 @@ using ZeroSumSetlistEditor.Models;
 
 namespace ZeroSumSetlistEditor.ViewModels
 {
-    public class SetlistCreateWindowViewModel : ViewModelBase
+    public partial class SetlistCreateWindowViewModel : ViewModelBase
     {
+        [ObservableProperty]
         private string _venue = string.Empty;
-        public string Venue
-        {
-            get => _venue;
-            set => this.RaiseAndSetIfChanged(ref _venue, value);
-        }
 
+        [ObservableProperty]
         private DateTime _date;
-        public DateTime Date
-        {
-            get => _date;
-            set => this.RaiseAndSetIfChanged(ref _date, value);
-        }
 
         public string TitleText { get; }
         public Setlist? Setlist { get; }

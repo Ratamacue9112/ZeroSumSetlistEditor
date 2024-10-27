@@ -24,14 +24,14 @@ namespace ZeroSumSetlistEditor.ViewModels
     {
         public Setlist Setlist { get; set; }
         public ObservableCollection<SetlistDocumentRole> Roles { get; set; }
-        public List<Song> Songs { get; set; }
+        public Dictionary<Song, string> Songs { get; set; }
         public bool PrintGeneral { get; set; }
 
         public Action<byte[], Setlist> OpenSaveDialog { get; set; }
 
         private MainWindowViewModel mainWindowVm;
 
-        public SetlistDocumentGenerateViewModel(Setlist setlist, List<string> roles, List<Song> songs, MainWindowViewModel mainWindowVm)
+        public SetlistDocumentGenerateViewModel(Setlist setlist, List<string> roles, Dictionary<Song, string> songs, MainWindowViewModel mainWindowVm)
         {
             Setlist = setlist;
             var list = new List<SetlistDocumentRole>();

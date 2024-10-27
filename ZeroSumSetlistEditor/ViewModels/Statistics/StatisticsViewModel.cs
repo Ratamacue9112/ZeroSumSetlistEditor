@@ -1,4 +1,5 @@
-﻿using ReactiveUI;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,44 +12,29 @@ using ZeroSumSetlistEditor.Models;
 
 namespace ZeroSumSetlistEditor.ViewModels
 {
-    public class StatisticsViewModel : ViewModelBase
+    public partial class StatisticsViewModel : ViewModelBase
     {
         public string _selectedItem = "All-time";
         public string SelectedItem
         {
-            get
-            {
-                return _selectedItem;
-            }
+            get => _selectedItem;
             set
             {
                 UpdateCurrentTimeFrame(value);
-                this.RaiseAndSetIfChanged(ref _selectedItem, value);
+                SetProperty(ref _selectedItem, value);
             }
         }
 
         public string Artist { get; set; }
 
+        [ObservableProperty]
         public ObservableCollection<StatisticTimeFrame> _statistics;
-        public ObservableCollection<StatisticTimeFrame> Statistics
-        {
-            get => _statistics;
-            set => this.RaiseAndSetIfChanged(ref _statistics, value);
-        }
 
+        [ObservableProperty]
         public ObservableCollection<string> _timeFrames;
-        public ObservableCollection<string> TimeFrames
-        {
-            get => _timeFrames;
-            set => this.RaiseAndSetIfChanged(ref _timeFrames, value);
-        }
 
+        [ObservableProperty]
         public StatisticTimeFrame _currentTimeFrame;
-        public StatisticTimeFrame CurrentTimeFrame
-        {
-            get => _currentTimeFrame;
-            set => this.RaiseAndSetIfChanged(ref _currentTimeFrame, value);
-        }
 
         private MainWindowViewModel mainWindowVm;
 

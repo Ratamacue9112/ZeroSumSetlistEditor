@@ -16,6 +16,7 @@ public partial class CreateWindow : Window
     private ArtistSelectViewModel? artistSelectVm;
     private SongSelectViewModel? songSelectVm;
     private RoleEditViewModel? roleEditVm;
+    private SetlistEditViewModel? setlistEditVm;
 
     public CreateWindow(ArtistSelectViewModel artistSelectVm)
     {
@@ -41,13 +42,21 @@ public partial class CreateWindow : Window
         InitializeComponent();
     }
 
+    public CreateWindow(SetlistEditViewModel setlistEditVm)
+    {
+        this.setlistEditVm = setlistEditVm;
+
+        Opened += BindCloseDialog;
+        InitializeComponent();
+    }
+
     private void BindCloseDialog(object sender, EventArgs e)
     {
         var vm = (CreateWindowViewModel)DataContext!;
         vm.CloseDialog += () =>
         {
             string error = "";
-            if (string.IsNullOrEmpty(vm.Text))
+            if (vm.CreateWindowMode != CreateWindowMode.EditOneOffNote && string.IsNullOrEmpty(vm.Text))
             {
                 error = "No name has been entered.";
             }
@@ -127,6 +136,19 @@ public partial class CreateWindow : Window
 
                         roleEditVm!.Roles.Remove(vm.EditingSongOrRole);
                         roleEditVm!.Roles.Add(vm.Text);
+                    }
+                    else if (vm.CreateWindowMode == CreateWindowMode.EditOneOffNote)
+                    {
+                        for (int i = 0; i < setlistEditVm!.Songs.Count; i++)
+                        {
+                            if (setlistEditVm!.Songs[i] == setlistEditVm!.CurrentEditingSong)
+                            {
+                                setlistEditVm!.Songs[i].OneOffNote = vm.Text;
+                                setlistEditVm!.Songs[i].OneOffNoteDisplay = vm.Text == "" ? "" : ("(" + vm.Text + ")");
+                                setlistEditVm!.HasChanged = true;
+                                break;
+                            }
+                        } 
                     }
                     Close();
                     return;

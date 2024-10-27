@@ -1,4 +1,5 @@
-﻿using ReactiveUI;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,11 +10,12 @@ using ZeroSumSetlistEditor.Models;
 
 namespace ZeroSumSetlistEditor.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase
+    public partial class MainWindowViewModel : ViewModelBase
     {
         public FileReading fileReading;
         public DocumentGeneration documentGeneration;
 
+        [ObservableProperty]
         private ViewModelBase content;
 
         public MainWindowViewModel()
@@ -73,8 +75,9 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public void OpenSetlistEdit(Setlist setlist)
         {
-            Content = SetlistEdit = new SetlistEditViewModel(setlist, fileReading.GetSetlistSongs(setlist), this);
+            Content = SetlistEdit = new SetlistEditViewModel(setlist, fileReading.GetSetlistSongsWithNotes(setlist), this);
             RegisterShowSetlistAddSongDialog.Invoke();
+            RegisterShowSetlistEditOneOffNoteDialog.Invoke();
         }
 
         public void OpenSetlistDocumentGenerate(Setlist setlist)
@@ -87,17 +90,12 @@ namespace ZeroSumSetlistEditor.ViewModels
             Content = new StatisticsViewModel(artist, fileReading.GetStatistics(artist).Combine(fileReading.GetStatistics(artist, true)), this);
         }
 
-        public ViewModelBase Content
-        {
-            get => content;
-            private set => this.RaiseAndSetIfChanged(ref content, value);
-        }
-
         public Action RegisterShowCreateArtistDialog { get; set; }
         public Action RegisterShowCreateSongDialog { get; set; }
         public Action RegisterShowCreateRoleDialog { get; set; }
         public Action RegisterShowCreateSetlistDialog { get; set; }
         public Action RegisterShowSetlistAddSongDialog { get; set; }
+        public Action RegisterShowSetlistEditOneOffNoteDialog { get; set; }
 
         public ArtistSelectViewModel ArtistSelect { get; set; }
         public SongSelectViewModel SongSelect { get; set; }
