@@ -17,6 +17,7 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
 		<TextBlock Margin="20" HorizontalAlignment="Center" Grid.Row="0" Grid.ColumnSpan="2">
@@ -55,6 +56,12 @@
 							</TextBlock>
 						
 							<StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="0 0 20 0">
+								<TextBlock FontFamily="{StaticResource MontserratFont}"
+									       DockPanel.Dock="Left"
+									       VerticalAlignment="Center"
+									       Margin="20 0 0 0"
+									       FontSize="18"
+										   Text="{Binding TimeDisplay}"/>
 								<Button Classes.icon="true"
 										Width="40"
 										Height="40"
@@ -95,7 +102,20 @@
 			</ItemsControl>
 		</ScrollViewer>
 
-		<Button Grid.Row="2"
+		<TextBlock Grid.Row="2"
+				   Grid.ColumnSpan="2"
+				   VerticalAlignment="Center"
+				   Margin="20 0 0 10"
+				   FontSize="18">
+			<Run Text="Total time:"
+				 FontFamily="{StaticResource MontserratFont}"
+				 FontStyle="Italic"
+				 FontWeight="ExtraLight"/>
+			<Run Text="{Binding TotalTimeDisplay}"
+				 FontFamily="{StaticResource MontserratFont}"/>
+		</TextBlock>
+
+		<Button Grid.Row="3"
 				Grid.ColumnSpan="2"
 				Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"
@@ -104,7 +124,7 @@
 			Add Song
 		</Button>
 
-		<Button Grid.Row="3"
+		<Button Grid.Row="4"
 				Grid.Column="0"
 				Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"
@@ -112,7 +132,7 @@
 				Command="{Binding AddIntermission}">
 			Add Intermission
 		</Button>
-		<Button Grid.Row="3"
+		<Button Grid.Row="4"
 				Grid.Column="1"
 				Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"
@@ -121,7 +141,7 @@
 			Add Encore
 		</Button>
 		
-		<Button Grid.Row="4"
+		<Button Grid.Row="5"
 				Grid.Column="0"
 				Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"
@@ -130,7 +150,7 @@
 				CommandParameter="{Binding Artist}">
 			Save
 		</Button>
-		<Button Grid.Row="4"
+		<Button Grid.Row="5"
 				Grid.Column="1"
 				Classes.regularButton="true"
 				FontFamily="{StaticResource MontserratFont}"

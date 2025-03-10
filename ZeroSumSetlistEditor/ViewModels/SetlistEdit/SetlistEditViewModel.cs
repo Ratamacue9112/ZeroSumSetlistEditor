@@ -25,6 +25,14 @@ namespace ZeroSumSetlistEditor.ViewModels
     {
         [ObservableProperty]
         private ObservableCollection<SetlistSong> _songs = new ObservableCollection<SetlistSong>();
+        [ObservableProperty]
+        private int _totalHours = 0;
+        [ObservableProperty]
+        private int _totalMinutes = 0;
+        [ObservableProperty]
+        private int _totalSeconds = 0;
+        [ObservableProperty]
+        private string _totalTimeDisplay = "";
 
         public int SongCount { get; set; }
         public int EncoreCount { get; set; }
@@ -45,7 +53,7 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         private const string breakColor = "#0D777C";
 
-        public SetlistEditViewModel(Setlist setlist, Dictionary<string, string> songs, MainWindowViewModel mainWindowVm)
+        public SetlistEditViewModel(Setlist setlist, List<KeyValuePair<string, string>> songs, MainWindowViewModel mainWindowVm)
         {
             SongCount = 0;
             EncoreCount = 0;
@@ -55,7 +63,8 @@ namespace ZeroSumSetlistEditor.ViewModels
                 if (song.Key.StartsWith("--") && song.Key.EndsWith("--"))
                 {
                     var name = song.Key.Replace("--", "");
-                    SetlistSong setlistSong = new SetlistSong(name, name, -1, breakColor, name.StartsWith("ENCORE") ? SetlistItemType.Encore : SetlistItemType.Intermission, song.Value);
+                    var encore = name.StartsWith("ENCORE");
+                    SetlistSong setlistSong = new SetlistSong(name, name, encore ? 3 : 15, 0, -1, breakColor, encore ? SetlistItemType.Encore : SetlistItemType.Intermission, song.Value);
                     if (setlistSong.Type == SetlistItemType.Encore)
                     {
                         EncoreCount++;
@@ -69,12 +78,12 @@ namespace ZeroSumSetlistEditor.ViewModels
                 else
                 {
                     SongCount++;
-                    var shortName = mainWindowVm.fileReading.GetSong(song.Key, setlist.Artist).ShortName;
-                    if (shortName == "")
+                    var songObj = mainWindowVm.fileReading.GetSong(song.Key, setlist.Artist);
+                    if (songObj.ShortName == "")
                     {
-                        shortName = song.Key;
+                        songObj.ShortName = song.Key;
                     }
-                    list.Add(new SetlistSong(song.Key, shortName, SongCount, GetDisplayColor(SongCount), SetlistItemType.Song, song.Value));
+                    list.Add(new SetlistSong(song.Key, songObj.ShortName, songObj.Minutes, songObj.Seconds, SongCount, GetDisplayColor(SongCount), SetlistItemType.Song, song.Value));
                 }
             }
 
@@ -87,6 +96,8 @@ namespace ZeroSumSetlistEditor.ViewModels
             ShowEditOneOffNoteDialog = new Interaction<CreateWindowViewModel, SetlistEditViewModel?>();
             this.mainWindowVm = mainWindowVm;
             startingSongs = list;
+
+            RecalculateTime();
         }
 
         public void AdjustSongs()
@@ -119,6 +130,33 @@ namespace ZeroSumSetlistEditor.ViewModels
                         Songs[i].DisplayColor = breakColor;
                     }
                 }
+            }
+        }
+
+        public void RecalculateTime()
+        {
+            TotalHours = 0;
+            TotalMinutes = 0;
+            TotalSeconds = 0;
+            foreach(SetlistSong song in Songs)
+            {
+                TotalMinutes += song.TimeMinutes;
+                TotalSeconds += song.TimeSeconds;
+            }
+            var remainder = TotalMinutes % 60;
+            TotalHours = (TotalMinutes - remainder) / 60;
+            var minutesRemainder = TotalSeconds % 60;
+            TotalMinutes = remainder + ((TotalSeconds - minutesRemainder) / 60);
+            TotalSeconds = minutesRemainder;
+
+
+            if (TotalHours > 0)
+            {
+                TotalTimeDisplay = TotalHours.ToString() + ":" + TotalMinutes.ToString("00") + ":" + TotalSeconds.ToString("00");
+            }
+            else
+            {
+                TotalTimeDisplay = TotalMinutes.ToString() + ":" + TotalSeconds.ToString("00");
             }
         }
 
@@ -159,6 +197,7 @@ namespace ZeroSumSetlistEditor.ViewModels
                 Changes.Add(new SetlistEmptyStateChange(true));
             }
             AdjustSongs();
+            RecalculateTime();
         } 
 
         public string GetDisplayColor(int number)
@@ -174,15 +213,17 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public void AddIntermission()
         {
-            Songs.Add(new SetlistSong("INTERMISSION", "INTERMISSION", 0, breakColor, SetlistItemType.Intermission, ""));
+            Songs.Add(new SetlistSong("INTERMISSION", "INTERMISSION", 15, 0, 0, breakColor, SetlistItemType.Intermission, ""));
             AdjustSongs();
+            RecalculateTime();
         }
 
         public void AddEncore()
         {
-            Songs.Add(new SetlistSong("ENCORE", "ENCORE", 0, breakColor, SetlistItemType.Encore, ""));
+            Songs.Add(new SetlistSong("ENCORE", "ENCORE", 3, 0, 0, breakColor, SetlistItemType.Encore, ""));
             EncoreCount++;
             AdjustSongs();
+            RecalculateTime();
         }
 
         public void Save()

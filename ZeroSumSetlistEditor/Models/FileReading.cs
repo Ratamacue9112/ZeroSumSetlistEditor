@@ -32,14 +32,14 @@ namespace ZeroSumSetlistEditor.Models
             string path = Path.Combine(PersistentDataPath, artist);
             if (!Directory.Exists(path))
             {
-                return 2;
+                return 3;
             }
 
             string csvPath = Path.Combine(path, artist + "_Songs.csv");
             if (!File.Exists(csvPath))
             {
                 File.Create(csvPath);
-                return 2;
+                return 3;
             }
 
             using TextFieldParser parser = new TextFieldParser(csvPath);
@@ -74,9 +74,9 @@ namespace ZeroSumSetlistEditor.Models
             }
 
             List<Song> songs = GetSongs(artist);
-            List<string> lines = ["version,2"];
+            List<string> lines = ["version,3"];
 
-            string headers = "songs,shortnames";
+            string headers = "songs,shortnames,minutes,seconds";
             foreach (string role in GetRoles(artist))
             {
                 headers += "," + role;
@@ -85,7 +85,7 @@ namespace ZeroSumSetlistEditor.Models
 
             foreach (Song song in songs)
             {
-                string line = song.Name + "," + song.ShortName;
+                string line = song.Name + "," + song.ShortName + "," + song.Minutes + "," + song.Seconds;
                 foreach (string note in song.Notes)
                 {
                     line += "," + note;
@@ -132,8 +132,10 @@ namespace ZeroSumSetlistEditor.Models
             using TextFieldParser parser = new TextFieldParser(csvPath);
             parser.TextFieldType = FieldType.Delimited;
             parser.SetDelimiters(",");
-            if (GetSongListVersion(artist) > 1)
+            var version = GetSongListVersion(artist);
+            if (version >= 2)
             {
+                parser.ReadFields();
                 parser.ReadFields();
             }
             int rowCount = 0;
@@ -141,23 +143,32 @@ namespace ZeroSumSetlistEditor.Models
             {
                 string songName = "";
                 string shortSongName = "";
+                int minutes = 0;
+                int seconds = 0;
                 List<string> notes = new List<string>();
 
                 string[] fields = parser.ReadFields()!;
                 int fieldCount = 0;
                 foreach (string field in fields)
                 {
-                    if (rowCount > 0 && fieldCount == 0)
+                    if (fieldCount == 0)
                     {
                         songName = field;
                     }
-                    else if (GetSongListVersion(artist) >= 2 && rowCount > 0 && fieldCount == 1)
+                    else if (version >= 2 && fieldCount == 1)
                     {
                         shortSongName = field;
                     }
-                    else if (rowCount > 0 && fieldCount > 0)
+                    else if (version >= 3 && fieldCount == 2)
                     {
-                        
+                        int.TryParse(field, out minutes);
+                    }
+                    else if (version >= 3 && fieldCount == 3)
+                    {
+                        int.TryParse(field, out seconds);
+                    }
+                    else if (fieldCount > 0)
+                    {
                         notes.Add(field);
                     }
                     fieldCount++;
@@ -166,7 +177,7 @@ namespace ZeroSumSetlistEditor.Models
 
                 if (songName != string.Empty) 
                 { 
-                    songs.Add(new Song(songName, shortSongName, notes, artist)); 
+                    songs.Add(new Song(songName, shortSongName, minutes, seconds, notes, artist)); 
                 }
             }
             songs.Sort();
@@ -183,7 +194,7 @@ namespace ZeroSumSetlistEditor.Models
             }
             else
             {
-                return new Song("", "", new List<string>(), "");
+                return new Song("", "", 0, 0, new List<string>(), "");
             }
         }
 
@@ -204,7 +215,7 @@ namespace ZeroSumSetlistEditor.Models
             File.WriteAllLines(path, linesList);
         }
 
-        public void RenameSong(string song, string newName, string newShortName, string artist)
+        public void RenameSong(string song, string newName, string newShortName, int newMinutes, int newSeconds, string artist)
         {
             string path = Path.Combine(PersistentDataPath, artist, artist + "_Songs.csv");
             List<string> linesList = File.ReadAllLines(path).ToList();
@@ -228,6 +239,14 @@ namespace ZeroSumSetlistEditor.Models
                 else if (i == 1)
                 {
                     newLine += "," + newShortName;
+                }
+                else if (i == 2)
+                {
+                    newLine += "," + newMinutes;
+                }
+                else if (i == 3)
+                {
+                    newLine += "," + newSeconds;
                 }
                 else
                 {
@@ -259,17 +278,20 @@ namespace ZeroSumSetlistEditor.Models
             parser.TextFieldType = FieldType.Delimited;
             parser.SetDelimiters(",");
 
-            int version = GetSongListVersion(artist);
+            var version = GetSongListVersion(artist);
 
-            string[] fields = parser.ReadFields()!;
-            if (version > 1)
+            if (version >= 2)
             {
-                fields = parser.ReadFields()!;
+                parser.ReadFields();
             }
+            string[] fields = parser.ReadFields()!;
             int fieldCount = 0;
+            int minimumField = 0;
+            if (version >= 2) minimumField = 1;
+            if (version >= 3) minimumField = 3;
             foreach (string field in fields)
             {
-                if (fieldCount > (version > 1 ? 1 : 0))
+                if (fieldCount > minimumField)
                 {
                     if (field != string.Empty)
                     {
@@ -405,7 +427,7 @@ namespace ZeroSumSetlistEditor.Models
                 }
                 index++;
             }
-            string newLine = song + "," + GetSong(song, artist).ShortName;
+            string newLine = song + "," + GetSong(song, artist).ShortName + ",,";
             foreach (SongNote note in notes)
             {
                 newLine += "," + note.Note;
@@ -451,12 +473,12 @@ namespace ZeroSumSetlistEditor.Models
             return new List<string>();
         }
 
-        public Dictionary<string, string> GetSetlistSongsWithNotes(Setlist setlist)
+        public List<KeyValuePair<string, string>> GetSetlistSongsWithNotes(Setlist setlist)
         {
             var path = Path.Combine(PersistentDataPath, setlist.Artist, "Setlists", setlist.Date.ToString("yyyy-MM-dd") + " == " + setlist.Venue + ".txt");
             if (File.Exists(path))
             {
-                Dictionary<string, string> songs = new Dictionary<string, string>();
+                List<KeyValuePair<string, string>> songs = new List<KeyValuePair<string, string>>();
                 var encoreCount = 0;
                 foreach (string song in File.ReadAllLines(path))
                 {
@@ -467,11 +489,11 @@ namespace ZeroSumSetlistEditor.Models
                         encoreCount++;
                         if (encoreCount >= 2) songSplit[0] = "--ENCORE " + encoreCount + "--";
                     }
-                    songs.Add(songSplit[0], songSplit.Length > 1 ? songSplit.Last() : "");
+                    songs.Add(new KeyValuePair<string, string>(songSplit[0], songSplit.Length > 1 ? songSplit.Last() : ""));
                 }
                 return songs;
             }
-            return new Dictionary<string, string>();
+            return new List<KeyValuePair<string, string>>();
         }
 
         public int GetIndexOfSong(string song, List<Song> list)
@@ -495,7 +517,7 @@ namespace ZeroSumSetlistEditor.Models
                     if (string.IsNullOrEmpty(song.Key)) continue;
                     if (song.Key.StartsWith("--") && song.Key.EndsWith("--"))
                     {
-                        songs.Add(new Song(song.Key, "", new List<string>(), setlist.Artist), song.Value);
+                        songs.Add(new Song(song.Key, "", 0, 0, new List<string>(), setlist.Artist), song.Value);
                     }
                     foreach (Song s in allSongs)
                     {

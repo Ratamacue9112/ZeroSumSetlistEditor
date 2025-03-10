@@ -39,15 +39,16 @@ namespace ZeroSumSetlistEditor
                 {
                     setlistEditVm.Changes.Add(new SetlistEmptyStateChange(false));
                 }
-                
-                var shortName = mainWindowViewModel.fileReading.GetSong(vm.SelectedSong, setlistEditVm.Artist).ShortName;
-                if (shortName == "")
+
+                var song = mainWindowViewModel.fileReading.GetSong(vm.SelectedSong, setlistEditVm.Artist);
+                if (song.ShortName == "")
                 {
-                    shortName = vm.SelectedSong;
+                    song.ShortName = vm.SelectedSong;
                 }
-                setlistEditVm.Songs.Add(new SetlistSong(vm.SelectedSong, shortName, setlistEditVm.SongCount, setlistEditVm.GetDisplayColor(setlistEditVm.SongCount), SetlistItemType.Song, ""));
+                setlistEditVm.Songs.Add(new SetlistSong(vm.SelectedSong, song.ShortName, song.Minutes, song.Seconds, setlistEditVm.SongCount, setlistEditVm.GetDisplayColor(setlistEditVm.SongCount), SetlistItemType.Song, ""));
 
                 Close();
+                setlistEditVm.RecalculateTime();
             };
         }
     }

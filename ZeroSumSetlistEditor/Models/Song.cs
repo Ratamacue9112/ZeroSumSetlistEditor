@@ -39,13 +39,17 @@ namespace ZeroSumSetlistEditor.Models
     {
         public string Name { get; set; }
         public string ShortName { get; set; }
+        public int Minutes { get; set; }
+        public int Seconds { get; set; }
         public List<string> Notes { get; set; }
         public string Artist { get; set; }
 
-        public Song(string name, string shortName, List<string> notes, string artist)
+        public Song(string name, string shortName, int minutes, int seconds, List<string> notes, string artist)
         {
             Name = name;
             ShortName = shortName;
+            Minutes = minutes;
+            Seconds = seconds;
             Notes = notes;
             Artist = artist;
         }
@@ -67,6 +71,14 @@ namespace ZeroSumSetlistEditor.Models
         private string _shortName = "";
         [ObservableProperty]
         private string _shortNameDisplay = "";
+
+        [ObservableProperty]
+        private int _timeMinutes = 0;
+        [ObservableProperty]
+        private int _timeSeconds = 0;
+        [ObservableProperty]
+        private string _timeDisplay = "";
+
         [ObservableProperty]
         private int _number = 0;
         [ObservableProperty]
@@ -75,21 +87,28 @@ namespace ZeroSumSetlistEditor.Models
         private string _displayColor = "";
         [ObservableProperty]
         private SetlistItemType _type = SetlistItemType.Song;
+
         [ObservableProperty]
         private string _oneOffNote = "";
         [ObservableProperty]
         private string _oneOffNoteDisplay = "";
 
-        public SetlistSong(string name, string shortName, int number, string displayColor, SetlistItemType type, string oneOffNote)
+        public SetlistSong(string name, string shortName, int minutes, int seconds, int number, string displayColor, SetlistItemType type, string oneOffNote)
         {
             Name = name;
             ShortName = shortName;
             ShortNameDisplay = shortName != name ? "[" + shortName + "]" : "";
+
+            TimeMinutes = minutes;
+            TimeSeconds = seconds;
+            TimeDisplay = minutes.ToString() + ":" + seconds.ToString("00");
+
             Number = number;
             if (type == SetlistItemType.Song) NumberText = number.ToString() + ". ";
             else NumberText = string.Empty;
             DisplayColor = displayColor;
             Type = type;
+
             OneOffNote = oneOffNote;
             if (OneOffNote != "")
             {

@@ -97,7 +97,7 @@ public partial class CreateWindow : Window
                     }
                     else if (vm.CreateWindowMode == CreateWindowMode.CreateSong)
                     {
-                        string text = vm.Text;
+                        string text = vm.Text + "," + vm.AltText + "," + vm.TimeMinutes + "," + vm.TimeSeconds;
                         List<string> notes = new List<string>();
                         for (int i = 0; i < vm.RoleCount; i++)
                         {
@@ -105,13 +105,13 @@ public partial class CreateWindow : Window
                             notes.Add("");
                         }
                         File.AppendAllText(path, Environment.NewLine + text);
-                        songSelectVm!.Songs.Add(new Song(vm.Text, vm.AltText, notes, vm.EditingArtist));
+                        songSelectVm!.Songs.Add(new Song(vm.Text, vm.AltText, (int)vm.TimeMinutes!, (int)vm.TimeSeconds!, notes, vm.EditingArtist));
                         songSelectVm!.Songs.Sort();
                         songSelectVm!.FilterSongs();
                     }
                     else if (vm.CreateWindowMode == CreateWindowMode.EditSong)
                     {
-                        vm.mainWindowVm!.fileReading.RenameSong(vm.EditingSongOrRole, vm.Text, vm.AltText, vm.EditingArtist);
+                        vm.mainWindowVm!.fileReading.RenameSong(vm.EditingSongOrRole, vm.Text, vm.AltText, (int)vm.TimeMinutes!, (int)vm.TimeSeconds!, vm.EditingArtist);
 
                         foreach (Song song in songSelectVm!.Songs)
                         {
@@ -119,6 +119,8 @@ public partial class CreateWindow : Window
                             {
                                 song.Name = vm.Text;
                                 song.ShortName = vm.AltText;
+                                song.Minutes = (int)(vm.TimeMinutes == null ? 0 : vm.TimeMinutes!);
+                                song.Seconds = (int)(vm.TimeSeconds == null ? 0 : vm.TimeSeconds!);
                             }
                         }
                         songSelectVm!.Songs.Sort();
