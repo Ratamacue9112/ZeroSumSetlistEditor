@@ -26,7 +26,7 @@ namespace ZeroSumSetlistEditor.ViewModels
             foreach (string artist in fileReading.GetArtists())
             {
                 int version = fileReading.GetSongListVersion(artist);
-                if (version < 2)
+                if (version < 3)
                 {
                     fileReading.UpdateSongList(artist);
                 }

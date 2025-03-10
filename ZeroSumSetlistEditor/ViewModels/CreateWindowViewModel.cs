@@ -40,6 +40,12 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public string AltTextTitle { get; set; }
 
+        [ObservableProperty]
+        private bool _showTime;
+
+        public int? TimeMinutes { get; set; } = 0;
+        public int? TimeSeconds { get; set; } = 0;
+
         public delegate void CloseDialogAction();
         public event CloseDialogAction? CloseDialog;
 
@@ -65,13 +71,20 @@ namespace ZeroSumSetlistEditor.ViewModels
                     TitleText = "Create Song";
                     ShowAltText = true;
                     AltTextTitle = "Shortened title (will show up on printed setlist)\nLeave blank to be the same as the title";
+                    ShowTime = true;
                     break;
                 case CreateWindowMode.EditSong:
                     TitleText = "Rename Song";
                     Text = songOrRole;
-                    AltText = mainWindowVm!.fileReading.GetSong(songOrRole, artist).ShortName;
+
+                    var song = mainWindowVm!.fileReading.GetSong(songOrRole, artist);
+                    AltText = song.ShortName;
+                    TimeMinutes = song.Minutes;
+                    TimeSeconds = song.Seconds;
+
                     ShowAltText = true;
                     AltTextTitle = "Shortened title (will show up on printed setlist)\nLeave blank to be the same as the title";
+                    ShowTime = true;
                     break;
                 case CreateWindowMode.CreateRole:
                     TitleText = "Create Role";
@@ -83,6 +96,7 @@ namespace ZeroSumSetlistEditor.ViewModels
                 case CreateWindowMode.EditOneOffNote:
                     TitleText = "Edit One Off Note";
                     Text = songOrRole;
+                    ShowTime = true;
                     break;
             }
         }

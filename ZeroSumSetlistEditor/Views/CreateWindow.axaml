@@ -7,7 +7,7 @@
         x:Class="ZeroSumSetlistEditor.CreateWindow"
 		x:DataType="vm:CreateWindowViewModel"
 		Icon="avares://ZeroSumSetlistEditor/Assets/icon.ico"
-		Width="500" Height="300"
+		Width="600" Height="500"
 		WindowStartupLocation="CenterOwner"
 		CanResize="false"
         Title="{Binding TitleText}">
@@ -40,6 +40,28 @@
 					 AcceptsReturn="False"
 					 IsVisible="{Binding ShowAltText}"
 					 Text="{Binding AltText}"/>
+			<TextBlock FontFamily="{StaticResource MontserratFont}"
+				       FontSize="18"
+					   IsVisible="{Binding ShowTime}"
+					   Text="Approximate time in minutes/seconds"/>
+			<NumericUpDown FontFamily="{StaticResource MontserratFont}"
+						   FontSize="18"
+						   MaxHeight="35"
+						   Minimum="0"
+						   ParsingNumberStyle="Integer"
+						   ShowButtonSpinner="false"
+						   IsVisible="{Binding ShowTime}"
+						   Value="{Binding TimeMinutes}"/>
+			<NumericUpDown FontFamily="{StaticResource MontserratFont}"
+						   FontSize="18"
+						   MaxHeight="35"
+						   Minimum="0"
+						   Maximum="59"
+						   FormatString="00"
+						   ParsingNumberStyle="Integer"
+						   ShowButtonSpinner="false"
+						   IsVisible="{Binding ShowTime}"
+						   Value="{Binding TimeSeconds}"/>
 		</StackPanel>
 	</DockPanel>
 </Window>
