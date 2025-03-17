@@ -69,7 +69,8 @@ namespace ZeroSumSetlistEditor.Models
             string csvPath = Path.Combine(path, artist + "_Songs.csv");
             if (!File.Exists(csvPath))
             {
-                File.Create(csvPath);
+                File.Create(csvPath).Close();
+                File.WriteAllText(csvPath, "version,3\nsongs,shortnames,minutes,seconds");
                 return;
             }
 

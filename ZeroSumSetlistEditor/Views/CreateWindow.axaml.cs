@@ -83,7 +83,7 @@ public partial class CreateWindow : Window
                     {
                         Directory.CreateDirectory(path);
                         string csvPath = path + Path.DirectorySeparatorChar + vm.Text + "_Songs.csv";
-                        File.WriteAllText(csvPath, "songs");
+                        vm.mainWindowVm!.fileReading.UpdateSongList(vm.Text);
                         artistSelectVm!.Artists.Add(vm.Text);
                         artistSelectVm!.Artists.Sort();
                     }
