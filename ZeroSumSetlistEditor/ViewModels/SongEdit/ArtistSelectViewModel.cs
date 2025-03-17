@@ -21,16 +21,19 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public Interaction<CreateWindowViewModel, ArtistSelectViewModel?> ShowDialog { get; }
 
-        public ArtistSelectViewModel(List<string> artists)
+        private MainWindowViewModel? mainWindowVm;
+
+        public ArtistSelectViewModel(List<string> artists, MainWindowViewModel mainWindowVm)
         {
             Artists = new ObservableCollection<string>(artists);
+            this.mainWindowVm = mainWindowVm;
 
             ShowDialog = new Interaction<CreateWindowViewModel, ArtistSelectViewModel?>();
         }
 
         public async void OpenCreateArtistDialog(string artist)
         {
-            var window = new CreateWindowViewModel(artist, artist == "" ? CreateWindowMode.CreateArtist : CreateWindowMode.EditArtist);
+            var window = new CreateWindowViewModel(artist, artist == "" ? CreateWindowMode.CreateArtist : CreateWindowMode.EditArtist, "", 0, mainWindowVm);
             var result = await ShowDialog.Handle(window);
         }
 

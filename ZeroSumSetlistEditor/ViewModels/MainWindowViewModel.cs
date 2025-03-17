@@ -31,7 +31,7 @@ namespace ZeroSumSetlistEditor.ViewModels
                     fileReading.UpdateSongList(artist);
                 }
             }
-            content = ArtistSelect = new ArtistSelectViewModel(fileReading.GetArtists());
+            content = ArtistSelect = new ArtistSelectViewModel(fileReading.GetArtists(), this);
         }
 
         public void OpenModeSelect(string artist)
@@ -41,7 +41,7 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public void OpenArtistSelect()
         {
-            Content = ArtistSelect = new ArtistSelectViewModel(fileReading.GetArtists());
+            Content = ArtistSelect = new ArtistSelectViewModel(fileReading.GetArtists(), this);
             RegisterShowCreateArtistDialog.Invoke();
         }
 
