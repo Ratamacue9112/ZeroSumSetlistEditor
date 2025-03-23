@@ -116,4 +116,12 @@ namespace ZeroSumSetlistEditor.Models
             }
         }
     }
+
+    public class OneOffSetlistSongData
+    {
+        public string Note { get; set; }
+        public int Minutes { get; set; }
+        public int Seconds { get; set; }
+        public bool OneOffTime { get; set; }
+    }
 }

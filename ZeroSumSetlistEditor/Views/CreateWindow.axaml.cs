@@ -147,6 +147,11 @@ public partial class CreateWindow : Window
                             {
                                 setlistEditVm!.Songs[i].OneOffNote = vm.Text;
                                 setlistEditVm!.Songs[i].OneOffNoteDisplay = vm.Text == "" ? "" : ("(" + vm.Text + ")");
+
+                                setlistEditVm!.Songs[i].TimeMinutes = (int)vm.TimeMinutes!;
+                                setlistEditVm!.Songs[i].TimeSeconds = (int)vm.TimeSeconds!;
+                                setlistEditVm!.Songs[i].TimeDisplay = ((int)vm.TimeMinutes!) + ":" + ((int)vm.TimeSeconds).ToString("00");
+
                                 setlistEditVm!.HasChanged = true;
                                 break;
                             }

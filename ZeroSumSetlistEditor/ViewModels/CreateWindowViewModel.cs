@@ -96,6 +96,9 @@ namespace ZeroSumSetlistEditor.ViewModels
                 case CreateWindowMode.EditOneOffNote:
                     TitleText = "Edit One Off Note";
                     Text = songOrRole;
+
+                    TimeMinutes = mainWindowVm!.SetlistEdit.CurrentEditingSong.TimeMinutes;
+                    TimeSeconds = mainWindowVm!.SetlistEdit.CurrentEditingSong.TimeSeconds;
                     ShowTime = true;
                     break;
             }

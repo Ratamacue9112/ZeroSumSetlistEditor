@@ -474,27 +474,51 @@ namespace ZeroSumSetlistEditor.Models
             return new List<string>();
         }
 
-        public List<KeyValuePair<string, string>> GetSetlistSongsWithNotes(Setlist setlist)
+        public List<KeyValuePair<string, OneOffSetlistSongData>> GetSetlistSongsWithOneOffData(Setlist setlist)
         {
             var path = Path.Combine(PersistentDataPath, setlist.Artist, "Setlists", setlist.Date.ToString("yyyy-MM-dd") + " == " + setlist.Venue + ".txt");
             if (File.Exists(path))
             {
-                List<KeyValuePair<string, string>> songs = new List<KeyValuePair<string, string>>();
+                List<KeyValuePair<string, OneOffSetlistSongData>> songs = new List<KeyValuePair<string, OneOffSetlistSongData>>();
                 var encoreCount = 0;
                 foreach (string song in File.ReadAllLines(path))
                 {
                     if (string.IsNullOrEmpty(song)) continue;
-                    var songSplit = song.Split("!(note)");
-                    if (songSplit[0] == "--ENCORE--")
+
+                    var hasTime = song.Contains("!(time)");
+                    var songSplit = hasTime ? song.Split("!(time)") : song.Split("!(note)");
+                    var name = songSplit[0];
+                    if (hasTime) songSplit = songSplit[1].Split("!(note)");
+
+                    var data = new OneOffSetlistSongData();
+                    var songObj = GetSong(name, setlist.Artist);
+
+                    if (hasTime)
+                    {
+                        var timeSplit = songSplit[0].Split(":");
+                        data.Minutes = int.Parse(timeSplit[0]);
+                        data.Seconds = int.Parse(timeSplit[1]);
+                        data.OneOffTime = data.Minutes != songObj.Minutes && data.Seconds != songObj.Seconds;
+                    }
+                    else
+                    {
+                        data.Minutes = songObj.Minutes;
+                        data.Seconds = songObj.Seconds;
+                        data.OneOffTime = false;
+                    }
+                    data.Note = songSplit.Length > 1 ? songSplit[1] : "";
+
+                    if (name == "--ENCORE--")
                     {
                         encoreCount++;
-                        if (encoreCount >= 2) songSplit[0] = "--ENCORE " + encoreCount + "--";
+                        if (encoreCount >= 2) name = "--ENCORE " + encoreCount + "--";
                     }
-                    songs.Add(new KeyValuePair<string, string>(songSplit[0], songSplit.Length > 1 ? songSplit.Last() : ""));
+
+                    songs.Add(new KeyValuePair<string, OneOffSetlistSongData>(name, data));
                 }
                 return songs;
             }
-            return new List<KeyValuePair<string, string>>();
+            return new List<KeyValuePair<string, OneOffSetlistSongData>>();
         }
 
         public int GetIndexOfSong(string song, List<Song> list)
@@ -513,16 +537,16 @@ namespace ZeroSumSetlistEditor.Models
             {
                 var songs = new Dictionary<Song, string>();
                 var allSongs = GetSongs(setlist.Artist);
-                foreach (KeyValuePair<string, string> song in GetSetlistSongsWithNotes(setlist))
+                foreach (KeyValuePair<string, OneOffSetlistSongData> song in GetSetlistSongsWithOneOffData(setlist))
                 {
                     if (string.IsNullOrEmpty(song.Key)) continue;
                     if (song.Key.StartsWith("--") && song.Key.EndsWith("--"))
                     {
-                        songs.Add(new Song(song.Key, "", 0, 0, new List<string>(), setlist.Artist), song.Value);
+                        songs.Add(new Song(song.Key, "", 0, 0, new List<string>(), setlist.Artist), song.Value.Note);
                     }
                     foreach (Song s in allSongs)
                     {
-                        if (s.Name == song.Key) songs.Add(s, song.Value);
+                        if (s.Name == song.Key) songs.Add(s, song.Value.Note);
                     }
                 }
                 return songs;
@@ -729,6 +753,7 @@ namespace ZeroSumSetlistEditor.Models
             foreach (var song in songs)
             {
                 string name = "";
+
                 switch (song.Type) 
                 {
                     case SetlistItemType.Song:
@@ -741,6 +766,9 @@ namespace ZeroSumSetlistEditor.Models
                         name = "--ENCORE--";
                         break;
                 }
+
+                name += "!(time)" + song.TimeDisplay;
+
                 if (song.OneOffNote != "")
                 {
                     name += "!(note)" + song.OneOffNote;
