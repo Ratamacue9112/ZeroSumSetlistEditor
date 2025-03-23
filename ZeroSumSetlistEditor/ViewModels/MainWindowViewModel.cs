@@ -75,7 +75,7 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         public void OpenSetlistEdit(Setlist setlist)
         {
-            Content = SetlistEdit = new SetlistEditViewModel(setlist, fileReading.GetSetlistSongsWithNotes(setlist), this);
+            Content = SetlistEdit = new SetlistEditViewModel(setlist, fileReading.GetSetlistSongsWithOneOffData(setlist), this);
             RegisterShowSetlistAddSongDialog.Invoke();
             RegisterShowSetlistEditOneOffNoteDialog.Invoke();
         }

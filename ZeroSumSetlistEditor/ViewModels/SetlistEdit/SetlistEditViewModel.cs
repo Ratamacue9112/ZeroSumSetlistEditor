@@ -53,18 +53,18 @@ namespace ZeroSumSetlistEditor.ViewModels
 
         private const string breakColor = "#0D777C";
 
-        public SetlistEditViewModel(Setlist setlist, List<KeyValuePair<string, string>> songs, MainWindowViewModel mainWindowVm)
+        public SetlistEditViewModel(Setlist setlist, List<KeyValuePair<string, OneOffSetlistSongData>> songs, MainWindowViewModel mainWindowVm)
         {
             SongCount = 0;
             EncoreCount = 0;
             var list = new List<SetlistSong>();
-            foreach (KeyValuePair<string, string> song in songs)
+            foreach (KeyValuePair<string, OneOffSetlistSongData> song in songs)
             {
                 if (song.Key.StartsWith("--") && song.Key.EndsWith("--"))
                 {
                     var name = song.Key.Replace("--", "");
                     var encore = name.StartsWith("ENCORE");
-                    SetlistSong setlistSong = new SetlistSong(name, name, encore ? 3 : 15, 0, -1, breakColor, encore ? SetlistItemType.Encore : SetlistItemType.Intermission, song.Value);
+                    SetlistSong setlistSong = new SetlistSong(name, name, encore ? 3 : 15, 0, -1, breakColor, encore ? SetlistItemType.Encore : SetlistItemType.Intermission, song.Value.Note);
                     if (setlistSong.Type == SetlistItemType.Encore)
                     {
                         EncoreCount++;
@@ -83,7 +83,7 @@ namespace ZeroSumSetlistEditor.ViewModels
                     {
                         songObj.ShortName = song.Key;
                     }
-                    list.Add(new SetlistSong(song.Key, songObj.ShortName, songObj.Minutes, songObj.Seconds, SongCount, GetDisplayColor(SongCount), SetlistItemType.Song, song.Value));
+                    list.Add(new SetlistSong(song.Key, songObj.ShortName, song.Value.Minutes, song.Value.Seconds, SongCount, GetDisplayColor(SongCount), SetlistItemType.Song, song.Value.Note));
                 }
             }
 
@@ -163,8 +163,9 @@ namespace ZeroSumSetlistEditor.ViewModels
         public async void OpenEditOneOffNoteDialog(SetlistSong song)
         {
             CurrentEditingSong = song;
-            var window = new CreateWindowViewModel(Artist, CreateWindowMode.EditOneOffNote, song.OneOffNote);
+            var window = new CreateWindowViewModel(Artist, CreateWindowMode.EditOneOffNote, song.OneOffNote, 0, mainWindowVm);
             var result = await ShowEditOneOffNoteDialog.Handle(window);
+            RecalculateTime();
         }
 
         public void MoveSongUp(SetlistSong song)
